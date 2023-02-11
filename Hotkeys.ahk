@@ -69,8 +69,9 @@ Return
     ; -- End turn --
     ; ------------------------------------------------------------
     x::
-        MouseClick, Left, 1200, 500, 1, 0, ,
-        MouseMove, 600, 1000, 0,
+        WinGetPos, , , width, height, A, , ,
+        MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
+        MouseMove, % width / 2, height / 2, 0,
     Return
 
     ; ------------------------------------------------------------
@@ -90,25 +91,27 @@ Return
     ; -- Back --
     ; ------------------------------------------------------------
     BackSpace::
-        MouseClick, Left, 1300, 950, 1, 0, ,
+        WinGetPos, , , width, height, A, , ,
+        MouseClick, Left, % width * 0.91, % height * 0.91, 1, 0, ,
     Return
 
     ; ------------------------------------------------------------
     ; -- Concede --
     ; ------------------------------------------------------------
     #z::
-        MouseClick, Left, 1330, 1020, 1, 0, ,
+        WinGetPos, , , width, height, A, , ,
+        MouseClick, Left, % width * 0.96, % height * 0.96, 1, 0, ,
         Sleep, 150
-        MouseClick, Left, 700, 400, 1, 0, ,
+        MouseClick, Left, % width * 0.5, % height * 0.4, 1, 0, ,
     Return
 
     ; ------------------------------------------------------------
     ; -- Squelch --
     ; ------------------------------------------------------------
     c::
-        MouseClick, Right, 684, 225, 1, 0, ,
-        ; Sleep, 150
-        MouseClick, Left, 550, 135, 1, 0, ,
+        WinGetPos, , , width, height, A, , ,
+        MouseClick, Right, % width * 0.5, % height * 0.2, 1, 0, ,
+        MouseClick, Left, % width * 0.4, % height * 0.1, 1, 0, ,
     Return
 
 ; ============================================================

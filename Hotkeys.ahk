@@ -83,7 +83,7 @@ Return
     x::
         WinGetPos, , , width, height, A, , ,
         MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
-        MouseMove, % width / 2, height / 2, 0,
+        MouseMove, % width / 2, height * 0.8, 0,
     Return
 
     ; ------------------------------------------------------------
@@ -113,8 +113,8 @@ Return
     #z::
         WinGetPos, , , width, height, A, , ,
         MouseClick, Left, % width * 0.96, % height * 0.96, 1, 0, ,
-        Sleep, 150
-        MouseClick, Left, % width * 0.5, % height * 0.4, 1, 0, ,
+        Sleep, 200
+        MouseClick, Left, % width * 0.5, % height * 0.38, 1, 0, ,
     Return
 
     ; ------------------------------------------------------------

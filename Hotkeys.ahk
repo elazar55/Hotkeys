@@ -174,3 +174,21 @@ Return
             SendInput {RButton up}
         }
     Return
+
+    ; ------------------------------------------------------------
+    ; -- Cross out row --
+    ; ------------------------------------------------------------
+    z::
+        WinGetPos, , , width, , A, , ,
+        MouseGetPos, , ypos, , ,
+        MouseClickDrag, Right, width * 0.31, ypos, width * 0.85, ypos, 5,
+    Return
+
+    ; ------------------------------------------------------------
+    ; -- Cross out column --
+    ; ------------------------------------------------------------
+    x::
+        WinGetPos, , , , height, A, , ,
+        MouseGetPos, xpos, , , ,
+        MouseClickDrag, Right, xpos, height * 0.3, xpos, height * 0.95, 5,
+    Return

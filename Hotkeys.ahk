@@ -1,4 +1,15 @@
 ; ============================================================
+; == Beep subroutine ==
+; ============================================================
+Beep(frequency, volume)
+{
+    SoundGet, master_volume
+    SoundSet, volume
+    SoundBeep, %frequency%
+    SoundSet, %master_volume%
+}
+
+; ============================================================
 ; == Triple click paste ==
 ; ============================================================
 #v::
@@ -57,7 +68,7 @@ Return
     Space::
         delay = 100
 
-        SoundBeep, 1500
+        Beep(1500, 25)
         while (GetKeyState("Space", "p"))
         {
             SendInput, {Space}
@@ -117,7 +128,7 @@ Return
 ; ============================================================
 ; == Picross Touch ==
 ; ============================================================
-#IfWinActive, Picross Touch
+#IfWinActive Picross Touch
 
     ; ------------------------------------------------------------
     ; -- Toggle RMB --
@@ -125,15 +136,11 @@ Return
     MButton::
         if (toggle := !toggle)
         {
-            SoundSet, 25
-            SoundBeep, 1500
-            SoundSet, 100
+            Beep(1500, 25)
         }
         Else
         {
-            SoundSet, 25
-            SoundBeep, 1000
-            SoundSet, 100
+            Beep(1000, 25)
         }
     Return
 

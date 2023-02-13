@@ -186,3 +186,27 @@ Return
             SendInput {RButton up}
         }
     Return
+
+    ; ------------------------------------------------------------
+    ; -- Cross out row --
+    ; ------------------------------------------------------------
+    z::
+        WinGetPos, , , width, height, A, , ,
+        MouseGetPos, xpos, ypos, , ,
+        old_x := xpos
+        MouseClickDragCustom("RButton", xpos, ypos, width * 0.85, ypos, 25, 0)
+        Sleep 150
+        MouseMove, old_x, ypos, 0,
+    Return
+
+    ; ------------------------------------------------------------
+    ; -- Cross out column --
+    ; ------------------------------------------------------------
+    x::
+        WinGetPos, , , width, height, A, , ,
+        MouseGetPos, xpos, ypos, , ,
+        old_y := ypos
+        MouseClickDragCustom("RButton", xpos, ypos, xpos, height * 0.95, 25, 0)
+        Sleep 150
+        MouseMove, xpos, old_y, 0,
+    Return

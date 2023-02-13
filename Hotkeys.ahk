@@ -188,25 +188,49 @@ Return
     Return
 
     ; ------------------------------------------------------------
-    ; -- Cross out row --
+    ; -- Cross out row -> --
     ; ------------------------------------------------------------
-    z::
+    s::
         WinGetPos, , , width, height, A, , ,
         MouseGetPos, xpos, ypos, , ,
         old_x := xpos
-        MouseClickDragCustom("RButton", xpos, ypos, width * 0.85, ypos, 25, 0)
+        MouseClickDragCustom("RButton", xpos, ypos, width * 0.85, ypos, 35, 2)
         Sleep 150
         MouseMove, old_x, ypos, 0,
     Return
 
     ; ------------------------------------------------------------
-    ; -- Cross out column --
+    ; -- Cross out row <- --
     ; ------------------------------------------------------------
-    x::
+    a::
+        WinGetPos, , , width, height, A, , ,
+        MouseGetPos, xpos, ypos, , ,
+        old_x := xpos
+        MouseClickDragCustom("RButton", xpos, ypos, width * 0.35, ypos, 35, 2)
+        Sleep 150
+        MouseMove, old_x, ypos, 0,
+    Return
+
+    ; ------------------------------------------------------------
+    ; -- Cross out column V --
+    ; ------------------------------------------------------------
+    r::
         WinGetPos, , , width, height, A, , ,
         MouseGetPos, xpos, ypos, , ,
         old_y := ypos
-        MouseClickDragCustom("RButton", xpos, ypos, xpos, height * 0.95, 25, 0)
+        MouseClickDragCustom("RButton", xpos, ypos, xpos, height * 0.95, 35, 2)
+        Sleep 150
+        MouseMove, xpos, old_y, 0,
+    Return
+
+    ; ------------------------------------------------------------
+    ; -- Cross out column ^ --
+    ; ------------------------------------------------------------
+    w::
+        WinGetPos, , , width, height, A, , ,
+        MouseGetPos, xpos, ypos, , ,
+        old_y := ypos
+        MouseClickDragCustom("RButton", xpos, ypos, xpos, height * 0.3, 35, 2)
         Sleep 150
         MouseMove, xpos, old_y, 0,
     Return

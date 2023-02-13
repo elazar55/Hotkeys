@@ -10,6 +10,18 @@ Beep(frequency, volume)
 }
 
 ; ============================================================
+; == Click drag mouse with pause ==
+; ============================================================
+MouseClickDragCustom(key, x, y, x2, y2, delay, speed)
+{
+    MouseMove, x, y, speed,
+    SendInput, {%key% down}
+    Sleep delay
+    MouseMove, x2, y2, speed,
+    SendInput, {%key% up}
+}
+
+; ============================================================
 ; == Triple click paste ==
 ; ============================================================
 #v::

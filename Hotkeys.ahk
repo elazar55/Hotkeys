@@ -1,4 +1,15 @@
 ; ============================================================
+; == Script attributes ==
+; ============================================================
+#NoEnv
+#SingleInstance, Force
+SendMode, Event
+#Include, Hearthstone.ahk
+#Include, PacmanDX.ahk
+#Include, PicrossTouch.ahk
+#IfWinActive ; Unset due to includes setting
+
+; ============================================================
 ; == Beep subroutine ==
 ; ============================================================
 Beep(frequency, volume)

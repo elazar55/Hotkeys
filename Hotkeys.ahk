@@ -26,29 +26,29 @@ Beep(frequency, volume)
 MouseClickDragCustom(key, x, y, x2, y2, delay, speed)
 {
     MouseMove, x, y, speed,
-    SendInput, {%key% down}
+    Send, {%key% down}
     Sleep delay
     MouseMove, x2, y2, speed,
-    SendInput, {%key% up}
+    Send, {%key% up}
 }
 
 ; ============================================================
 ; == Triple click paste ==
 ; ============================================================
 #v::
-    SendInput, {LButton}
-    SendInput, {LButton}
-    SendInput, {LButton}
-    SendInput, ^v
+    Send, {LButton}
+    Send, {LButton}
+    Send, {LButton}
+    Send, ^v
 Return
 
 ; ============================================================
 ; == Double click copy ==
 ; ============================================================
 #c::
-    SendInput, {LButton}
-    SendInput, {LButton}
-    SendInput, ^c
+    Send, {LButton}
+    Send, {LButton}
+    Send, ^c
 Return
 
 ; ============================================================
@@ -59,9 +59,9 @@ Return
 
     while (GetKeyState("Space", "p") AND GetKeyState("LWin", "p"))
     {
-        SendInput, {Tab}
+        Send, {Tab}
         Sleep, %delay%
-        SendInput, {Space}
+        Send, {Space}
         Sleep, %delay%
     }
 Return

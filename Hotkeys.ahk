@@ -10,18 +10,6 @@ SendMode, Event
 #IfWinActive ; Unset due to includes setting
 
 ; ============================================================
-; == Click drag mouse with pause ==
-; ============================================================
-MouseClickDragCustom(key, x, y, x2, y2, delay, speed)
-{
-    MouseMove, x, y, speed,
-    Send, {%key% down}
-    Sleep delay
-    MouseMove, x2, y2, speed,
-    Send, {%key% up}
-}
-
-; ============================================================
 ; == Triple click paste ==
 ; ============================================================
 #v::

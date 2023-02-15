@@ -55,7 +55,6 @@
         MouseGetPos, xpos, ypos, , ,
         old_x := xpos
         MouseClickDragCustom("RButton", xpos, ypos, width * 0.87, ypos, 40, 3)
-        Sleep 150
         MouseMove, old_x, ypos, 0,
     Return
 
@@ -67,7 +66,6 @@
         MouseGetPos, xpos, ypos, , ,
         old_x := xpos
         MouseClickDragCustom("RButton", xpos, ypos, width * 0.3, ypos, 40, 3)
-        Sleep 150
         MouseMove, old_x, ypos, 0,
     Return
 
@@ -79,7 +77,6 @@
         MouseGetPos, xpos, ypos, , ,
         old_y := ypos
         MouseClickDragCustom("RButton", xpos, ypos, xpos, height * 0.95, 40, 3)
-        Sleep 150
         MouseMove, xpos, old_y, 0,
     Return
 
@@ -91,6 +88,5 @@
         MouseGetPos, xpos, ypos, , ,
         old_y := ypos
         MouseClickDragCustom("RButton", xpos, ypos, xpos, height * 0.3, 40, 3)
-        Sleep 150
         MouseMove, xpos, old_y, 0,
     Return

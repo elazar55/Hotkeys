@@ -48,25 +48,25 @@ Return
 ; == Surround with quotes ==
 ; ============================================================
 #IfWinNotActive, Visual Studio Code
-    "::
-        clip_content := Clipboard
-        Clipboard := ""
-        Send ^c
-        ClipWait, 0.05
-        Clipboard := """" Clipboard """"
-        Send ^v
-        Clipboard := clip_content
-    Return
+"::
+    clip_content := Clipboard
+    Clipboard := ""
+    Send ^c
+    ClipWait, 0.05
+    Clipboard := """" Clipboard """"
+    Send ^v
+    Clipboard := clip_content
+Return
 
-    ; ============================================================
-    ; == Surround with parenthesis ==
-    ; ============================================================
-    +9::
-        clip_content := Clipboard
-        Clipboard := ""
-        Send ^c
-        ClipWait, 0.05
-        Clipboard := "(" Clipboard ")"
-        Send ^v
-        Clipboard := clip_content
-    Return
+; ============================================================
+; == Surround with parenthesis ==
+; ============================================================
++9::
+    clip_content := Clipboard
+    Clipboard := ""
+    Send ^c
+    ClipWait, 0.05
+    Clipboard := "(" Clipboard ")"
+    Send ^v
+    Clipboard := clip_content
+Return

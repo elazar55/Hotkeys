@@ -5,6 +5,18 @@
 #SingleInstance, Force
 SetTitleMatchMode, 2
 SendMode, Event
+
+; ============================================================
+; == Beep Subroutine ==
+; ============================================================
+Beep(frequency, volume)
+{
+    SoundGet, master_volume
+    SoundSet, volume
+    SoundBeep, %frequency%
+    SoundSet, %master_volume%
+}
+
 ; ============================================================
 ; == Excluded windows from surround with hotkeys ==
 ; ============================================================
@@ -62,6 +74,7 @@ Return
     Clipboard := """" Clipboard """"
     Send ^v
     Clipboard := clip_content
+    Beep(1500, 25)
 Return
 
 ; ============================================================
@@ -75,4 +88,5 @@ Return
     Clipboard := "(" Clipboard ")"
     Send ^v
     Clipboard := clip_content
+    Beep(1500, 25)
 Return

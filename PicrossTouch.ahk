@@ -1,15 +1,4 @@
 ; ============================================================
-; == Beep subroutine ==
-; ============================================================
-Beep(frequency, volume)
-{
-    SoundGet, master_volume
-    SoundSet, volume
-    SoundBeep, %frequency%
-    SoundSet, %master_volume%
-}
-
-; ============================================================
 ; == Click drag mouse with pause ==
 ; ============================================================
 MouseClickDragCustom(key, x, y, x2, y2, delay, speed)

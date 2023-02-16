@@ -23,10 +23,15 @@ Beep(frequency, volume)
 GroupAdd, excluded_windows, Visual Studio Code
 GroupAdd, excluded_windows, cmd.exe
 GroupAdd, excluded_windows, MINGW64
+
+; ============================================================
+; == Include files for specific programs or games ==
+; ============================================================
 #Include, Hearthstone.ahk
 #Include, PacmanDX.ahk
 #Include, PicrossTouch.ahk
-#IfWinActive ; Unset due to includes setting
+; == Unset due to includes setting it ==
+#IfWinActive
 
 ; ============================================================
 ; == Triple click paste ==

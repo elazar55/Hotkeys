@@ -3,6 +3,7 @@
 ; ============================================================
 #NoEnv
 #SingleInstance, Force
+SetTitleMatchMode, 2
 SendMode, Event
 #Include, Hearthstone.ahk
 #Include, PacmanDX.ahk
@@ -42,3 +43,30 @@ Return
         Sleep, %delay%
     }
 Return
+
+; ============================================================
+; == Surround with quotes ==
+; ============================================================
+#IfWinNotActive, Visual Studio Code
+    "::
+        clip_content := Clipboard
+        Clipboard := ""
+        Send ^c
+        ClipWait, 0.05
+        Clipboard := """" Clipboard """"
+        Send ^v
+        Clipboard := clip_content
+    Return
+
+    ; ============================================================
+    ; == Surround with parenthesis ==
+    ; ============================================================
+    +9::
+        clip_content := Clipboard
+        Clipboard := ""
+        Send ^c
+        ClipWait, 0.05
+        Clipboard := "(" Clipboard ")"
+        Send ^v
+        Clipboard := clip_content
+    Return

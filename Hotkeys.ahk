@@ -7,17 +7,6 @@ SetTitleMatchMode, 2
 SendMode, Event
 
 ; ============================================================
-; == Beep Subroutine ==
-; ============================================================
-Beep(frequency, volume)
-{
-    SoundGet, master_volume
-    SoundSet, volume
-    SoundBeep, %frequency%
-    SoundSet, %master_volume%
-}
-
-; ============================================================
 ; == Excluded windows from surround with hotkeys ==
 ; ============================================================
 GroupAdd, excluded_windows, Visual Studio Code
@@ -32,6 +21,17 @@ GroupAdd, excluded_windows, MINGW64
 #Include, PicrossTouch.ahk
 ; == Unset due to includes setting it ==
 #IfWinActive
+
+; ============================================================
+; == Beep Subroutine ==
+; ============================================================
+Beep(frequency, volume)
+{
+    SoundGet, master_volume
+    SoundSet, volume
+    SoundBeep, %frequency%
+    SoundSet, %master_volume%
+}
 
 ; ============================================================
 ; == Triple click paste ==

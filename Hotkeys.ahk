@@ -5,6 +5,12 @@
 #SingleInstance, Force
 SetTitleMatchMode, 2
 SendMode, Event
+; ============================================================
+; == Excluded windows from surround with hotkeys ==
+; ============================================================
+GroupAdd, excluded_windows, Visual Studio Code
+GroupAdd, excluded_windows, cmd.exe
+GroupAdd, excluded_windows, MINGW64
 #Include, Hearthstone.ahk
 #Include, PacmanDX.ahk
 #Include, PicrossTouch.ahk
@@ -47,7 +53,7 @@ Return
 ; ============================================================
 ; == Surround with quotes ==
 ; ============================================================
-#IfWinNotActive, Visual Studio Code
+#IfWinNotActive, ahk_group excluded_windows
 "::
     clip_content := Clipboard
     Clipboard := ""

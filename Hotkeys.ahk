@@ -1,26 +1,35 @@
 ; ============================================================
-; == Script attributes ==
+; == Auto Exexcute ==
 ; ============================================================
+
+; ------------------------------------------------------------
+; -- Script attributes --
+; ------------------------------------------------------------
 #NoEnv
 #SingleInstance, Force
 SetTitleMatchMode, 2
 SendMode, Event
 
-; ============================================================
-; == Excluded windows from surround with hotkeys ==
-; ============================================================
+; ------------------------------------------------------------
+; -- Excluded windows from surround with hotkeys --
+; ------------------------------------------------------------
 GroupAdd, excluded_windows, Visual Studio Code
 GroupAdd, excluded_windows, cmd.exe
 GroupAdd, excluded_windows, MINGW64
 
-; ============================================================
-; == Include files for specific programs or games ==
-; ============================================================
+; ------------------------------------------------------------
+; -- Include files for specific programs or games --
+; == Included files will auto execute as well ==
+; ------------------------------------------------------------
 #Include, Hearthstone.ahk
 #Include, PacmanDX.ahk
 #Include, PicrossTouch.ahk
 ; == Unset due to includes setting it ==
 #IfWinActive
+
+; ============================================================
+; == Global hotkeys ==
+; ============================================================
 
 ; ============================================================
 ; == Beep Subroutine ==

@@ -13,7 +13,7 @@ MouseClickDragCustom(key, x, y, x2, y2, delay, speed)
 ; ============================================================
 ; == Picross Touch ==
 ; ============================================================
-#IfWinActive Picross Touch
+#IfWinActive ahk_exe picross.exe
 
 ; ------------------------------------------------------------
 ; -- Toggle RMB --

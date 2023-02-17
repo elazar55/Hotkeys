@@ -1,5 +1,5 @@
 ; ============================================================
-; == PAC-MAN Championship Edition DX+ ==
+; == PAC-MAN Championship Edition DX+
 ; ============================================================
 #IfWinActive, ahk_exe PAC-MAN.exe
 w::Up

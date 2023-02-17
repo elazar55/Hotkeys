@@ -1,9 +1,9 @@
 ; ============================================================
-; == Auto Exexcute ==
+; == Auto Exexcute
 ; ============================================================
 
 ; ------------------------------------------------------------
-; -- Script attributes --
+; -- Script attributes
 ; ------------------------------------------------------------
 #NoEnv
 #SingleInstance, Force
@@ -11,28 +11,28 @@ SetTitleMatchMode, 2
 SendMode, Event
 
 ; ------------------------------------------------------------
-; -- Excluded windows from surround with hotkeys --
+; -- Excluded windows from surround with hotkeys
 ; ------------------------------------------------------------
 GroupAdd, excluded_windows, Visual Studio Code
 GroupAdd, excluded_windows, cmd.exe
 GroupAdd, excluded_windows, MINGW64
 
 ; ------------------------------------------------------------
-; -- Include files for specific programs or games --
-; == Included files will auto execute as well ==
+; -- Include files for specific programs or games
+; -- Included files will auto execute as well
 ; ------------------------------------------------------------
 #Include, Hearthstone.ahk
 #Include, PacmanDX.ahk
 #Include, PicrossTouch.ahk
-; == Unset due to includes setting it ==
+; == Unset due to includes setting it
 #IfWinActive
 
 ; ============================================================
-; == Global hotkeys ==
+; == Global hotkeys
 ; ============================================================
 
 ; ============================================================
-; == Beep Subroutine ==
+; == Beep Subroutine
 ; ============================================================
 Beep(frequency, volume)
 {
@@ -43,7 +43,7 @@ Beep(frequency, volume)
 }
 
 ; ============================================================
-; == Triple click paste ==
+; == Triple click paste
 ; ============================================================
 #v::
     Send, {LButton}
@@ -53,7 +53,7 @@ Beep(frequency, volume)
 Return
 
 ; ============================================================
-; == Double click copy ==
+; == Double click copy
 ; ============================================================
 #c::
     Send, {LButton}
@@ -62,7 +62,7 @@ Return
 Return
 
 ; ============================================================
-; == Repeat tab then space ==
+; == Repeat tab then space
 ; ============================================================
 #Space::
     delay = 100
@@ -77,7 +77,7 @@ Return
 Return
 
 ; ============================================================
-; == Surround with quotes ==
+; == Surround with quotes
 ; ============================================================
 #IfWinNotActive, ahk_group excluded_windows
 "::
@@ -92,7 +92,7 @@ Return
 Return
 
 ; ============================================================
-; == Surround with parenthesis ==
+; == Surround with parenthesis
 ; ============================================================
 +9::
     clip_content := Clipboard

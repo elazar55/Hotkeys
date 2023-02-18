@@ -53,8 +53,7 @@ Return
 #z::
     WinGetPos, , , width, height, A, , ,
     MouseClick, Left, % width * 0.96, % height * 0.96, 1, 0, ,
-    Sleep, 200
-    MouseClick, Left, % width * 0.5, % height * 0.38, 1, 0, ,
+    MouseClick, Left, % width * 0.5, % height * 0.38, 1, 2, ,
 Return
 
 ; ------------------------------------------------------------

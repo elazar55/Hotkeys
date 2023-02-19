@@ -77,18 +77,26 @@ Return
 Return
 
 ; ============================================================
-; == Surround with quotes
+; == Surround with ... etc
 ; == Exclude VS Code and apps which don't use CTRL+V to paste
 ; ============================================================
 #IfWinNotActive, ahk_group excluded_windows
-"::
+SurroundWith(open, close)
+{
     clip_content := Clipboard
     Clipboard := ""
     Send ^c
     ClipWait, 0.05
-    Clipboard := """" Clipboard """"
+    Clipboard := open Clipboard close
     Send ^v
     Clipboard := clip_content
+}
+
+; ============================================================
+; == Surround with parenthesis
+; ============================================================
+"::
+    SurroundWith("""", """")
     Beep(1500, 25)
 Return
 
@@ -96,12 +104,6 @@ Return
 ; == Surround with parenthesis
 ; ============================================================
 +9::
-    clip_content := Clipboard
-    Clipboard := ""
-    Send ^c
-    ClipWait, 0.05
-    Clipboard := "(" Clipboard ")"
-    Send ^v
-    Clipboard := clip_content
+    SurroundWith("(", ")")
     Beep(1500, 25)
 Return

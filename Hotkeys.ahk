@@ -78,6 +78,7 @@ Return
 
 ; ============================================================
 ; == Surround with quotes
+; == Exclude VS Code and apps which don't use CTRL+V to paste
 ; ============================================================
 #IfWinNotActive, ahk_group excluded_windows
 "::

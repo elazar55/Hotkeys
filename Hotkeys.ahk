@@ -13,9 +13,9 @@ SendMode, Event
 ; ------------------------------------------------------------
 ; -- Excluded windows from surround with hotkeys
 ; ------------------------------------------------------------
-GroupAdd, excluded_windows, Visual Studio Code
-GroupAdd, excluded_windows, cmd.exe
-GroupAdd, excluded_windows, MINGW64
+GroupAdd, excluded_windows, ahk_exe code.exe
+GroupAdd, excluded_windows, ahk_exe cmd.exe
+GroupAdd, excluded_windows, ahk_exe mintty.exe
 
 ; ------------------------------------------------------------
 ; -- Include files for specific programs or games

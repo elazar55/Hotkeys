@@ -93,7 +93,7 @@ SurroundWith(open, close)
 }
 
 ; ============================================================
-; == Surround with parenthesis
+; == Surround with quotes
 ; ============================================================
 "::
     SurroundWith("""", """")

@@ -22,7 +22,12 @@ Return
 ; ------------------------------------------------------------
 x::
     WinGetPos, , , width, height, A, , ,
-    MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
+
+    While, GetKeyState("x", "P") ; -- Keeps clicking until you let go
+    {
+        MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
+        Sleep, 100
+    }
     MouseMove, % width / 2, height * 0.8, 0,
 Return
 

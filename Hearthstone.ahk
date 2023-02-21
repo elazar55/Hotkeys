@@ -1,4 +1,9 @@
 ; ============================================================
+; == Auto Exexcute section
+; ============================================================
+repeat_delay = 50
+
+; ============================================================
 ; == Hearthstone
 ; ============================================================
 #IfWinActive, ahk_exe Hearthstone.exe
@@ -7,13 +12,12 @@
 ; -- Turbo space
 ; ------------------------------------------------------------
 Space::
-    delay = 100
 
     Beep(1500, 25)
     while (GetKeyState("Space", "p"))
     {
         Send, {Space}
-        Sleep, %delay%
+        Sleep, %repeat_delay%
     }
 Return
 
@@ -26,7 +30,7 @@ x::
     While, GetKeyState("x", "P") ; -- Keeps clicking until you let go
     {
         MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
-        Sleep, 100
+        Sleep, %repeat_delay%
     }
     MouseMove, % width / 2, height * 0.8, 0,
 Return
@@ -35,12 +39,10 @@ Return
 ; -- Turbo LButton
 ; ------------------------------------------------------------
 #LButton::
-    delay = 100
-
     while (GetKeyState("LButton", "p"))
     {
         Send {LButton}
-        Sleep, %delay%
+        Sleep, %repeat_delay%`
     }
 Return
 

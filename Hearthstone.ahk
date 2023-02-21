@@ -26,7 +26,8 @@ Return
 Space::
     WinGetPos, , , width, height, A, , ,
 
-    While, GetKeyState("x", "P") ; -- Keeps clicking until you let go
+    ; -- Keeps clicking until you let go
+    While, GetKeyState("Space", "P")
     {
         MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
         Sleep, %repeat_delay%

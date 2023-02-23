@@ -83,7 +83,9 @@ Return
 #IfWinNotActive, ahk_group excluded_windows
 SurroundWith(open, close)
 {
+    ; == Backup the clipboard since it'll be modified
     clip_content := Clipboard
+
     Clipboard := ""
     Send ^c
     ClipWait, 0.05
@@ -94,6 +96,7 @@ SurroundWith(open, close)
     If (Clipboard = open close)
         Send, {Left}
 
+    ; == Restores what was in the clipboard originally
     Clipboard := clip_content
 }
 

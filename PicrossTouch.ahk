@@ -21,41 +21,31 @@ MouseClickDragCustom(key, x, y, x2, y2, delay, speed)
 MButton::
     if (toggle := !toggle)
     {
+        Send {RButton down}
         Beep(1500, 25)
     }
     Else
     {
+        Send {RButton up}
         Beep(1000, 25)
     }
 Return
 
-LButton::
+~LButton::
     If (toggle)
     {
-        Send {RButton down}
-        KeyWait LButton
+        toggle = 0
         Send {RButton up}
-    }
-    Else
-    {
-        Send {LButton down}
-        KeyWait LButton
-        Send {LButton up}
+        Beep(1000, 25)
     }
 Return
 
-RButton::
+~RButton::
     If (toggle)
     {
-        Send {LButton down}
-        KeyWait RButton
-        Send {LButton up}
-    }
-    Else
-    {
-        Send {RButton down}
-        KeyWait RButton
+        toggle = 0
         Send {RButton up}
+        Beep(1000, 25)
     }
 Return
 

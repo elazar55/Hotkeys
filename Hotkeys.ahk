@@ -24,6 +24,7 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
 #Include, Hearthstone.ahk
 #Include, PacmanDX.ahk
 #Include, PicrossTouch.ahk
+#Include, GreedCorp.ahk
 ; == Unset due to includes setting it
 #IfWinActive
 

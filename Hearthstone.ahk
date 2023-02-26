@@ -12,7 +12,6 @@ repeat_delay = 50
 ; -- Turbo space
 ; ------------------------------------------------------------
 x::
-    Beep(1500, 25)
     while (GetKeyState("x", "p"))
     {
         Send, {Space}

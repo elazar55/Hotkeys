@@ -31,12 +31,18 @@ MButton::
     }
 Return
 
-~LButton::
+LButton::
     If (toggle)
     {
         toggle = 0
         Send {RButton up}
         Beep(1000, 25)
+    }
+    Else
+    {
+        Send {LButton Down}
+        KeyWait, LButton
+        Send {LButton Up}
     }
 Return
 

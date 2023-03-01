@@ -22,9 +22,8 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
 ; -- Included files will auto execute as well
 ; ------------------------------------------------------------
 #Include, Hearthstone.ahk
-#Include, PacmanDX.ahk
+#Include, Misc.ahk
 #Include, PicrossTouch.ahk
-#Include, GreedCorp.ahk
 ; == Unset due to includes setting it
 #IfWinActive
 

@@ -32,6 +32,6 @@ s::d
 v::
     SetKeyDelay, 50, 50
     Send wwww
-    Beep(1200, 25)
     SetKeyDelay, 10, -1 ; == Default
+    Send {Space Down}
 Return

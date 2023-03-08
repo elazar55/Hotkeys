@@ -33,14 +33,14 @@ s::d
 ; == Spoilers
 ; ============================================================
 v::
-    ; == Releases jump in case previous trigger left it down
+    ; == Releases jump in case previous trigger left it down ==
     Send {Space Up}
 
     SetKeyDelay, 25, 25
     Send wwww
     Send {Space Down}
 
-    ; == Default
+    ; == Default ==
     SetKeyDelay, 10, -1
 Return
 

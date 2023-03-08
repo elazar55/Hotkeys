@@ -54,11 +54,11 @@ BackSpace::
 Return
 
 ; ------------------------------------------------------------
-; -- Play Classic
+; -- Play Classic / Brawl
 ; ------------------------------------------------------------
 z::
     WinGetPos, , , width, height, A, , ,
-    MouseClick, Left, % width * 0.8, % height * 0.8, 1, 0, ,
+    MouseClick, Left, % width * 0.82, % height * 0.8, 1, 0, ,
 Return
 
 ; ------------------------------------------------------------

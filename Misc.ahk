@@ -26,7 +26,12 @@ Return
 ; ============================================================
 #IfWinActive ahk_exe FEZ.exe
 
-w::Up
-a::Left
-r::Down
-s::Right
+r::s
+s::d
+
+v::
+    SetKeyDelay, 50, 50
+    Send wwww
+    Beep(1200, 25)
+    SetKeyDelay, 10, -1 ; == Default
+Return

@@ -88,13 +88,11 @@ SurroundWith(open, close)
 
     Clipboard := ""
     Send ^c
-    ClipWait, 0.05
     Clipboard := open Clipboard close
     Send ^v
 
-    ; == Moves cursor inside if it's empty inside ==
-    If (Clipboard = open close)
-        Send, {Left}
+    ; == Moves cursor inside ==
+    Send, {Left}
 
     ; == Restores what was in the clipboard originally ==
     Clipboard := clip_content

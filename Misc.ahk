@@ -1,4 +1,16 @@
 ; ============================================================
+; == Battleblock Theater
+; ============================================================
+#IfWinActive ahk_exe BattleBlockTheater.exe
+
+w::Up
+a::Left
+r::Down
+s::Right
+
+Return
+
+; ============================================================
 ; == Greed Corp
 ; ============================================================
 #IfWinActive ahk_class GREED_CORP_CLASSNAME

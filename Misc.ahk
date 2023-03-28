@@ -1,4 +1,34 @@
 ; ============================================================
+; == Pix The Cat
+; ============================================================
+#IfWinActive ahk_exe PixTheCat.exe
+
+Space::Enter
+
+; ------------------------------------------------------------
+; -- Restart
+; ------------------------------------------------------------
+^r::
+    SetKeyDelay, 25, 25
+    Send, {Escape}
+    Send, {Down}
+    Send, {Enter}
+    ; == Default ==
+    SetKeyDelay, 10, -1
+Return
+
+; ============================================================
+; == Absolute Drift
+; ============================================================
+#IfWinActive ahk_exe AbsoluteDrift.exe
+
+w::Up
+a::Left
+r::Down
+s::Right
+BackSpace::Enter
+
+; ============================================================
 ; == Battleblock Theater
 ; ============================================================
 #IfWinActive ahk_exe BattleBlockTheater.exe
@@ -79,4 +109,19 @@ Return
             MouseMove, mouse_x, window_height, 0
     }
     ToolTip, , , ,
+Return
+
+; ============================================================
+; == RetroArch
+; ============================================================
+#IfWinActive ahk_exe retroarch.exe
+
+~Sc029::
+    SetKeyDelay, 45, 25
+    Send, {Escape}
+    Send, {Escape}
+    SetKeyDelay, 100, 100
+    Send, {Escape}
+    ; == Default ==
+    SetKeyDelay, 10, -1
 Return

@@ -58,7 +58,12 @@ Return
 ; ------------------------------------------------------------
 z::
     WinGetPos, , , width, height, A, , ,
-    MouseClick, Left, % width * 0.82, % height * 0.8, 1, 0, ,
+
+    while (GetKeyState("z", "p"))
+    {
+        MouseClick, Left, % width * 0.82, % height * 0.8, 1, 0, ,
+        Sleep, %repeat_delay%`
+    }
 Return
 
 ; ------------------------------------------------------------

@@ -54,11 +54,18 @@ Return
 ; ==============================================================================
 z::
     WinGetPos, , , width, height, A, , ,
-
     while (GetKeyState("z", "p"))
     {
-        MouseClick, Left, % width * 0.82, % height * 0.8, 1, 0, ,
-        Sleep, %repeat_delay%`
+        size = 50
+        tau = 6.28318530718
+        speed = 0.5
+        angle += speed
+        angle := Mod(angle, tau)
+        posy := Sin(angle) * size
+        posx := Cos(angle) * size
+
+        MouseClick, Left, % (width * 0.82) + posx, % (height * 0.8) + posy, 1, 0, ,
+        ; Sleep, %repeat_delay%`
     }
 Return
 

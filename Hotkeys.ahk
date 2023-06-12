@@ -5,7 +5,7 @@
 #NoEnv
 #SingleInstance, Force
 SetTitleMatchMode, 2
-SetBatchLines, 1
+SetBatchLines, 10
 SendMode, Event
 
 ; Excluded windows

@@ -7,7 +7,7 @@ repeat_delay = 50
 ; ==============================================================================
 ;                                  Turbo Space
 ; ==============================================================================
-x::
+#Space::
     while (GetKeyState("x", "p"))
     {
         Send, {Space}
@@ -20,14 +20,11 @@ Return
 ; ==============================================================================
 Space::
     WinGetPos, , , width, height, A, , ,
+    MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
 
-    ; Keeps clicking until you let go
-    While, GetKeyState("Space", "P")
-    {
-        MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
-        Sleep, %repeat_delay%
-    }
-    MouseMove, % width / 2, height * 0.8, 0,
+    ; Re-center
+    If (!GetKeyState("Space", "P"))
+        MouseMove, % width / 2, height * 0.8, 0,
 Return
 
 ; ==============================================================================
@@ -44,7 +41,7 @@ Return
 ; ==============================================================================
 ;                                     Back
 ; ==============================================================================
-BackSpace::
+#BackSpace::
     WinGetPos, , , width, height, A, , ,
     MouseClick, Left, % width * 0.91, % height * 0.91, 1, 0, ,
 Return
@@ -52,27 +49,15 @@ Return
 ; ==============================================================================
 ;                                     Play
 ; ==============================================================================
-z::
+#p::
     WinGetPos, , , width, height, A, , ,
-    while (GetKeyState("z", "p"))
-    {
-        size = 50
-        tau = 6.28318530718
-        speed = 0.5
-        angle += speed
-        angle := Mod(angle, tau)
-        posy := Sin(angle) * size
-        posx := Cos(angle) * size
-
-        MouseClick, Left, % (width * 0.82) + posx, % (height * 0.8) + posy, 1, 0, ,
-        ; Sleep, %repeat_delay%`
-    }
+    MouseClick, Left, % (width * 0.82), % (height * 0.8), 1, 0, ,
 Return
 
 ; ==============================================================================
 ;                                    Concede
 ; ==============================================================================
-#z::
+#c::
     WinGetPos, , , width, height, A, , ,
     MouseClick, Left, % width * 0.96, % height * 0.96, 1, 0, ,
     MouseClick, Left, % width * 0.5, % height * 0.38, 1, 2, ,
@@ -81,8 +66,8 @@ Return
 ; ==============================================================================
 ;                                    Squelch
 ; ==============================================================================
-c::
+#s::
     WinGetPos, , , width, height, A, , ,
     MouseClick, Right, % width * 0.5, % height * 0.2, 1, 0, ,
-    MouseClick, Left, % width * 0.4, % height * 0.1, 1, 0, ,
+    MouseClick, Left, % width * 0.4, % height * 0.12, 1, 2, ,
 Return

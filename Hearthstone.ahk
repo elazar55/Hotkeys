@@ -8,7 +8,7 @@ repeat_delay = 50
 ;                                  Turbo Space
 ; ==============================================================================
 #Space::
-    while (GetKeyState("x", "p"))
+    while (GetKeyState("Space", "p"))
     {
         Send, {Space}
         Sleep, %repeat_delay%
@@ -21,10 +21,11 @@ Return
 Space::
     WinGetPos, , , width, height, A, , ,
     MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
+Return
 
+Space Up::
     ; Re-center
-    If (!GetKeyState("Space", "P"))
-        MouseMove, % width / 2, height * 0.8, 0,
+    MouseMove, % width / 2, height * 0.8, 0,
 Return
 
 ; ==============================================================================

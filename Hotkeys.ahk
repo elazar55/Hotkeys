@@ -64,3 +64,32 @@ Return
         Sleep, %delay%
     }
 Return
+
+; ==============================================================================
+;                                     Price
+; ==============================================================================
+#F::
+    Send, ^c
+    ClipWait, 1
+    increment := 0.20
+
+    If (Clipboard >= 15)
+        increment := 2
+    Else If (Clipboard >= 5)
+        increment := 1
+    Else If (Clipboard >= 2)
+        increment := 0.50
+
+    Clipboard := Format("{:.2f}", Clipboard + (increment * 2) + 0.01)
+Return
+
+; ==============================================================================
+;                                  Title Case
+; ==============================================================================
+#t::
+    Send, ^c
+    ClipWait, 1
+    StringUpper, Clipboard, Clipboard, T
+    Send, ^v
+
+Return

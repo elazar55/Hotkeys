@@ -69,8 +69,10 @@ Return
 ;                                     Price
 ; ==============================================================================
 #F::
+    Clipboard =
     Send, ^c
     ClipWait, 1
+    Beep(1200, 20)
     increment := 0.20
 
     If (Clipboard >= 15)

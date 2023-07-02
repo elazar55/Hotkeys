@@ -10,7 +10,7 @@ repeat_delay = 50
 #Space::
     while (GetKeyState("Space", "p"))
     {
-        Send, {Space}
+        Send, {Blind}{Space}
         Sleep, %repeat_delay%
     }
 Return
@@ -19,13 +19,21 @@ Return
 ;                                   End Turn
 ; ==============================================================================
 Space::
-    WinGetPos, , , width, height, A, , ,
-    MouseClick, Left, % width * 0.9, % height * 0.45, 1, 0, ,
+    WinGetPos, , , win_width, win_height, A, , ,
+
+    x := win_width * 0.9
+    y := win_height * 0.45
+    click_count := 1
+    speed := 0
+
+    MouseClick, Left, x, y, click_count, speed, ,
 Return
 
-Space Up::
-    ; Re-center
-    MouseMove, % width / 2, height * 0.8, 0,
+Space Up:: ; Re-center
+    x := win_width / 2
+    y := win_height * 0.8
+
+    MouseMove, x, y, speed,
 Return
 
 ; ==============================================================================
@@ -34,7 +42,7 @@ Return
 !LButton::
     while (GetKeyState("LButton", "p"))
     {
-        Send {LButton}
+        Send {Blind}{LButton}
         Sleep, %repeat_delay%`
     }
 Return
@@ -51,24 +59,49 @@ Return
 ;                                     Play
 ; ==============================================================================
 #p::
-    WinGetPos, , , width, height, A, , ,
-    MouseClick, Left, % (width * 0.82), % (height * 0.8), 1, 0, ,
+    WinGetPos, , , win_width, win_height, A, , ,
+
+    x := win_width * 0.82
+    y := win_height * 0.8
+    click_count := 1
+    speed := 0
+
+    MouseClick, Left, x, y, click_count, speed, ,
 Return
 
 ; ==============================================================================
 ;                                    Concede
 ; ==============================================================================
 #c::
-    WinGetPos, , , width, height, A, , ,
-    MouseClick, Left, % width * 0.96, % height * 0.96, 1, 0, ,
-    MouseClick, Left, % width * 0.5, % height * 0.38, 1, 2, ,
+    WinGetPos, , , win_width, win_height, A, , ,
+
+    x := win_width * 0.96
+    y := win_height * 0.96
+    click_count := 1
+    speed := 2
+
+    MouseClick, Left, x, y, click_count, speed, ,
+
+    x := win_width * 0.5
+    y := win_height * 0.38
+    MouseClick, Left, x, y, click_count, speed, ,
 Return
 
 ; ==============================================================================
 ;                                    Squelch
 ; ==============================================================================
 #s::
-    WinGetPos, , , width, height, A, , ,
-    MouseClick, Right, % width * 0.5, % height * 0.2, 1, 0, ,
-    MouseClick, Left, % width * 0.4, % height * 0.12, 1, 2, ,
+    WinGetPos, , , win_width, win_height, A, , ,
+
+    x := win_width * 0.5
+    y := win_height * 0.2
+    click_count := 1
+    speed := 0
+
+    MouseClick, Right, x, y, click_count, speed, ,
+
+    x := win_width * 0.4
+    y := win_height * 0.12
+    speed := 2
+    MouseClick, Left, x, y, click_count, speed, ,
 Return

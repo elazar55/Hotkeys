@@ -78,6 +78,19 @@ Return
         increment := 1
 
     Clipboard := Format("{:.2f}", Clipboard + increment + 0.01)
+    ; MsgBox, % Format("{:.2f}", Clipboard + increment + 0.01)
+    Send, ^v
+    Beep(1200, 20)
+Return
+; ==============================================================================
+;                                 Sentence Case
+; ==============================================================================
+#s::
+    Send, ^c
+    ClipWait, 1
+
+    Clipboard := RegExReplace(Clipboard, "(?<=\w\s)\b(\w)", "$L0")
+
     Send, ^v
     Beep(1200, 20)
 Return
@@ -99,10 +112,12 @@ Return
 #a::
     SetTitleMatchMode Regex
 
-    WinGet, windows, List, .+, , Start Menu|Program Manager|Chrome|Code
+    WinGet, window_count, List, .+, , Start Menu|Program Manager|Chrome|Code
 
-    columns := 3
-    rows := 2
+    rows := Min(Ceil(window_count / 2), 2)
+    columns := Ceil(window_count / rows)
+    slots := rows * columns
+    carry := slots - window_count
 
     left_offset := 7
     top_offset := 7
@@ -110,21 +125,24 @@ Return
     screen_width := 1920
     screen_height = 1050
 
-    win_width := (screen_width / columns) + (left_offset * 2)
-    win_height := (screen_height / rows) + (top_offset)
+    window_width := (screen_width / columns) + (left_offset * 2)
+    window_height := (screen_height / rows) + (top_offset)
 
-    Loop, %windows%
+    Loop, %window_count%
     {
         x_index := Floor((A_Index - 1) / rows)
         y_index := Mod(A_Index - 1, rows)
 
-        x_pos := ((win_width - left_offset * 2) * x_index) - left_offset
-        y_pos := (win_height - top_offset) * y_index
+        If (carry && A_Index = window_count)
+            window_height := (screen_height) + (top_offset)
 
-        id := windows%A_Index%
+        x_pos := ((window_width - left_offset * 2) * x_index) - left_offset
+        y_pos := (window_height - top_offset) * y_index
+
+        id := window_count%A_Index%
 
         WinActivate, ahk_id %id%
-        WinMove, ahk_id %id%,, x_pos, y_pos, win_width, win_height
+        WinMove, ahk_id %id%,, x_pos, y_pos, window_width, window_height
         ; MsgBox, X: %x_index%`nY: %y_index%
     }
 

@@ -104,3 +104,17 @@ Return
     }
     ToolTip, , , ,
 Return
+
+DelayedAutoRepeat(key, das)
+{
+    SetKeyDelay, 10, 25
+    while (GetKeyState(key, "p"))
+    {
+        Send %key%
+
+        If (das)
+            Sleep, das
+        das := 0
+    }
+    SetKeyDelay, 10, -1
+}

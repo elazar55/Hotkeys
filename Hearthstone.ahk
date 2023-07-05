@@ -10,7 +10,7 @@ repeat_delay = 50
 #Space::
     while (GetKeyState("Space", "p"))
     {
-        Send, {Blind}{Space}
+        Send, {Space}
         Sleep, %repeat_delay%
     }
 Return
@@ -78,9 +78,12 @@ Return
     x := win_width * 0.96
     y := win_height * 0.96
     click_count := 1
-    speed := 2
+    speed := 3
+    delay := 100
 
     MouseClick, Left, x, y, click_count, speed, ,
+
+    Sleep, %delay%
 
     x := win_width * 0.5
     y := win_height * 0.38

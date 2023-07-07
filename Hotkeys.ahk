@@ -89,7 +89,8 @@ Return
     Send, ^c
     ClipWait, 1
 
-    Clipboard := RegExReplace(Clipboard, "(?<=\w\s)\b(\w)", "$L0")
+    StringLower, Clipboard, Clipboard
+    Clipboard := RegExReplace(Clipboard, "(?<=^|\.|\. |】)(\w)", "$U0")
 
     Send, ^v
     Beep(1200, 20)
@@ -101,6 +102,8 @@ Return
     Send, ^c
     ClipWait, 1
 
+    StringLower, Clipboard, Clipboard
+    Clipboard := RegExReplace(Clipboard, "(?<=\w)(\.)(?=\w)", " ")
     Clipboard := RegExReplace(Clipboard, "(\b\w(?=\w{3,}))", "$U0")
 
     Send, ^v

@@ -1,4 +1,4 @@
-; ==============================================================================
+﻿; ==============================================================================
 ;                             Auto Exexcute section
 ; ==============================================================================
 ; Script attributes
@@ -157,3 +157,35 @@ Return
 #r::
     Reload
 Return
+; ==============================================================================
+;                                       Jobalots
+; ==============================================================================
+#d::
+    FileDelete, output.txt
+
+    Loop, Read, input.txt
+    {
+        ScrapeData(A_LoopReadLine)
+    }
+    Beep(1200, 25)
+Return
+
+ScrapeData(address)
+{
+    file := "html.txt"
+    UrlDownloadToFile, %address%, %file%
+
+    If (ErrorLevel)
+    {
+        MsgBox, Error
+        Return False
+    }
+
+    FileRead, file_string, %file%
+    RegExMatch(file_string, "(?<=\Q<meta property=""og:url"" content=""https://eu.jobalots.com/products/\E)\w+", sku)
+    RegExMatch(file_string, "(?<=\Q><strong>Weight:</strong>\E\s)\d+\.\d+", weight)
+    RegExMatch(file_string, "â‚¬\d+\.\d+ (\w+)", asin)
+
+    FileAppend, % weight . "`t" . sku . "`t" . asin1 . "`n", output.txt
+    Return True
+}

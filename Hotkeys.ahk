@@ -130,18 +130,16 @@ Return
     window_width := (screen_width / columns) + (left_offset * 2)
     window_height := (screen_height / rows) + (top_offset)
 
-    index_mul_y := window_height
-
     Loop, %window_count%
     {
         x_index := Floor((A_Index - 1) / rows)
         y_index := Mod(A_Index - 1, rows)
 
+        x_pos := ((window_width - left_offset * 2) * x_index) - left_offset
+        y_pos := (window_height - top_offset) * y_index
+
         If (carry && A_Index = window_count)
             window_height := ((screen_height / rows) * (carry + 1)) + (top_offset)
-
-        x_pos := ((window_width - left_offset * 2) * x_index) - left_offset
-        y_pos := (index_mul_y - top_offset) * y_index
 
         id := window_count%A_Index%
 

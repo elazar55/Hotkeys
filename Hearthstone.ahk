@@ -26,10 +26,9 @@ Space::
     click_count := 1
     speed := 0
 
-    MouseClick, Left, x, y, click_count, speed, ,
-Return
+    while (GetKeyState("Space", "p"))
+        MouseClick, Left, x, y, click_count, speed, ,
 
-Space Up:: ; Re-center
     x := win_width / 2
     y := win_height * 0.8
 

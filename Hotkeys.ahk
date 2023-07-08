@@ -1,4 +1,4 @@
-; ==============================================================================
+﻿; ==============================================================================
 ;                             Auto Exexcute section
 ; ==============================================================================
 ; Script attributes
@@ -29,7 +29,6 @@ Beep(frequency, volume)
     SoundBeep, %frequency%
     SoundSet, %master_volume%
 }
-
 ; ==============================================================================
 ;                              Triple click paste
 ; ==============================================================================
@@ -167,24 +166,23 @@ Return
 
     Loop, Read, input.txt
         If (!ScrapeData(A_LoopReadLine))
-    {
+        {
             MsgBox Error scraping data.
             Return
-    }
+        }
 
     Beep(1200, 25)
 Return
-
+; ==============================================================================
+;                                  Scrape Data
+; ==============================================================================
 ScrapeData(address)
 {
     file := "html.txt"
     UrlDownloadToFile, %address%, %file%
 
     If (ErrorLevel)
-    {
-        MsgBox, Error
         Return False
-    }
 
     FileRead, file_string, %file%
     RegExMatch(file_string, "(?<=\Q<meta property=""og:url"" content=""https://eu.jobalots.com/products/\E)\w+", sku)

@@ -1,4 +1,4 @@
-﻿; ==============================================================================
+; ==============================================================================
 ;                             Auto Exexcute section
 ; ==============================================================================
 ; Script attributes
@@ -166,9 +166,12 @@ Return
     FileDelete, output.txt
 
     Loop, Read, input.txt
+        If (!ScrapeData(A_LoopReadLine))
     {
-        ScrapeData(A_LoopReadLine)
+            MsgBox Error scraping data.
+            Return
     }
+
     Beep(1200, 25)
 Return
 

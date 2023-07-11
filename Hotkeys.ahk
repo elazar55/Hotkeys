@@ -159,28 +159,52 @@ Return
 ; ==============================================================================
 ;                                       Jobalots
 ; ==============================================================================
+
 #d::
     output_file := "output.txt"
-    order_html := "order.html"
-    urls_file := "urls.txt"
-
     FileDelete, %output_file%
-    FileDelete, %urls_file%
 
-    ScrapeOrderURLs(order_html, urls_file)
+    global urls := []
+    global titles := []
+    global prices := []
+    order_html := "order.html"
 
-    Loop, Read, %urls_file%
-        If (!ScrapeData(A_LoopReadLine, output_file))
+    If (!ScrapeOrderHTML(order_html))
+    {
+        MsgBox Error scraping order HTML.
+        Return
+    }
+
+    global images := []
+    global skus := []
+    global weights := []
+    global asins := []
+    ; MsgBox, % urls[4]
+
+    For index, url in urls
+    {
+        If (!ScrapeData(url))
         {
             MsgBox Error scraping data.
             Return
         }
+        FileAppend, % images[index] . "`t"
+            . titles[index] . "`t"
+            . prices[index] . "`t"
+            . weights[index] . "`t"
+            . skus[index] . "`t"
+            . asins[index] . "`n"
+            , %output_file%
+
+        ToolTip, % titles[index]
+    }
     Beep(1200, 25)
+    ToolTip
 Return
 ; ==============================================================================
 ;                                  Scrape Data
 ; ==============================================================================
-ScrapeData(address, output_file)
+ScrapeData(address)
 {
     source_file := "item.html"
     UrlDownloadToFile, %address%, %source_file%
@@ -188,30 +212,51 @@ ScrapeData(address, output_file)
     If (ErrorLevel)
         Return False
 
-    FileRead, file_string, %source_file%
+    FileRead, source_string, %source_file%
 
-    RegExMatch(file_string, "(?<=<td><img src="").+?(?=""><\/td>)", image)
-    RegExMatch(file_string, "(?<=<title>\n).+(?=\s&ndash;)", title)
-    RegExMatch(file_string, "(?<=\Q<meta property=""og:url"" content=""https://eu.jobalots.com/products/\E)\w+", sku)
-    RegExMatch(file_string, "(?<=\Q><strong>Weight:</strong>\E\s)\d+\.\d+", weight)
-    RegExMatch(file_string, "â‚¬\d+\.\d+ (\w+)", asin)
+    If (InStr(source_string, "404 Not Found"))
+    {
+        images.Push("")
+        skus.Push("No Data")
+        weights.Push("0")
+        asins.Push("No Data")
 
-    FileAppend, % image . "`t" . title . "`t" . weight . "`t" . sku . "`t" . asin1 . "`n", %output_file%
+        Return true
+    }
 
-    Return True
+    RegExMatch(source_string, "(?<=<td><img src="").+?(?=""><\/td>)", image)
+    RegExMatch(source_string, "(?<=\Q<meta property=""og:url"" content=""https://eu.jobalots.com/products/\E)\w+", sku)
+    RegExMatch(source_string, "(?<=\Q><strong>Weight:</strong>\E\s)\d+\.\d+", weight)
+    RegExMatch(source_string, "â‚¬\d+\.\d+ (\w+)", asin)
+
+    images.Push(image)
+    skus.Push(sku)
+    weights.Push(weight)
+    asins.Push(asin1)
+
+    Return true
 }
 ; ==============================================================================
 ;                               Scrape Order URLs
 ; ==============================================================================
-ScrapeOrderURLs(order_html, urls_file)
+ScrapeOrderHTML(order_html)
 {
     FileRead, file_string, %order_html%
 
-    urls_string := ""
+    If (ErrorLevel)
+        Return False
+
     match_pos := 1
-
     While (match_pos := RegExMatch(file_string, "(?<=https:\/\/jobalots.com\/products\/)\w+", match, match_pos + StrLen(match)))
-        urls_string = % urls_string . "https://eu.jobalots.com/products/" . match . "`n"
+        urls.Push("https://eu.jobalots.com/products/" . match)
 
-    FileAppend, %urls_string%, %urls_file%
+    match_pos := 1
+    While (match_pos := RegExMatch(file_string, "(?<=Jobalots auction - ).+(?=\s?-\d+-)", match, match_pos + StrLen(match)))
+        titles.Push(match)
+
+    match_pos := 1
+    While (match_pos := RegExMatch(file_string, "(?<=data-label=""Price""><span class=transcy-money>â‚¬)(\d+),(\d+)(?=<\/span>)", match, match_pos + StrLen(match)))
+        prices.Push(match1 . "." match2)
+
+    Return True
 }

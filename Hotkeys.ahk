@@ -164,37 +164,54 @@ Return
     output_file := "output.txt"
     FileDelete, %output_file%
 
-    global urls := []
-    global titles := []
-    global prices := []
+    urls := []
+    titles := []
+    prices := []
     order_html := "order.html"
 
-    If (!ScrapeOrderHTML(order_html))
+    If (!ScrapeOrderHTML(order_html, urls, titles, prices))
     {
         MsgBox Error scraping order HTML.
         Return
     }
 
-    global images := []
-    global skus := []
-    global weights := []
-    global asins := []
+    images := []
+    skus := []
+    weights := []
+    asins := []
     ; MsgBox, % urls[4]
 
     For index, url in urls
     {
-        If (!ScrapeData(url))
+        If (!ScrapeData(url, images, skus, weights, asins))
         {
             MsgBox Error scraping data.
             Return
         }
-        FileAppend, % images[index] . "`t"
+
+        If (images[index] = "")
+            images[index] := "Blank"
+        If (titles[index] = "")
+            titles[index] := "Blank"
+        If (prices[index] = "")
+            prices[index] := "Blank"
+        If (weights[index] = "")
+            weights[index] := "Blank"
+        If (skus[index] = "")
+            skus[index] := "Blank"
+        If (asins[index] = "")
+            asins[index] := "Blank"
+
+        FileAppend
+            , % images[index] . "`t"
             . titles[index] . "`t"
             . prices[index] . "`t"
             . weights[index] . "`t"
             . skus[index] . "`t"
             . asins[index] . "`n"
             , %output_file%
+
+        ; FileAppend, % prices[index] . "`n", %output_file%
 
         ToolTip, % titles[index]
     }
@@ -204,7 +221,7 @@ Return
 ; ==============================================================================
 ;                                  Scrape Data
 ; ==============================================================================
-ScrapeData(address)
+ScrapeData(address, images, skus, weights, asins)
 {
     source_file := "item.html"
     UrlDownloadToFile, %address%, %source_file%
@@ -216,10 +233,10 @@ ScrapeData(address)
 
     If (InStr(source_string, "404 Not Found"))
     {
-        images.Push("")
-        skus.Push("No Data")
-        weights.Push("0")
-        asins.Push("No Data")
+        images.Push("ND")
+        skus.Push("ND")
+        weights.Push("ND")
+        asins.Push("ND")
 
         Return true
     }
@@ -239,7 +256,7 @@ ScrapeData(address)
 ; ==============================================================================
 ;                               Scrape Order URLs
 ; ==============================================================================
-ScrapeOrderHTML(order_html)
+ScrapeOrderHTML(order_html, urls, titles, prices)
 {
     FileRead, file_string, %order_html%
 
@@ -251,12 +268,17 @@ ScrapeOrderHTML(order_html)
         urls.Push("https://eu.jobalots.com/products/" . match)
 
     match_pos := 1
-    While (match_pos := RegExMatch(file_string, "(?<=Jobalots auction - ).+(?=\s?-\d+-)", match, match_pos + StrLen(match)))
+    While (match_pos := RegExMatch(file_string, "s)(?<=Jobalots auction - ).+?(?=<\/a>)", match, match_pos + StrLen(match)))
+    {
+        match := StrReplace(match, "`r`n")
+        match := RegExReplace(match, "\s{2,}")
+        match := Trim(match)
         titles.Push(match)
+    }
 
     match_pos := 1
-    While (match_pos := RegExMatch(file_string, "(?<=data-label=""Price""><span class=transcy-money>â‚¬)(\d+),(\d+)(?=<\/span>)", match, match_pos + StrLen(match)))
-        prices.Push(match1 . "." match2)
+    While (match_pos := RegExMatch(file_string, "s)data-label=""Price"">.*?translate=""no"">â‚¬(\d+),(\d+)", match, match_pos + StrLen(match)))
+        prices.Push(match1 . "." . match2)
 
     Return True
 }

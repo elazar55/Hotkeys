@@ -160,33 +160,58 @@ Return
 ;                                       Jobalots
 ; ==============================================================================
 #d::
-    FileDelete, output.txt
+    output_file := "output.txt"
+    order_html := "order.html"
+    urls_file := "urls.txt"
 
-    Loop, Read, input.txt
-        If (!ScrapeData(A_LoopReadLine))
+    FileDelete, %output_file%
+    FileDelete, %urls_file%
+
+    ScrapeOrderURLs(order_html, urls_file)
+
+    Loop, Read, %urls_file%
+        If (!ScrapeData(A_LoopReadLine, output_file))
         {
             MsgBox Error scraping data.
             Return
         }
-
     Beep(1200, 25)
 Return
 ; ==============================================================================
 ;                                  Scrape Data
 ; ==============================================================================
-ScrapeData(address)
+ScrapeData(address, output_file)
 {
-    file := "html.txt"
-    UrlDownloadToFile, %address%, %file%
+    source_file := "item.html"
+    UrlDownloadToFile, %address%, %source_file%
 
     If (ErrorLevel)
         Return False
 
-    FileRead, file_string, %file%
+    FileRead, file_string, %source_file%
+
+    RegExMatch(file_string, "(?<=<td><img src="").+?(?=""><\/td>)", image)
+    RegExMatch(file_string, "(?<=<title>\n).+(?=\s&ndash;)", title)
     RegExMatch(file_string, "(?<=\Q<meta property=""og:url"" content=""https://eu.jobalots.com/products/\E)\w+", sku)
     RegExMatch(file_string, "(?<=\Q><strong>Weight:</strong>\E\s)\d+\.\d+", weight)
     RegExMatch(file_string, "â‚¬\d+\.\d+ (\w+)", asin)
 
-    FileAppend, % weight . "`t" . sku . "`t" . asin1 . "`n", output.txt
+    FileAppend, % image . "`t" . title . "`t" . weight . "`t" . sku . "`t" . asin1 . "`n", %output_file%
+
     Return True
+}
+; ==============================================================================
+;                               Scrape Order URLs
+; ==============================================================================
+ScrapeOrderURLs(order_html, urls_file)
+{
+    FileRead, file_string, %order_html%
+
+    urls_string := ""
+    match_pos := 1
+
+    While (match_pos := RegExMatch(file_string, "(?<=https:\/\/jobalots.com\/products\/)\w+", match, match_pos + StrLen(match)))
+        urls_string = % urls_string . "https://eu.jobalots.com/products/" . match . "`n"
+
+    FileAppend, %urls_string%, %urls_file%
 }

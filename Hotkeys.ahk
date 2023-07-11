@@ -161,7 +161,7 @@ Return
 ; ==============================================================================
 
 #d::
-    output_file := "output.txt"
+    output_file := "output.csv"
     FileDelete, %output_file%
 
     urls := []
@@ -180,6 +180,17 @@ Return
     weights := []
     asins := []
     ; MsgBox, % urls[4]
+
+    seperator := ","
+
+    FileAppend
+        , % "Image" . seperator
+        . "Title" . seperator
+        . "Price" . seperator
+        . "Weight" . seperator
+        . "SKU" . seperator
+        . "ASIN" . "`n"
+        , %output_file%
 
     For index, url in urls
     {
@@ -203,11 +214,11 @@ Return
             asins[index] := "Blank"
 
         FileAppend
-            , % images[index] . "`t"
-            . titles[index] . "`t"
-            . prices[index] . "`t"
-            . weights[index] . "`t"
-            . skus[index] . "`t"
+            , % images[index] . seperator
+            . """" . titles[index] . """" . seperator
+            . prices[index] . seperator
+            . weights[index] . seperator
+            . skus[index] . seperator
             . asins[index] . "`n"
             , %output_file%
 

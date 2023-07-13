@@ -14,56 +14,26 @@ GroupAdd, excluded_windows, ahk_exe cmd.exe
 GroupAdd, excluded_windows, ahk_exe mintty.exe
 
 ; Included files will auto execute as well
+#Include, Helpers.ahk
 #Include, Hearthstone.ahk
 #Include, Misc.ahk
 #Include, PicrossTouch.ahk
 
-#IfWinActive ; Unset due to includes setting it
+; Unset due to includes setting it
+#IfWinActive
 ; ==============================================================================
-;                                Beep Subroutine
+;                                      GUI
 ; ==============================================================================
-Beep(frequency, volume)
-{
-    SoundGet, master_volume
-    SoundSet, volume
-    SoundBeep, %frequency%
-    SoundSet, %master_volume%
-}
-; ==============================================================================
-;                              Triple click paste
-; ==============================================================================
-#v::
-    Send, {LButton}
-    Send, {LButton}
-    Send, {LButton}
-    Send, ^v
+#m::
+    ; Gui, +AlwaysOnTop
+    Gui, Add, Button, W320 GScrape, Scrape
+    Gui, Add, Button, W320 GTileWindows, Tile Windows
+    Gui, Show
 Return
 ; ==============================================================================
-;                               Double click copy
+;                                   Set Price
 ; ==============================================================================
-#c::
-    Send, {LButton}
-    Send, {LButton}
-    Send, ^c
-Return
-; ==============================================================================
-;                             Repeat tab then space
-; ==============================================================================
-#Space::
-    delay = 100
-
-    while (GetKeyState("Space", "p") AND GetKeyState("LWin", "p"))
-    {
-        Send, {Tab}
-        Sleep, %delay%
-        Send, {Space}
-        Sleep, %delay%
-    }
-Return
-; ==============================================================================
-;                                     Price
-; ==============================================================================
-#F::
+#p::
     Clipboard =
     Send, ^c
     ClipWait, 1
@@ -111,37 +81,35 @@ Return
 ; ==============================================================================
 ;                                 Tile Windows
 ; ==============================================================================
-#a::
+TileWindows:
     SetTitleMatchMode Regex
+    WinGet, window_count, List, .+, , Start Menu|Program Manager|Chrome|Code|Hotkeys|Window Spy
 
-    WinGet, window_count, List, .+, , Start Menu|Program Manager|Chrome|Code
-
-    rows := Min(Ceil(window_count / 2), 2)
-    columns := Ceil(window_count / rows)
-    slots := rows * columns
-    carry := slots - window_count
-
-    left_offset := 7
-    top_offset := 7
-
-    screen_width := 1920
-    screen_height = 1050
-
-    window_width := (screen_width / columns) + (left_offset * 2)
+    ; @AHK++AlignAssignmentOn
+    rows          := Min(Ceil(window_count / 2), 2)
+    columns       := Ceil(window_count / rows)
+    slots         := rows * columns
+    carry         := slots - window_count
+    left_offset   := 7
+    top_offset    := 7
+    screen_width  := 1920
+    screen_height  = 1050
+    window_width  := (screen_width / columns) + (left_offset * 2)
     window_height := (screen_height / rows) + (top_offset)
+    ; @AHK++AlignAssignmentOff
 
     Loop, %window_count%
     {
+        ; @AHK++AlignAssignmentOn
+        id      := window_count%A_Index%
         x_index := Floor((A_Index - 1) / rows)
         y_index := Mod(A_Index - 1, rows)
-
-        x_pos := ((window_width - left_offset * 2) * x_index) - left_offset
-        y_pos := (window_height - top_offset) * y_index
-
+        x_pos   := ((window_width - left_offset * 2) * x_index) - left_offset
+        y_pos   := (window_height - top_offset) * y_index
+        ; @AHK++AlignAssignmentOff
+        MsgBox, %id%
         If (carry && A_Index = window_count)
             window_height := ((screen_height / rows) * (carry + 1)) + (top_offset)
-
-        id := window_count%A_Index%
 
         WinActivate, ahk_id %id%
         WinMove, ahk_id %id%,, x_pos, y_pos, window_width, window_height
@@ -157,32 +125,32 @@ Return
     Reload
 Return
 ; ==============================================================================
-;                                       Jobalots
+;                                Jobalots Scrape
 ; ==============================================================================
-
-#d::
+Scrape:
+    ; @AHK++AlignAssignmentOn
+    urls        := []
+    titles      := []
+    prices      := []
+    order_html  := "order.html"
+    images      := []
+    skus        := []
+    weights     := []
     output_file := "output.csv"
+    asins       := []
+    seperator   := ","
+    ; @AHK++AlignAssignmentOff
+
     FileDelete, %output_file%
 
-    urls := []
-    titles := []
-    prices := []
-    order_html := "order.html"
-
-    If (!ScrapeOrderHTML(order_html, urls, titles, prices))
+    ; Gather SKUs / links to each product from the order
+    If (!ScrapeOrderLinks(order_html, urls, titles, prices))
     {
-        MsgBox Error scraping order HTML.
+        MsgBox Error scraping %order_html%.
         Return
     }
 
-    images := []
-    skus := []
-    weights := []
-    asins := []
-    ; MsgBox, % urls[4]
-
-    seperator := ","
-
+    ; CSV column headers
     FileAppend
         , % "Image" . seperator
         . "Title" . seperator
@@ -192,14 +160,16 @@ Return
         . "ASIN" . "`n"
         , %output_file%
 
+    ; Loop through and scrape data about each product
     For index, url in urls
     {
-        If (!ScrapeData(url, images, skus, weights, asins))
+        If (!ScrapeProduct(url, images, skus, weights, asins))
         {
             MsgBox Error scraping data.
             Return
         }
 
+        ; Smoke test. Nothing should be blank
         If (images[index] = "")
             images[index] := "Blank"
         If (titles[index] = "")
@@ -213,26 +183,26 @@ Return
         If (asins[index] = "")
             asins[index] := "Blank"
 
+        ; Write out to the file
         FileAppend
             , % images[index] . seperator
             . """" . titles[index] . """" . seperator
             . prices[index] . seperator
             . weights[index] . seperator
-            . skus[index] . seperator
-            . asins[index] . "`n"
+            . """=HYPERLINK(""eu.jobalots.com/products/" . skus[index] . """, """ . skus[index] . """)""" . seperator
+            . """=HYPERLINK(""amazon.de/dp/" . asins[index] . """, """ . asins[index] . """)""`n"
             , %output_file%
 
-        ; FileAppend, % prices[index] . "`n", %output_file%
-
+        ; A progress indicator
         ToolTip, % titles[index]
     }
     Beep(1200, 25)
     ToolTip
 Return
 ; ==============================================================================
-;                                  Scrape Data
+;                         Scrape data from product page
 ; ==============================================================================
-ScrapeData(address, images, skus, weights, asins)
+ScrapeProduct(address, images, skus, weights, asins)
 {
     source_file := "item.html"
     UrlDownloadToFile, %address%, %source_file%
@@ -267,7 +237,7 @@ ScrapeData(address, images, skus, weights, asins)
 ; ==============================================================================
 ;                               Scrape Order URLs
 ; ==============================================================================
-ScrapeOrderHTML(order_html, urls, titles, prices)
+ScrapeOrderLinks(order_html, urls, titles, prices)
 {
     FileRead, file_string, %order_html%
 
@@ -275,21 +245,24 @@ ScrapeOrderHTML(order_html, urls, titles, prices)
         Return False
 
     match_pos := 1
-    While (match_pos := RegExMatch(file_string, "(?<=https:\/\/jobalots.com\/products\/)\w+", match, match_pos + StrLen(match)))
-        urls.Push("https://eu.jobalots.com/products/" . match)
-
-    match_pos := 1
-    While (match_pos := RegExMatch(file_string, "s)(?<=Jobalots auction - ).+?(?=<\/a>)", match, match_pos + StrLen(match)))
+    While (match_pos)
     {
-        match := StrReplace(match, "`r`n")
-        match := RegExReplace(match, "\s{2,}")
-        match := Trim(match)
-        titles.Push(match)
-    }
+        match_pos := RegExMatch(file_string, "(?<=https:\/\/jobalots.com\/products\/)\w+", url_match, match_pos + StrLen(price_match))
+        match_pos := RegExMatch(file_string, "s)(?<=Jobalots auction - ).+?(?=<\/a>)", title_match, match_pos + StrLen(url_match))
+        match_pos := RegExMatch(file_string, "s)data-label=""Price"">.*?translate=""no"">â‚¬(\d+),(\d+)", price_match, match_pos + StrLen(title_match))
 
-    match_pos := 1
-    While (match_pos := RegExMatch(file_string, "s)data-label=""Price"">.*?translate=""no"">â‚¬(\d+),(\d+)", match, match_pos + StrLen(match)))
-        prices.Push(match1 . "." . match2)
+        If (match_pos)
+        {
+            urls.Push("https://eu.jobalots.com/products/" . url_match)
+
+            title_match := StrReplace(title_match, "`r`n")
+            title_match := RegExReplace(title_match, "\s{2,}")
+            title_match := Trim(title_match)
+            titles.Push(title_match)
+
+            prices.Push(price_match1 . "." . price_match2)
+        }
+    }
 
     Return True
 }

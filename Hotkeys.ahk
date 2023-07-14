@@ -28,7 +28,14 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
     ; Gui, +AlwaysOnTop
     Gui, Add, Button, W320 GScrape, Scrape
     Gui, Add, Button, W320 GTileWindows, Tile Windows
+    Gui, Add, Button, W320 GClean, Clean
     Gui, Show
+Return
+; ==============================================================================
+;                                     Clean
+; ==============================================================================
+Clean:
+    FileRemoveDir, images, 1
 Return
 ; ==============================================================================
 ;                                   Set Price
@@ -231,6 +238,22 @@ ScrapeProduct(address, images, skus, weights, asins)
     skus.Push(sku)
     weights.Push(weight)
     asins.Push(asin1)
+
+    ; Download product images
+    dl_path := "images/" . sku
+    If (!FileExist(dl_path))
+        FileCreateDir, %dl_path%
+
+    match_pos := 1
+    While (match_pos := RegExMatch(source_string, "(?<=<a href="")//eu.jobalots.com/cdn/shop/products/.+?.jpg.*?(?="" class=)", match, match_pos + StrLen(match)))
+    {
+        UrlDownloadToFile, https:%match%, %dl_path%/%A_Index%.jpg
+        If (ErrorLevel)
+        {
+            MsgBox, Error downloading https:%match% to %dl_path%/%A_Index%.jpg
+            Return
+        }
+    }
 
     Return true
 }

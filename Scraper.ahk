@@ -3,26 +3,27 @@
 ; ==============================================================================
 Scrape:
     ; @AHK++AlignAssignmentOn
-    urls        := []
-    titles      := []
-    prices      := []
-    order_html  := "order.html"
-    images      := []
-    skus        := []
-    weights     := []
-    output_file := "output.csv"
-    asins       := []
-    seperator   := ","
+    urls       := []
+    titles     := []
+    prices     := []
+    order_html := "order.html"
+    images     := []
+    skus       := []
+    weights    := []
+    asins      := []
+    seperator  := ","
+    jleu       :=
     ; @AHK++AlignAssignmentOff
 
-    FileDelete, %output_file%
-
     ; Gather SKUs / links to each product from the order
-    If (!ScrapeOrderLinks(order_html, urls, titles, prices))
+    If (!ScrapeOrderLinks(order_html, urls, titles, prices, jleu))
     {
         MsgBox Error scraping %order_html%.
         Return
     }
+
+    output_file := "Orders" . "/" . jleu . "/" . "output.csv"
+    FileDelete, %output_file%
 
     ; CSV column headers
     FileAppend
@@ -41,7 +42,7 @@ Scrape:
         ToolTip, % titles[index]
 
         extra_data := []
-        If (!ScrapeProduct(url, images, skus, weights, asins, extra_data))
+        If (!ScrapeProduct(url, images, skus, weights, asins, extra_data, jleu))
         {
             MsgBox Error scraping data.
             Return
@@ -97,7 +98,7 @@ Return
 ; ==============================================================================
 ;                         Scrape data from product page
 ; ==============================================================================
-ScrapeProduct(address, images, skus, weights, asins, extra_data)
+ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
 {
     source_file := "item.html"
     UrlDownloadToFile, %address%, %source_file%
@@ -131,7 +132,8 @@ ScrapeProduct(address, images, skus, weights, asins, extra_data)
     RegexMatchAll(source_string, extra_data, "(?<=<td>).+?(?=<\/td>)")
 
     ; Download product images
-    DownloadImagesFromString(source_string, asin1)
+    subfolder_name := "Orders" . "/" . jleu . "/" . sku . "/" . "images"
+    DownloadImagesFromString(source_string, subfolder_name)
     Return true
 }
 ; ==============================================================================
@@ -149,16 +151,15 @@ RegexMatchAll(haystack, results, pattern)
 DownloadImagesFromString(source_string, subfolder_name)
 {
     ; Create directory if it doesn't exist
-    dl_path := "images/" . subfolder_name
-    If (!FileExist(dl_path))
-        FileCreateDir, %dl_path%
+    If (!FileExist(subfolder_name))
+        FileCreateDir, %subfolder_name%
 
     image_urls := []
     RegexMatchAll(source_string, image_urls, "(?<=<a href="")//eu.jobalots.com/cdn/shop/products/.+?.jpg.*?(?="" class=)")
 
     For i, url in image_urls
     {
-        file_path = %dl_path%/%i%.jpg
+        file_path = %subfolder_name%/%i%.jpg
 
         If (!FileExist(file_path))
         {
@@ -175,7 +176,7 @@ DownloadImagesFromString(source_string, subfolder_name)
 ; ==============================================================================
 ;                               Scrape Order URLs
 ; ==============================================================================
-ScrapeOrderLinks(order_html, urls, titles, prices)
+ScrapeOrderLinks(order_html, urls, titles, prices, ByRef jleu)
 {
     FileRead, file_string, %order_html%
 
@@ -184,6 +185,9 @@ ScrapeOrderLinks(order_html, urls, titles, prices)
         MsgBox, Error reading %order_html%
         Return False
     }
+
+    RegExMatch(file_string, "jleu\w+", jleu)
+
     match_pos := 1
     While (match_pos)
     {

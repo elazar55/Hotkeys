@@ -16,7 +16,7 @@ Scrape:
     ; @AHK++AlignAssignmentOff
 
     ; Gather SKUs / links to each product from the order
-    If (!ScrapeOrderLinks(order_html, urls, titles, prices, jleu))
+    If (!ScrapeOrderLinks(order_html, urls, titles, prices, skus, jleu))
     {
         MsgBox Error scraping %order_html%.
         Return
@@ -111,7 +111,6 @@ ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
     If (InStr(source_string, "404 Not Found"))
     {
         images.Push("ND")
-        skus.Push("ND")
         weights.Push("ND")
         asins.Push("ND")
 
@@ -124,7 +123,6 @@ ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
     RegExMatch(source_string, "â‚¬\d+\.\d+ (\w+)", asin)
 
     images.Push(image)
-    skus.Push(sku)
     weights.Push(weight)
     asins.Push(asin1)
 
@@ -176,7 +174,7 @@ DownloadImagesFromString(source_string, subfolder_name)
 ; ==============================================================================
 ;                               Scrape Order URLs
 ; ==============================================================================
-ScrapeOrderLinks(order_html, urls, titles, prices, ByRef jleu)
+ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
 {
     FileRead, file_string, %order_html%
 
@@ -198,6 +196,7 @@ ScrapeOrderLinks(order_html, urls, titles, prices, ByRef jleu)
         If (match_pos)
         {
             urls.Push("https://eu.jobalots.com/products/" . url_match)
+            skus.Push(url_match)
 
             title_match := StrReplace(title_match, "`r`n")
             title_match := RegExReplace(title_match, "\s{2,}")

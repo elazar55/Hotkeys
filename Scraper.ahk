@@ -24,16 +24,7 @@ Scrape:
 
     output_file := "Orders" . "/" . jleu . "/" . "output.csv"
     FileDelete, %output_file%
-
-    ; CSV column headers
-    FileAppend
-        , % "Image" . seperator
-        . "Title" . seperator
-        . "Price" . seperator
-        . "Weight" . seperator
-        . "SKU" . seperator
-        . "ASIN" . "`n"
-        , %output_file%
+    AppendHeaderToFile(output_file)
 
     ; Loop through and scrape data about each product
     For index, url in urls
@@ -95,6 +86,44 @@ Scrape:
     Beep(1200, 25)
     ToolTip
 Return
+; ==============================================================================
+;                               Scrape Order URLs
+; ==============================================================================
+ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
+{
+    FileRead, file_string, %order_html%
+
+    If (ErrorLevel)
+    {
+        MsgBox, Error reading %order_html%
+        Return False
+    }
+
+    RegExMatch(file_string, "jleu\w+", jleu)
+
+    match_pos := 1
+    While (match_pos)
+    {
+        match_pos := RegExMatch(file_string, "(?<=https:\/\/jobalots.com\/products\/)\w+", url_match, match_pos + StrLen(price_match))
+        match_pos := RegExMatch(file_string, "s)(?<=Jobalots auction - ).+?(?=<\/a>)", title_match, match_pos + StrLen(url_match))
+        match_pos := RegExMatch(file_string, "s)data-label=""Price"">.*?translate=""no"">â‚¬(\d+),(\d+)", price_match, match_pos + StrLen(title_match))
+
+        If (match_pos)
+        {
+            urls.Push("https://eu.jobalots.com/products/" . url_match)
+            skus.Push(url_match)
+
+            title_match := StrReplace(title_match, "`r`n")
+            title_match := RegExReplace(title_match, "\s{2,}")
+            title_match := Trim(title_match)
+            titles.Push(title_match)
+
+            prices.Push(price_match1 . "." . price_match2)
+        }
+    }
+
+    Return True
+}
 ; ==============================================================================
 ;                         Scrape data from product page
 ; ==============================================================================
@@ -172,40 +201,16 @@ DownloadImagesFromString(source_string, subfolder_name)
     }
 }
 ; ==============================================================================
-;                               Scrape Order URLs
+;                         Append CSV Headers to a File
 ; ==============================================================================
-ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
+AppendHeaderToFile(file)
 {
-    FileRead, file_string, %order_html%
-
-    If (ErrorLevel)
-    {
-        MsgBox, Error reading %order_html%
-        Return False
-    }
-
-    RegExMatch(file_string, "jleu\w+", jleu)
-
-    match_pos := 1
-    While (match_pos)
-    {
-        match_pos := RegExMatch(file_string, "(?<=https:\/\/jobalots.com\/products\/)\w+", url_match, match_pos + StrLen(price_match))
-        match_pos := RegExMatch(file_string, "s)(?<=Jobalots auction - ).+?(?=<\/a>)", title_match, match_pos + StrLen(url_match))
-        match_pos := RegExMatch(file_string, "s)data-label=""Price"">.*?translate=""no"">â‚¬(\d+),(\d+)", price_match, match_pos + StrLen(title_match))
-
-        If (match_pos)
-        {
-            urls.Push("https://eu.jobalots.com/products/" . url_match)
-            skus.Push(url_match)
-
-            title_match := StrReplace(title_match, "`r`n")
-            title_match := RegExReplace(title_match, "\s{2,}")
-            title_match := Trim(title_match)
-            titles.Push(title_match)
-
-            prices.Push(price_match1 . "." . price_match2)
-        }
-    }
-
-    Return True
+    FileAppend
+        , % "Image" . seperator
+        . "Title" . seperator
+        . "Price" . seperator
+        . "Weight" . seperator
+        . "SKU" . seperator
+        . "ASIN" . "`n"
+        , %file%
 }

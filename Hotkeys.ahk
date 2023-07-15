@@ -31,6 +31,7 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
     ; Gui, +AlwaysOnTop
     Gui, Add, Button, W320 GScrape, Scrape
     Gui, Add, Button, W320 GTileWindows, Tile Windows
+    Gui, Add, Button, W320 GGridWindows, Grid Windows
     Gui, Add, Button, W320 GClean, Clean
     Gui, Show
 Return

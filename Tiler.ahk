@@ -28,7 +28,7 @@ TileWindows:
         x_pos   := ((window_width - left_offset * 2) * x_index) - left_offset
         y_pos   := (window_height - top_offset) * y_index
         ; @AHK++AlignAssignmentOff
-        MsgBox, %id%
+
         If (carry && A_Index = window_count)
             window_height := ((screen_height / rows) * (carry + 1)) + (top_offset)
 

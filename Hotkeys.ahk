@@ -34,7 +34,16 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
     Gui, Add, Button, W320 GGridWindows, Grid Windows
     Gui, Add, Button, W320 GClean, Clean
     Gui, Show
+    OnMessage(0x0201, "WM_LBUTTONDOWN")
 Return
+; ==============================================================================
+;                            WM_LBUTTONDOWN Callback
+; ==============================================================================
+WM_LBUTTONDOWN(wParam, lParam)
+{
+    if A_GuiControl
+        Gui, Hide
+}
 ; ==============================================================================
 ;                                     Clean
 ; ==============================================================================

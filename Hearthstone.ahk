@@ -65,7 +65,8 @@ Return
     click_count := 1
     speed := 0
 
-    MouseClick, Left, x, y, click_count, speed, ,
+    while (GetKeyState("p", "p"))
+        MouseClick, Left, x, y, click_count, speed, ,
 Return
 
 ; ==============================================================================

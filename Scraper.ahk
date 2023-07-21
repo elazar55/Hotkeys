@@ -1,7 +1,12 @@
 ﻿; ==============================================================================
+
+; ==============================================================================
+; ==============================================================================
 ;                                Jobalots Scrape
 ; ==============================================================================
 Scrape:
+    Gui, Destroy
+    SetBatchLines, -1
     ; @AHK++AlignAssignmentOn
     urls       := []
     titles     := []
@@ -26,12 +31,15 @@ Scrape:
     FileDelete, %output_file%
     AppendHeaderToFile(output_file)
 
+    ; ---------------------------------- GUI -----------------------------------
+    global progress
+    Gui, Add, Progress, w500 h20 cBlue vprogress
+    Gui, show, AutoSize
+    ; --------------------------------------------------------------------------
+
     ; Loop through and scrape data about each product
     For index, url in urls
     {
-        ; An activity indicator
-        ToolTip, % titles[index]
-
         extra_data := []
         If (!ScrapeProduct(url, images, skus, weights, asins, extra_data, jleu))
         {
@@ -82,10 +90,21 @@ Scrape:
                     . "`n"
                     , %output_file%
             }
+        GuiControl, , textbox, % titles[index]
+        GuiControl, , progress, % index / urls.Length() * 100
     }
+    GuiControl, , textbox, Finished
+    SetBatchLines, 1
     Beep(1200, 25)
-    ToolTip
 Return
+; ==============================================================================
+
+; ==============================================================================
+GetLineCount(text)
+{
+    StrReplace(text, "`n", "`n", num_lines)
+    Return num_lines
+}
 ; ==============================================================================
 ;                               Scrape Order URLs
 ; ==============================================================================
@@ -98,6 +117,11 @@ ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
         MsgBox, Error reading %order_html%
         Return False
     }
+    ; ---------------------------------- GUI -----------------------------------
+    global textbox
+    Gui, Add, Text, w500 h40 vtextbox
+    Gui, show
+    ; --------------------------------------------------------------------------
 
     RegExMatch(file_string, "jleu\w+", jleu)
 
@@ -117,15 +141,16 @@ ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
             title_match := RegExReplace(title_match, "\s{2,}")
             title_match := Trim(title_match)
             titles.Push(title_match)
-
             prices.Push(price_match1 . "." . price_match2)
+
+            GuiControl,, textbox, %title_match%
         }
     }
 
     Return True
 }
 ; ==============================================================================
-;                         Scrape data from product page
+;                              Scrape product page
 ; ==============================================================================
 ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
 {

@@ -5,7 +5,7 @@
 #NoEnv
 #SingleInstance, Force
 SetTitleMatchMode, 2
-SetBatchLines, 10
+SetBatchLines, 1
 SendMode, Event
 
 ; Excluded windows
@@ -29,12 +29,12 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
 ; ==============================================================================
 #m::
     ; Gui, +AlwaysOnTop
+    Gui, Destroy
     Gui, Add, Button, W320 GScrape, Scrape
     Gui, Add, Button, W320 GTileWindows, Tile Windows
     Gui, Add, Button, W320 GGridWindows, Grid Windows
-    Gui, Add, Button, W320 GClean, Clean
     Gui, Show
-    OnMessage(0x0201, "WM_LBUTTONDOWN")
+; OnMessage(0x0201, "WM_LBUTTONDOWN")
 Return
 ; ==============================================================================
 ;                            WM_LBUTTONDOWN Callback
@@ -42,7 +42,7 @@ Return
 WM_LBUTTONDOWN(wParam, lParam)
 {
     if A_GuiControl
-        Gui, Hide
+        Gui, Destroy
 }
 ; ==============================================================================
 ;                                     Clean

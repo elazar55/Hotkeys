@@ -2,6 +2,7 @@
 ; ==============================================================================
 ;                                 Tile Windows
 ; ==============================================================================
+#a::
 TileWindows:
     SetTitleMatchMode Regex
     WinGet, window_count, List, .+, , Start Menu|Program Manager|Chrome|Code|Hotkeys|Window Spy

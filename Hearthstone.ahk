@@ -6,8 +6,7 @@
 ;                                  Turbo Space
 ; ==============================================================================
 #Space::
-    while (GetKeyState("Space", "p"))
-        Send, {Space}
+    Send, {Space}
 Return
 ; ==============================================================================
 ;                                   End Turn
@@ -80,7 +79,7 @@ Return
     y           := win_height * 0.96
     click_count := 1
     speed       := 0
-    delay       := 100
+    delay       := 150
     ;@AHK++AlignAssignmentOff
 
     MouseClick, Left, x, y, click_count, speed
@@ -101,7 +100,7 @@ Return
     y           := win_height * 0.2
     click_count := 1
     speed       := 0
-    delay       := 100
+    delay       := 150
     ;@AHK++AlignAssignmentOff
 
     MouseClick, Right, x, y, click_count, speed

@@ -207,8 +207,8 @@ DownloadImagesFromString(source_string, subfolder_name)
         FileCreateDir, %subfolder_name%
 
     image_urls := []
-    RegexMatchAll(source_string, image_urls, "(?<=<a href="")//eu.jobalots.com/cdn/shop/products/.+?.jpg.*?(?="" class=)")
-
+    RegexMatchAll(source_string, image_urls, "(?<=<a href="")//eu.jobalots.com/cdn/shop/\w+/.+?.jpg.*?(?="" class=)")
+    MsgBox, %subfolder_name%
     For i, url in image_urls
     {
         file_path = %subfolder_name%/%i%.jpg
@@ -230,6 +230,7 @@ DownloadImagesFromString(source_string, subfolder_name)
 ; ==============================================================================
 AppendHeaderToFile(file)
 {
+    seperator := ","
     FileAppend
         , % "Image" . seperator
         . "Title" . seperator

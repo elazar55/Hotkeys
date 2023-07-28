@@ -33,6 +33,13 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
     Gui, Add, Button, W320 GScrape, Scrape
     Gui, Add, Button, W320 GTileWindows, Tile Windows
     Gui, Add, Button, W320 GGridWindows, Grid Windows
+
+    ; Gui, Add, Edit, W320 r20 veditField, TestText
+    ; Gui, Submit
+    ; FileRead, orderHtml, order.html
+    ; GuiControl,, editField, %orderHtml%
+    ; MsgBox, %editField%
+
     Gui, Show
 ; OnMessage(0x0201, "WM_LBUTTONDOWN")
 Return

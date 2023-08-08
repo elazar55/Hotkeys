@@ -11,7 +11,7 @@ Scrape:
     urls       := []
     titles     := []
     prices     := []
-    order_html := "order.html"
+    order_html := "../res/order.html"
     images     := []
     skus       := []
     weights    := []
@@ -27,7 +27,7 @@ Scrape:
         Return
     }
 
-    output_file := "Orders" . "/" . jleu . "/" . "output.csv"
+    output_file := "../" . "Orders" . "/" . jleu . "/" . "output.csv"
     FileDelete, %output_file%
     AppendHeaderToFile(output_file)
 
@@ -154,7 +154,7 @@ ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
 ; ==============================================================================
 ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
 {
-    source_file := "item.html"
+    source_file := "../res/item.html"
     UrlDownloadToFile, %address%, %source_file%
 
     If (ErrorLevel)
@@ -184,7 +184,7 @@ ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
     RegexMatchAll(source_string, extra_data, "(?<=<td>).+?(?=<\/td>)")
 
     ; Download product images
-    subfolder_name := "Orders" . "/" . jleu . "/" . sku . "/" . "images"
+    subfolder_name := "../" . "Orders" . "/" . jleu . "/" . sku . "/" . "images"
     DownloadImagesFromString(source_string, subfolder_name)
     Return true
 }

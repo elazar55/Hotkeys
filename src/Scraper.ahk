@@ -27,7 +27,13 @@ Scrape:
         Return
     }
 
-    output_file := "../" . "Orders" . "/" . jleu . "/" . "output.csv"
+    ; Create directory if it doesn't exist
+    outputFolder := "../" . "Orders" . "/" . jleu
+
+    If (!FileExist(outputFolder))
+        FileCreateDir, %outputFolder%
+
+    output_file := outputFolder . "/" . "output.csv"
     FileDelete, %output_file%
     AppendHeaderToFile(output_file)
 
@@ -128,7 +134,7 @@ ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
     match_pos := 1
     While (match_pos)
     {
-        match_pos := RegExMatch(file_string, "(?<=https:\/\/jobalots.com\/products\/)\w+", url_match, match_pos + StrLen(price_match))
+        match_pos := RegExMatch(file_string, "(?<=jobalots.com\/products\/)\w+", url_match, match_pos + StrLen(price_match))
         match_pos := RegExMatch(file_string, "s)(?<=Jobalots auction - ).+?(?=<\/a>)", title_match, match_pos + StrLen(url_match))
         match_pos := RegExMatch(file_string, "s)data-label=""Price"">.*?translate=""no"">â‚¬(\d+),(\d+)", price_match, match_pos + StrLen(title_match))
 

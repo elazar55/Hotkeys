@@ -75,8 +75,8 @@ Return
 
     Clipboard := Format("{:.2f}", Clipboard + increment + 0.01)
     ; MsgBox, % Format("{:.2f}", Clipboard + increment + 0.01)
-    Send, {Tab}
-    Send, ^v
+    ; Send, {Tab}
+    ; Send, ^v
     Beep(1200, 20)
 Return
 ; ==============================================================================

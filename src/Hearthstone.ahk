@@ -113,4 +113,9 @@ Return
     ;@AHK++AlignAssignmentOff
 
     MouseClick, Left, x, y, click_count, speed
+
+    ; Move to neutral
+    x := win_width / 2
+    y := win_height * 0.8
+    MouseMove, x, y, speed
 Return

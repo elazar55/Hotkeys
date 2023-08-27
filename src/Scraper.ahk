@@ -29,7 +29,6 @@ Scrape:
 
     ; Create directory if it doesn't exist
     outputFolder := "../" . "Orders" . "/" . jleu
-
     If (!FileExist(outputFolder))
         FileCreateDir, %outputFolder%
 

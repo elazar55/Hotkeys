@@ -52,10 +52,30 @@ WM_LBUTTONDOWN(wParam, lParam)
         Gui, Destroy
 }
 ; ==============================================================================
-;                                     Clean
+;                                  Gui Destroy
 ; ==============================================================================
-Clean:
-    FileRemoveDir, Orders, 1
+~Escape::
+    Gui, Destroy
+Return
+; ==============================================================================
+;                                Duplicate Words
+; ==============================================================================
+#D::
+    Gui, Destroy
+    Gui, Add, Edit, vmyText w960 gChangeText,
+    Gui, Add, Edit, voutput w960,
+    Gui, Show
+Return
+
+ChangeText:
+    Gui, Submit, NoHide
+    myText := RegExReplace(myText, "\b(\w+)\b(?=.*?\b\1\b)")
+    myText := RegExReplace(myText, "\s{2,}", " ")
+    myText := RegExReplace(myText, "\s+,", ",")
+    myText := RegExReplace(myText, "\s+\.", ".")
+    myText := RegExReplace(myText, ",\.", ".")
+    myText := Trim(myText)
+    GuiControl,, output, % myText
 Return
 ; ==============================================================================
 ;                                   Set Price

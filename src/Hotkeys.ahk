@@ -33,24 +33,8 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
     Gui, Add, Button, W320 GScrape, Scrape
     Gui, Add, Button, W320 GTileWindows, Tile Windows
     Gui, Add, Button, W320 GGridWindows, Grid Windows
-
-    ; Gui, Add, Edit, W320 r20 veditField, TestText
-    ; Gui, Submit
-    ; FileRead, orderHtml, order.html
-    ; GuiControl,, editField, %orderHtml%
-    ; MsgBox, %editField%
-
     Gui, Show
-; OnMessage(0x0201, "WM_LBUTTONDOWN")
 Return
-; ==============================================================================
-;                            WM_LBUTTONDOWN Callback
-; ==============================================================================
-WM_LBUTTONDOWN(wParam, lParam)
-{
-    if A_GuiControl
-        Gui, Destroy
-}
 ; ==============================================================================
 ;                                  Gui Destroy
 ; ==============================================================================
@@ -74,7 +58,7 @@ ChangeText:
     myText := RegExReplace(myText, "\s+,", ",")
     myText := RegExReplace(myText, "\s+\.", ".")
     myText := RegExReplace(myText, ",\.", ".")
-    myText := Trim(myText)
+    myText := Trim(myText, " ,-")
     GuiControl,, output, % myText
 Return
 ; ==============================================================================

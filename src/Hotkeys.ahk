@@ -25,12 +25,48 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
 ; Unset due to includes setting it
 #IfWinActive
 ; ==============================================================================
+;                                New C++ Project
+; ==============================================================================
+NewCppProject:
+
+    InputBox, title,,,,,,,,,
+    FileSelectFolder, selectedFolder,, 3
+
+    If (ErrorLevel)
+        Return
+
+    FileCreateDir, %selectedFolder%/%title%/src
+    FileCreateDir, %selectedFolder%/%title%/build
+
+    FileCopy, ../res/CPPBoilerPlate.cpp, %selectedFolder%/%title%/src/Main.cpp
+    FileCopy, ../res/makefile, %selectedFolder%/%title%
+
+Return
+; ==============================================================================
+
+; ==============================================================================
+FBClones:
+    SetBatchLines, -1
+    datFile := "W:\Games\fbneo\FBNeoDatafile.dat"
+
+    FileDelete, clones.txt
+
+    Loop, Read, %datFile%, clones.txt
+    {
+        if (RegExMatch(A_LoopReadLine, "game name=""(.+?)""\s?cloneof=""(.+?)""", match))
+            FileAppend, %match1%.zip`n
+    }
+    Beep(1200, 20)
+    SetBatchLines, 1
+; ==============================================================================
 ;                                      GUI
 ; ==============================================================================
 #m::
-    ; Gui, +AlwaysOnTop
     Gui, Destroy
+    ; Gui, +AlwaysOnTop
     Gui, Add, Button, W320 GScrape, Scrape
+    Gui, Add, Button, W320 GOpenOrder, Open order.html
+    Gui, Add, Button, W320 GOpenLatest, Open latest output
     Gui, Add, Button, W320 GTileWindows, Tile Windows
     Gui, Add, Button, W320 GGridWindows, Grid Windows
     Gui, Show
@@ -42,9 +78,9 @@ Return
     Gui, Destroy
 Return
 ; ==============================================================================
-;                                Duplicate Words
+;                                  Regex Tool
 ; ==============================================================================
-#D::
+RegexTool:
     Gui, Destroy
     Gui, Add, Edit, vmyText w960 gChangeText,
     Gui, Add, Edit, voutput w960,
@@ -53,13 +89,20 @@ Return
 
 ChangeText:
     Gui, Submit, NoHide
-    myText := RegExReplace(myText, "\b(\w+)\b(?=.*?\b\1\b)")
-    myText := RegExReplace(myText, "\s{2,}", " ")
-    myText := RegExReplace(myText, "\s+,", ",")
-    myText := RegExReplace(myText, "\s+\.", ".")
-    myText := RegExReplace(myText, ",\.", ".")
-    myText := Trim(myText, " ,-")
-    GuiControl,, output, % myText
+    ; myText := RegExReplace(myText, "\b(\w+)\b(?=.*?\b\1\b)")
+    ; myText := RegExReplace(myText, "\s{2,}", " ")
+    ; myText := RegExReplace(myText, "\s+,", ",")
+    ; myText := RegExReplace(myText, "\s+\.", ".")
+    ; myText := RegExReplace(myText, ",\.", ".")
+    ; myText := Trim(myText, " ,-")
+
+    match_pos := 1
+    dupes :=
+    While (match_pos := RegExMatch(myText, "\b(\w+)\b(?=.*?\b\1\b)", match, match_pos + StrLen(match)))
+    {
+        dupes := match . " " . dupes
+    }
+    GuiControl,, output, % dupes
 Return
 ; ==============================================================================
 ;                                   Set Price
@@ -78,15 +121,12 @@ Return
         increment := 1
 
     Clipboard := Format("{:.2f}", Clipboard + increment + 0.01)
-    ; MsgBox, % Format("{:.2f}", Clipboard + increment + 0.01)
-    ; Send, {Tab}
-    ; Send, ^v
     Beep(1200, 20)
 Return
 ; ==============================================================================
 ;                                 Sentence Case
 ; ==============================================================================
-#s::
+SentenceCase:
     Send, ^c
     ClipWait, 1
 
@@ -99,12 +139,11 @@ Return
 ; ==============================================================================
 ;                                  Title Case
 ; ==============================================================================
-#t::
+TitleCase:
     Send, ^c
     ClipWait, 1
 
     StringLower, Clipboard, Clipboard, T
-    ; Clipboard := RegExReplace(Clipboard, "(?<=\w)(\.)(?=\w)", " ")
     Clipboard := RegExReplace(Clipboard, "(?<!^)\b(The|Is|To|And|On|In|A|An|Or|But|For|Of)\b", "$L0")
 
     Send, ^v

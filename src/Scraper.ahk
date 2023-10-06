@@ -1,7 +1,4 @@
 ﻿; ==============================================================================
-
-; ==============================================================================
-; ==============================================================================
 ;                                Jobalots Scrape
 ; ==============================================================================
 Scrape:
@@ -100,6 +97,12 @@ Scrape:
     }
     GuiControl, , textbox, Finished
     SetBatchLines, 1
+
+    ; Open output
+    editor := "C:\Users\Elazar\AppData\Local\Programs\Microsoft VS Code\code.exe"
+    RunWait, %editor% %output_file%
+
+    Gui, Destroy
     Beep(1200, 25)
 Return
 ; ==============================================================================
@@ -244,3 +247,23 @@ AppendHeaderToFile(file)
         . "ASIN" . "`n"
         , %file%
 }
+Return
+; ==============================================================================
+;                                Open order.html
+; ==============================================================================
+OpenOrder:
+    Run, notepad.exe ..\res\order.html, , ,
+Return
+; ==============================================================================
+;                                Open Latest
+; ==============================================================================
+OpenLatest:
+    latest :=
+    editor := "C:\Users\Elazar\AppData\Local\Programs\Microsoft VS Code\code.exe"
+
+    Loop, Files, ../Orders/*, D
+    {
+        latest := A_LoopFileName
+    }
+    Run, %editor% ../Orders/%latest%/output.csv
+Return

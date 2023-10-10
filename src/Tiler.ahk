@@ -52,20 +52,22 @@ GridWindows:
     rows          := 2
     columns       := 3
     screen_width  := 1920
+    screen_height  = 1050
     left_offset   := 7
     top_offset    := 7
-    screen_height  = 1050
     window_width  := (screen_width / columns) + (left_offset * 2)
     window_height := (screen_height / rows) + (top_offset)
     ; @AHK++AlignAssignmentOff
 
     Loop, %window_count%
     {
-        id := window_count%A_Index%
+        ; @AHK++AlignAssignmentOn
+        id      := window_count%A_Index%
         x_index := Floor((A_Index - 1) / rows)
         y_index := Mod(A_Index - 1, rows)
-        x_pos := ((window_width - left_offset * 2) * x_index) - left_offset
-        y_pos := (window_height - top_offset) * y_index
+        x_pos   := ((window_width - left_offset * 2) * x_index) - left_offset
+        y_pos   := (window_height - top_offset) * y_index
+        ; @AHK++AlignAssignmentOff
 
         WinActivate, ahk_id %id%
         WinMove, ahk_id %id%,, x_pos, y_pos, window_width, window_height

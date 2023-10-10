@@ -25,6 +25,29 @@ GroupAdd, excluded_windows, ahk_exe mintty.exe
 ; Unset due to includes setting it
 #IfWinActive
 ; ==============================================================================
+;                                 Barcode Mode
+; ==============================================================================
+barcodeMode := false
+#If, %barcodeMode%
+f::e
+p::r
+g::t
+j::y
+l::u
+u::i
+y::o
+`;::p
+r::s
+s::d
+t::f
+d::g
+n::j
+e::k
+i::l
+o::`;
+k::n
+#If
+; ==============================================================================
 ;                                New C++ Project
 ; ==============================================================================
 NewCppProject:
@@ -43,7 +66,7 @@ NewCppProject:
 
 Return
 ; ==============================================================================
-
+;                                Write Clone Games
 ; ==============================================================================
 FBClones:
     SetBatchLines, -1
@@ -63,13 +86,20 @@ FBClones:
 ; ==============================================================================
 #m::
     Gui, Destroy
-    ; Gui, +AlwaysOnTop
+    Gui, +AlwaysOnTop
     Gui, Add, Button, W320 GScrape, Scrape
     Gui, Add, Button, W320 GOpenOrder, Open order.html
     Gui, Add, Button, W320 GOpenLatest, Open latest output
     Gui, Add, Button, W320 GTileWindows, Tile Windows
     Gui, Add, Button, W320 GGridWindows, Grid Windows
+    Gui, Add, Checkbox, vbarcodeMode gGuiSubmit, Barcode Mode
     Gui, Show
+Return
+; ==============================================================================
+;                                  GUI Submit
+; ==============================================================================
+GuiSubmit:
+    Gui, Submit, NoHide
 Return
 ; ==============================================================================
 ;                                  Gui Destroy

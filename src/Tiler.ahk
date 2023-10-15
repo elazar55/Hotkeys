@@ -74,3 +74,37 @@ GridWindows:
     }
     SetTitleMatchMode 1
 Return
+; ==============================================================================
+;                                   Positions
+; ==============================================================================
+#a::
+    ; @AHK++AlignAssignmentOn
+    screen_width := 1920
+    min_width    := screen_width * 0.25
+    max_width    := screen_width * 0.8
+    decrement    := screen_width * 0.05
+    ; @AHK++AlignAssignmentOff
+
+    WinGetPos, , , window_width, , A, , ,
+
+    If (window_width < min_width)
+        WinMove, A, , 0, 0, max_width, , ,
+    Else
+        WinMove, A, , 0, 0, window_width - decrement, , ,
+Return
+
+#s::
+    ; @AHK++AlignAssignmentOn
+    screen_width := 1920
+    min_width    := screen_width * 0.25
+    max_width    := screen_width * 0.8
+    decrement    := screen_width * 0.05
+    ; @AHK++AlignAssignmentOff
+
+    WinGetPos, pos_x, pos_y, window_width, window_height, A, , ,
+
+    If (window_width < min_width)
+        WinMove, A, , screen_width - window_width + decrement, 0, max_width, , ,
+    Else
+        WinMove, A, , screen_width - window_width + decrement, 0, window_width - decrement, , ,
+Return

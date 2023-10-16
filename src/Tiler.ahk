@@ -75,36 +75,70 @@ GridWindows:
     SetTitleMatchMode 1
 Return
 ; ==============================================================================
-;                                   Positions
+;                                   Dock
 ; ==============================================================================
-#a::
+Globals()
+{
     ; @AHK++AlignAssignmentOn
-    screen_width := 1920
-    min_width    := screen_width * 0.25
-    max_width    := screen_width * 0.8
-    decrement    := screen_width * 0.05
+    global screen_width  := 1920
+    global screen_height := 1050
+    global min_width     := screen_width * 0.35
+    global max_width     := screen_width * 0.8
+    global decrement     := screen_width * 0.05
+    global left_offset   := 7
+    global top_offset    := 7
     ; @AHK++AlignAssignmentOff
+}
+#a::
+    Globals()
 
-    WinGetPos, , , window_width, , A, , ,
+    WinGetPos, pos_x, , window_width, , A, , ,
 
-    If (window_width < min_width)
-        WinMove, A, , 0, 0, max_width, , ,
-    Else
-        WinMove, A, , 0, 0, window_width - decrement, , ,
+    WinMove, A, , -left_offset,
+
+    If (pos_x == -left_offset)
+    {
+        If (window_width < min_width)
+            WinMove, A, , , , max_width, , ,
+        Else
+            WinMove, A, , , , window_width - decrement, , ,
+    }
 Return
 
 #s::
-    ; @AHK++AlignAssignmentOn
-    screen_width := 1920
-    min_width    := screen_width * 0.25
-    max_width    := screen_width * 0.8
-    decrement    := screen_width * 0.05
-    ; @AHK++AlignAssignmentOff
+    Globals()
 
-    WinGetPos, pos_x, pos_y, window_width, window_height, A, , ,
+    WinGetPos, pos_x, , window_width, , A, , ,
 
-    If (window_width < min_width)
-        WinMove, A, , screen_width - window_width + decrement, 0, max_width, , ,
+    WinMove, A, , screen_width - window_width + left_offset,
+
+    If (pos_x == screen_width - window_width + left_offset)
+    {
+        If (window_width < min_width)
+            WinMove, A, , screen_width - window_width + decrement + left_offset, , max_width, , ,
+        Else
+            WinMove, A, , screen_width - window_width + decrement + left_offset, , window_width - decrement, , ,
+    }
+Return
+
+#w::
+    Globals()
+
+    WinGetPos, , , , window_height, A, , ,
+
+    If (window_height <= screen_height * 0.6)
+        WinMove, A, , , 0, , screen_height + top_offset, ,
     Else
-        WinMove, A, , screen_width - window_width + decrement, 0, window_width - decrement, , ,
+        WinMove, A, , , 0, , window_height / 2 + top_offset / 2, ,
+Return
+
+#r::
+    Globals()
+
+    WinGetPos, , , , window_height, A, , ,
+
+    If (window_height <= screen_height * 0.6)
+        WinMove, A, , , 0, , screen_height + top_offset, ,
+    Else
+        WinMove, A, , , screen_height / 2, , screen_height / 2 + top_offset, ,
 Return

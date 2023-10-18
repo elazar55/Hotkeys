@@ -75,67 +75,96 @@ GridWindows:
     SetTitleMatchMode 1
 Return
 ; ==============================================================================
-;                                   Dock
+;                                 Docker
 ; ==============================================================================
 Globals()
 {
     ; @AHK++AlignAssignmentOn
     global screen_width  := 1920
     global screen_height := 1050
+    global alignment     := 128
     global min_width     := screen_width * 0.35
     global max_width     := screen_width * 0.8
-    global decrement     := screen_width * 0.05
     global left_offset   := 7
     global top_offset    := 7
+    global pos_x         :=
+    global window_width  :=
+    global window_height :=
     ; @AHK++AlignAssignmentOff
+
+    WinGetPos, pos_x, , window_width, window_height, A, , ,
+    WinGet, title, ProcessName, A, , ,
+
+    If (title == "Code.exe")
+    {
+        ; @AHK++AlignAssignmentOn
+        left_offset := 0
+        top_offset  := 0
+        ; @AHK++AlignAssignmentOff
+    }
 }
+; ==============================================================================
+;                                     Left
+; ==============================================================================
 #a::
     Globals()
-
-    WinGetPos, pos_x, , window_width, , A, , ,
-
-    WinMove, A, , -left_offset,
-
+    ; Resize if the window is already on the left.
+    ; Otherwise, place it on the left and resize it to the nearest alignment.
     If (pos_x == -left_offset)
     {
         If (window_width < min_width)
-            WinMove, A, , , , max_width, , ,
+            WinMove, A, , -left_offset, , max_width + left_offset * 2, , ,
         Else
-            WinMove, A, , , , window_width - decrement, , ,
+        {
+            new_width := (Round(window_width / alignment) - 1) * alignment
+            WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
+        }
     }
-Return
+    Else
+    {
+        new_width := (Round(window_width / alignment)) * alignment
+        WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
+    }
 
+Return
+; ==============================================================================
+;                                     Right
+; ==============================================================================
 #s::
     Globals()
-
-    WinGetPos, pos_x, , window_width, , A, , ,
-
-    WinMove, A, , screen_width - window_width + left_offset,
 
     If (pos_x == screen_width - window_width + left_offset)
     {
         If (window_width < min_width)
-            WinMove, A, , screen_width - window_width + decrement + left_offset, , max_width, , ,
+            WinMove, A, , screen_width - max_width - left_offset, , max_width + left_offset * 2, , ,
         Else
-            WinMove, A, , screen_width - window_width + decrement + left_offset, , window_width - decrement, , ,
+        {
+            new_width := (Round(window_width / alignment) - 1) * alignment
+            WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
+        }
+    }
+    Else
+    {
+        new_width := (Round(window_width / alignment)) * alignment
+        WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
     }
 Return
-
+; ==============================================================================
+;                                      Up
+; ==============================================================================
 #w::
     Globals()
-
-    WinGetPos, , , , window_height, A, , ,
 
     If (window_height <= screen_height * 0.6)
         WinMove, A, , , 0, , screen_height + top_offset, ,
     Else
         WinMove, A, , , 0, , window_height / 2 + top_offset / 2, ,
 Return
-
+; ==============================================================================
+;                                     Down
+; ==============================================================================
 #r::
     Globals()
-
-    WinGetPos, , , , window_height, A, , ,
 
     If (window_height <= screen_height * 0.6)
         WinMove, A, , , 0, , screen_height + top_offset, ,

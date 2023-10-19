@@ -7,7 +7,6 @@
 SetTitleMatchMode, 2
 SetBatchLines, 20ms
 SendMode, Event
-#Include, Tiler.ahk
 ; ==============================================================================
 ;                                      GUI
 ; ==============================================================================
@@ -29,6 +28,7 @@ Return
 ; #Include, GameRemaps.ahk
 ; #Include, PicrossTouch.ahk
 #Include, Scraper.ahk
+#Include, Tiler.ahk
 #Include, Helpers.ahk
 ; ==============================================================================
 ;                                  Gui Destroy

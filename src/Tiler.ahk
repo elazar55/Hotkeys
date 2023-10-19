@@ -1,20 +1,5 @@
 #IfWinActive
 ; ==============================================================================
-;                                    Globals
-; ==============================================================================
-; @AHK++AlignAssignmentOn
-global screen_width  := 1920
-global screen_height := 1050
-global alignment     := 128
-global min_width     := alignment * Round((screen_width * 0.3) / alignment)
-global max_width     := alignment * Round((screen_width * 0.8) / alignment)
-global left_offset   := 7
-global top_offset    := 7
-global pos_x         :=
-global window_width  :=
-global window_height :=
-; @AHK++AlignAssignmentOff
-; ==============================================================================
 ;                                 Tile Windows
 ; ==============================================================================
 TileWindows:
@@ -92,8 +77,20 @@ Return
 ; ==============================================================================
 ;                                 Docker
 ; ==============================================================================
-WindowAttrib()
+Globals()
 {
+    ; @AHK++AlignAssignmentOn
+    global screen_width  := 1920
+    global screen_height := 1050
+    global alignment     := 128
+    global min_width     := alignment * Round((screen_width * 0.3) / alignment)
+    global max_width     := alignment * Round((screen_width * 0.8) / alignment)
+    global left_offset   := 7
+    global top_offset    := 7
+    global pos_x         :=
+    global window_width  :=
+    global window_height :=
+    ; @AHK++AlignAssignmentOff
     WinGetPos, pos_x, , window_width, window_height, A, , ,
     WinGet, title, ProcessName, A, , ,
 
@@ -109,7 +106,7 @@ WindowAttrib()
 ;                                     Left
 ; ==============================================================================
 #a::
-    WindowAttrib()
+    Globals()
     ; Resize if the window is already on the left.
     If (pos_x == -left_offset)
     {
@@ -132,7 +129,7 @@ Return
 ;                                 Left Reverse
 ; ==============================================================================
 $+#a::
-    WindowAttrib()
+    Globals()
     If (pos_x == -left_offset)
     {
         If (window_width >= screen_width)
@@ -153,7 +150,7 @@ Return
 ;                                     Right
 ; ==============================================================================
 #s::
-    WindowAttrib()
+    Globals()
 
     If (pos_x == screen_width - window_width + left_offset)
     {
@@ -175,7 +172,7 @@ Return
 ;                             Right Reverse
 ; ==============================================================================
 +#s::
-    WindowAttrib()
+    Globals()
 
     If (pos_x == screen_width - window_width + left_offset)
     {
@@ -197,7 +194,7 @@ Return
 ;                                      Up
 ; ==============================================================================
 #w::
-    WindowAttrib()
+    Globals()
 
     If (window_height <= screen_height * 0.6)
         WinMove, A, , , 0, , screen_height + top_offset, ,
@@ -208,7 +205,7 @@ Return
 ;                                     Down
 ; ==============================================================================
 #r::
-    WindowAttrib()
+    Globals()
 
     If (window_height <= screen_height * 0.6)
         WinMove, A, , , 0, , screen_height + top_offset, ,

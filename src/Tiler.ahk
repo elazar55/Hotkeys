@@ -1,5 +1,20 @@
 #IfWinActive
 ; ==============================================================================
+;                                    Globals
+; ==============================================================================
+; @AHK++AlignAssignmentOn
+global screen_width  := 1920
+global screen_height := 1050
+global alignment     := 128
+global min_width     := alignment * Round((screen_width * 0.3) / alignment)
+global max_width     := alignment * Round((screen_width * 0.8) / alignment)
+global left_offset   := 7
+global top_offset    := 7
+global pos_x         :=
+global window_width  :=
+global window_height :=
+; @AHK++AlignAssignmentOff
+; ==============================================================================
 ;                                 Tile Windows
 ; ==============================================================================
 TileWindows:
@@ -77,21 +92,8 @@ Return
 ; ==============================================================================
 ;                                 Docker
 ; ==============================================================================
-Globals()
+WindowAttrib()
 {
-    ; @AHK++AlignAssignmentOn
-    global screen_width  := 1920
-    global screen_height := 1050
-    global alignment     := 128
-    global min_width     := screen_width * 0.35
-    global max_width     := screen_width * 0.8
-    global left_offset   := 7
-    global top_offset    := 7
-    global pos_x         :=
-    global window_width  :=
-    global window_height :=
-    ; @AHK++AlignAssignmentOff
-
     WinGetPos, pos_x, , window_width, window_height, A, , ,
     WinGet, title, ProcessName, A, , ,
 
@@ -107,9 +109,8 @@ Globals()
 ;                                     Left
 ; ==============================================================================
 #a::
-    Globals()
+    WindowAttrib()
     ; Resize if the window is already on the left.
-    ; Otherwise, place it on the left and resize it to the nearest alignment.
     If (pos_x == -left_offset)
     {
         If (window_width < min_width)
@@ -120,18 +121,39 @@ Globals()
             WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
         }
     }
+    ; Otherwise, place it on the left and resize it to the nearest alignment.
     Else
     {
         new_width := (Round(window_width / alignment)) * alignment
         WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
     }
-
+Return
+; ==============================================================================
+;                                 Left Reverse
+; ==============================================================================
+$+#a::
+    WindowAttrib()
+    If (pos_x == -left_offset)
+    {
+        If (window_width >= screen_width)
+            WinMove, A, , -left_offset, , min_width + left_offset * 2, , ,
+        Else
+        {
+            new_width := (Round(window_width / alignment) + 1) * alignment
+            WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
+        }
+    }
+    Else
+    {
+        new_width := (Round(window_width / alignment)) * alignment
+        WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
+    }
 Return
 ; ==============================================================================
 ;                                     Right
 ; ==============================================================================
 #s::
-    Globals()
+    WindowAttrib()
 
     If (pos_x == screen_width - window_width + left_offset)
     {
@@ -150,10 +172,32 @@ Return
     }
 Return
 ; ==============================================================================
+;                             Right Reverse
+; ==============================================================================
++#s::
+    WindowAttrib()
+
+    If (pos_x == screen_width - window_width + left_offset)
+    {
+        If (window_width >= screen_width)
+            WinMove, A, , screen_width - min_width - left_offset, , min_width + left_offset * 2, , ,
+        Else
+        {
+            new_width := (Round(window_width / alignment) + 1) * alignment
+            WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
+        }
+    }
+    Else
+    {
+        new_width := (Round(window_width / alignment)) * alignment
+        WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
+    }
+Return
+; ==============================================================================
 ;                                      Up
 ; ==============================================================================
 #w::
-    Globals()
+    WindowAttrib()
 
     If (window_height <= screen_height * 0.6)
         WinMove, A, , , 0, , screen_height + top_offset, ,
@@ -164,7 +208,7 @@ Return
 ;                                     Down
 ; ==============================================================================
 #r::
-    Globals()
+    WindowAttrib()
 
     If (window_height <= screen_height * 0.6)
         WinMove, A, , , 0, , screen_height + top_offset, ,

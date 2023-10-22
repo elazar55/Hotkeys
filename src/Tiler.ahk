@@ -87,10 +87,11 @@ Globals()
     global left_offset   := 7
     global top_offset    := 7
     global pos_x         :=
+    global pos_y         :=
     global window_width  :=
     global window_height :=
     ; @AHK++AlignAssignmentOff
-    WinGetPos, pos_x, , window_width, window_height, A, , ,
+    WinGetPos, pos_x, pos_y, window_width, window_height, A, , ,
     WinGet, title, ProcessName, A, , ,
 
     If (title == "Code.exe")
@@ -100,11 +101,21 @@ Globals()
         top_offset  := 0
         ; @AHK++AlignAssignmentOff
     }
-    SetTimer, RemoveTooltip, -1000
 }
 RemoveToolTip:
     ToolTip
 return
+
+Dock(x, y, width, height)
+{
+    global left_offset
+    global top_offset
+
+    ToolTip, % width - left_offset * 2 . "x" . height - top_offset
+    SetTimer, RemoveTooltip, -1000
+
+    WinMove, A, , x, y, width, height, ,
+}
 ; ==============================================================================
 ;                                     Left
 ; ==============================================================================
@@ -113,13 +124,12 @@ return
     ; Resize if the window is already on the left.
     If (pos_x == -left_offset)
     {
-        If (window_width < min_width)
-            WinMove, A, , -left_offset, , screen_width + left_offset * 2, , ,
+        If (window_width - left_offset * 2 <= min_width)
+            Dock(-left_offset, pos_y, screen_width + left_offset * 2, window_height)
         Else
         {
             new_width := (Round(window_width / alignment) - 1) * alignment
-            ToolTip, % new_width . "x" . window_height - top_offset, , ,
-            WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
+            Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
         }
     }
     ; Otherwise, place it on the left, resize it to the nearest alignment,
@@ -127,8 +137,7 @@ return
     Else
     {
         new_width := (Round(window_width / alignment)) * alignment
-        ToolTip, % new_width . "x" . window_height - top_offset, , ,
-        WinMove, A, , -left_offset, 0, new_width + left_offset * 2, screen_height + top_offset, ,
+        Dock(-left_offset, 0, new_width + left_offset * 2, screen_height + top_offset)
     }
 Return
 ; ==============================================================================
@@ -139,19 +148,17 @@ $+#a::
     If (pos_x == -left_offset)
     {
         If (window_width >= screen_width)
-            WinMove, A, , -left_offset, , min_width + left_offset * 2, , ,
+            Dock(-left_offset, pos_y, min_width + left_offset * 2, window_height)
         Else
         {
             new_width := (Round(window_width / alignment) + 1) * alignment
-            ToolTip, % new_width . "x" . window_height - top_offset, , ,
-            WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
+            Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
         }
     }
     Else
     {
         new_width := (Round(window_width / alignment)) * alignment
-        ToolTip, % new_width . "x" . window_height - top_offset, , ,
-        WinMove, A, , -left_offset, 0, new_width + left_offset * 2, screen_height + top_offset, ,
+        Dock(-left_offset, 0, new_width + left_offset * 2, screen_height + top_offset)
     }
 Return
 ; ==============================================================================
@@ -162,20 +169,18 @@ Return
 
     If (pos_x == screen_width - window_width + left_offset)
     {
-        If (window_width < min_width)
-            WinMove, A, , screen_width - screen_width - left_offset, , screen_width + left_offset * 2, , ,
+        If (window_width - left_offset * 2 <= min_width)
+            Dock(-left_offset, pos_y, screen_width + left_offset * 2, window_height)
         Else
         {
             new_width := (Round(window_width / alignment) - 1) * alignment
-            ToolTip, % new_width . "x" . window_height - top_offset, , ,
-            WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
+            Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
         }
     }
     Else
     {
         new_width := (Round(window_width / alignment)) * alignment
-        ToolTip, % new_width . "x" . window_height - top_offset, , ,
-        WinMove, A, , screen_width - new_width - left_offset, 0, new_width + left_offset * 2, screen_height + top_offset, ,
+        Dock(screen_width - new_width - left_offset, 0, new_width + left_offset * 2, screen_height + top_offset)
     }
 Return
 ; ==============================================================================
@@ -187,19 +192,17 @@ Return
     If (pos_x == screen_width - window_width + left_offset)
     {
         If (window_width >= screen_width)
-            WinMove, A, , screen_width - min_width - left_offset, , min_width + left_offset * 2, , ,
+            Dock(screen_width - min_width - left_offset, pos_y, min_width + left_offset * 2, window_height)
         Else
         {
             new_width := (Round(window_width / alignment) + 1) * alignment
-            ToolTip, % new_width . "x" . window_height - top_offset, , ,
-            WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
+            Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
         }
     }
     Else
     {
         new_width := (Round(window_width / alignment)) * alignment
-        ToolTip, % new_width . "x" . window_height - top_offset, , ,
-        WinMove, A, , screen_width - new_width - left_offset, 0, new_width + left_offset * 2, screen_height + top_offset, ,
+        Dock(screen_width - new_width - left_offset, 0, new_width + left_offset * 2, screen_height + top_offset)
     }
 Return
 ; ==============================================================================
@@ -209,9 +212,9 @@ Return
     Globals()
 
     If (window_height <= screen_height * 0.6)
-        WinMove, A, , , 0, , screen_height + top_offset, ,
+        Dock(pos_x, 0, window_width, screen_height + top_offset)
     Else
-        WinMove, A, , , 0, , window_height / 2 + top_offset / 2, ,
+        Dock(pos_x, 0, window_width, Round(window_height / 2 + top_offset / 2))
 Return
 ; ==============================================================================
 ;                                     Down
@@ -220,7 +223,7 @@ Return
     Globals()
 
     If (window_height <= screen_height * 0.6)
-        WinMove, A, , , 0, , screen_height + top_offset, ,
+        Dock(pos_x, 0, window_width, screen_height + top_offset)
     Else
-        WinMove, A, , , screen_height / 2, , screen_height / 2 + top_offset, ,
+        Dock(pos_x, screen_height / 2, window_width, Round(screen_height / 2 + top_offset))
 Return

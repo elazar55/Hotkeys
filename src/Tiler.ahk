@@ -82,9 +82,8 @@ Globals()
     ; @AHK++AlignAssignmentOn
     global screen_width  := 1920
     global screen_height := 1050
-    global alignment     := 128
-    global min_width     := alignment * Round((screen_width * 0.3) / alignment)
-    global max_width     := alignment * Round((screen_width * 0.8) / alignment)
+    global alignment     := 2**7
+    global min_width     := alignment * Round((screen_width / 3) / alignment)
     global left_offset   := 7
     global top_offset    := 7
     global pos_x         :=
@@ -101,7 +100,11 @@ Globals()
         top_offset  := 0
         ; @AHK++AlignAssignmentOff
     }
+    SetTimer, RemoveTooltip, -1000
 }
+RemoveToolTip:
+    ToolTip
+return
 ; ==============================================================================
 ;                                     Left
 ; ==============================================================================
@@ -111,18 +114,21 @@ Globals()
     If (pos_x == -left_offset)
     {
         If (window_width < min_width)
-            WinMove, A, , -left_offset, , max_width + left_offset * 2, , ,
+            WinMove, A, , -left_offset, , screen_width + left_offset * 2, , ,
         Else
         {
             new_width := (Round(window_width / alignment) - 1) * alignment
+            ToolTip, % new_width . "x" . window_height - top_offset, , ,
             WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
         }
     }
-    ; Otherwise, place it on the left and resize it to the nearest alignment.
+    ; Otherwise, place it on the left, resize it to the nearest alignment,
+    ; and stretch it vertically
     Else
     {
         new_width := (Round(window_width / alignment)) * alignment
-        WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
+        ToolTip, % new_width . "x" . window_height - top_offset, , ,
+        WinMove, A, , -left_offset, 0, new_width + left_offset * 2, screen_height + top_offset, ,
     }
 Return
 ; ==============================================================================
@@ -137,13 +143,15 @@ $+#a::
         Else
         {
             new_width := (Round(window_width / alignment) + 1) * alignment
+            ToolTip, % new_width . "x" . window_height - top_offset, , ,
             WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
         }
     }
     Else
     {
         new_width := (Round(window_width / alignment)) * alignment
-        WinMove, A, , -left_offset, , new_width + left_offset * 2, , ,
+        ToolTip, % new_width . "x" . window_height - top_offset, , ,
+        WinMove, A, , -left_offset, 0, new_width + left_offset * 2, screen_height + top_offset, ,
     }
 Return
 ; ==============================================================================
@@ -155,17 +163,19 @@ Return
     If (pos_x == screen_width - window_width + left_offset)
     {
         If (window_width < min_width)
-            WinMove, A, , screen_width - max_width - left_offset, , max_width + left_offset * 2, , ,
+            WinMove, A, , screen_width - screen_width - left_offset, , screen_width + left_offset * 2, , ,
         Else
         {
             new_width := (Round(window_width / alignment) - 1) * alignment
+            ToolTip, % new_width . "x" . window_height - top_offset, , ,
             WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
         }
     }
     Else
     {
         new_width := (Round(window_width / alignment)) * alignment
-        WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
+        ToolTip, % new_width . "x" . window_height - top_offset, , ,
+        WinMove, A, , screen_width - new_width - left_offset, 0, new_width + left_offset * 2, screen_height + top_offset, ,
     }
 Return
 ; ==============================================================================
@@ -181,13 +191,15 @@ Return
         Else
         {
             new_width := (Round(window_width / alignment) + 1) * alignment
+            ToolTip, % new_width . "x" . window_height - top_offset, , ,
             WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
         }
     }
     Else
     {
         new_width := (Round(window_width / alignment)) * alignment
-        WinMove, A, , screen_width - new_width - left_offset, , new_width + left_offset * 2, , ,
+        ToolTip, % new_width . "x" . window_height - top_offset, , ,
+        WinMove, A, , screen_width - new_width - left_offset, 0, new_width + left_offset * 2, screen_height + top_offset, ,
     }
 Return
 ; ==============================================================================

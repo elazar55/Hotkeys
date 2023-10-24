@@ -105,13 +105,20 @@ Globals()
 RemoveToolTip:
     ToolTip
 return
-
+; ==============================================================================
+;                                 Dock Function
+; ==============================================================================
 Dock(x, y, width, height)
 {
     global left_offset
     global top_offset
 
-    ToolTip, % width - left_offset * 2 . "x" . height - top_offset
+    CoordMode, ToolTip, Screen
+
+    tip_x := x
+    If (x == 0)
+        tip_x := width
+    ToolTip, % width - left_offset * 2 . "x" . height - top_offset, tip_x, y
     SetTimer, RemoveTooltip, -1000
 
     WinMove, A, , x, y, width, height, ,

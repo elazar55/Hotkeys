@@ -94,7 +94,7 @@ Globals()
     WinGetPos, pos_x, pos_y, window_width, window_height, A, , ,
     WinGet, title, ProcessName, A, , ,
 
-    If (title == "Code.exe")
+    If (RegExMatch(title, "(Code.exe)|(Playnite.*.exe)"))
     {
         ; @AHK++AlignAssignmentOn
         left_offset := 0

@@ -82,7 +82,7 @@ Globals()
     ; @AHK++AlignAssignmentOn
     global screen_width  := 1920
     global screen_height := 1050
-    global alignment     := 2**7
+    global alignment     := 2**6
     global min_width     := alignment * Round((screen_width / 3) / alignment)
     global left_offset   := 7
     global top_offset    := 7

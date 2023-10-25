@@ -1,9 +1,51 @@
 ﻿; ==============================================================================
+;                         Append CSV Headers to a File
+; ==============================================================================
+AppendHeaderToFile(file)
+{
+    seperator := ","
+    FileDelete, %file%
+    FileAppend
+        , % "Image" . seperator
+        . "Title" . seperator
+        . "Price" . seperator
+        . "Weight" . seperator
+        . "SKU" . seperator
+        . "ASIN" . "`n"
+        , %file%
+}
+; ==============================================================================
+;                                Write Out Data
+; ==============================================================================
+WriteOutData(image, title, price, weight, sku, asin, output_file)
+{
+    seperator := ","
+
+    FileAppend
+        , % image . seperator
+        . """" . title . """" . seperator
+        . price . seperator
+        . weight . seperator
+        . """=HYPERLINK(""eu.jobalots.com/products/" . sku . """, """ . sku . """)""" . seperator
+        . """=HYPERLINK(""amazon.de/dp/" . asin . """, """ . asin . """)""`n"
+        , %output_file%
+}
+; ==============================================================================
+;                              Create Progress Bar
+; ==============================================================================
+CreateProgressBar()
+{
+    global progress
+    Gui, Add, Progress, w500 h20 cBlue vprogress
+    Gui, show, AutoSize
+}
+; ==============================================================================
 ;                                Jobalots Scrape
 ; ==============================================================================
 Scrape:
     Gui, Destroy
     SetBatchLines, -1
+
     ; @AHK++AlignAssignmentOn
     urls       := []
     titles     := []
@@ -23,21 +65,15 @@ Scrape:
         MsgBox Error scraping %order_html%.
         Return
     }
+    outputFolder := "../" . "Orders" . "/" . jleu
+    output_file := outputFolder . "/" . "output.csv"
 
     ; Create directory if it doesn't exist
-    outputFolder := "../" . "Orders" . "/" . jleu
     If (!FileExist(outputFolder))
         FileCreateDir, %outputFolder%
 
-    output_file := outputFolder . "/" . "output.csv"
-    FileDelete, %output_file%
     AppendHeaderToFile(output_file)
-
-    ; ---------------------------------- GUI -----------------------------------
-    global progress
-    Gui, Add, Progress, w500 h20 cBlue vprogress
-    Gui, show, AutoSize
-    ; --------------------------------------------------------------------------
+    CreateProgressBar()
 
     ; Loop through and scrape data about each product
     For index, url in urls
@@ -64,14 +100,7 @@ Scrape:
             asins[index] := "Blank"
 
         ; Write out to the file
-        FileAppend
-            , % images[index] . seperator
-            . """" . titles[index] . """" . seperator
-            . prices[index] . seperator
-            . weights[index] . seperator
-            . """=HYPERLINK(""eu.jobalots.com/products/" . skus[index] . """, """ . skus[index] . """)""" . seperator
-            . """=HYPERLINK(""amazon.de/dp/" . asins[index] . """, """ . asins[index] . """)""`n"
-            , %output_file%
+        WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], asins[index], output_file)
 
         ; Lots and mini lots extra data
         If (extra_data.Length() / 7 > 1)
@@ -83,15 +112,9 @@ Scrape:
                 extra_data[j + 1] := StrReplace(extra_data[j + 1], "<img src=""")
                 extra_data[j + 1] := StrReplace(extra_data[j + 1], """>")
 
-                FileAppend, % extra_data[j + 1] . seperator
-                    . """" . extra_data[j + 2] . """" . seperator
-                    . "-" . seperator
-                    . "-" . seperator
-                    . """=HYPERLINK(""eu.jobalots.com/products/" . skus[index] . """, """ . skus[index] . """)""" . seperator
-                    . """=HYPERLINK(""amazon.de/dp/" . extra_data[j + 6] . """, """ . extra_data[j + 6] . """)"""
-                    . "`n"
-                    , %output_file%
+                WriteOutData(extra_data[j + 1], extra_data[j + 2], "-", "-", skus[index], extra_data[j + 6], output_file)
             }
+        ; Update progress bar
         GuiControl, , textbox, % titles[index]
         GuiControl, , progress, % index / urls.Length() * 100
     }
@@ -105,14 +128,6 @@ Scrape:
     Gui, Destroy
     Beep(1200, 25)
 Return
-; ==============================================================================
-
-; ==============================================================================
-GetLineCount(text)
-{
-    StrReplace(text, "`n", "`n", num_lines)
-    Return num_lines
-}
 ; ==============================================================================
 ;                               Scrape Order URLs
 ; ==============================================================================
@@ -232,22 +247,6 @@ DownloadImagesFromString(source_string, subfolder_name)
         }
     }
 }
-; ==============================================================================
-;                         Append CSV Headers to a File
-; ==============================================================================
-AppendHeaderToFile(file)
-{
-    seperator := ","
-    FileAppend
-        , % "Image" . seperator
-        . "Title" . seperator
-        . "Price" . seperator
-        . "Weight" . seperator
-        . "SKU" . seperator
-        . "ASIN" . "`n"
-        , %file%
-}
-Return
 ; ==============================================================================
 ;                                Open order.html
 ; ==============================================================================

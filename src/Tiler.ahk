@@ -237,3 +237,38 @@ Return
     Else
         Dock(pos_x, screen_height / 2, window_width, Round(screen_height / 2 + top_offset))
 Return
+; ==============================================================================
+;                                   Top-Left
+; ==============================================================================
+#q::
+    Globals()
+    Dock(-left_offset, 0, window_width, window_height)
+Return
+; ==============================================================================
+;                                   Top-Right
+; ==============================================================================
+#f::
+    Globals()
+    Dock(screen_width - window_width + left_offset, 0, window_width, window_height)
+Return
+; ==============================================================================
+;                                   Bottom-Left
+; ==============================================================================
+#z::
+    Globals()
+    Dock(-left_offset, screen_height - window_height + top_offset, window_width, window_height)
+Return
+; ==============================================================================
+;                                   Bottom-Right
+; ==============================================================================
+#c::
+    Globals()
+    Dock(screen_width - window_width + left_offset, screen_height - window_height + top_offset, window_width, window_height)
+Return
+; ==============================================================================
+;                                    Center
+; ==============================================================================
+#x::
+    Globals()
+    Dock((screen_width / 2) - (window_width / 2) , (screen_height / 2) - (window_height / 2) + (top_offset / 2), window_width, window_height)
+Return

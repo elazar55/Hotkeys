@@ -1,4 +1,16 @@
+; ==============================================================================
+;                             Auto Exexcute Section
+; ==============================================================================
 #IfWinActive
+; @AHK++AlignAssignmentOn
+global screen_width  := 1920
+global screen_height := 1050
+global alignment     := 2**6
+global min_width     := alignment * Round((screen_width / 3) / alignment)
+global left_offset   := 7
+global top_offset    := 7
+; @AHK++AlignAssignmentOff
+Return
 ; ==============================================================================
 ;                                 Tile Windows
 ; ==============================================================================
@@ -75,15 +87,14 @@ GridWindows:
     SetTitleMatchMode 1
 Return
 ; ==============================================================================
-;                                 Docker
+;                                    Docker
 ; ==============================================================================
-Globals()
+; ==============================================================================
+;                                    Update
+; ==============================================================================
+Update()
 {
     ; @AHK++AlignAssignmentOn
-    global screen_width  := 1920
-    global screen_height := 1050
-    global alignment     := 2**6
-    global min_width     := alignment * Round((screen_width / 3) / alignment)
     global left_offset   := 7
     global top_offset    := 7
     global pos_x         :=
@@ -102,6 +113,16 @@ Globals()
         ; @AHK++AlignAssignmentOff
     }
 }
+; ==============================================================================
+;                                      GUI
+; ==============================================================================
+DockerGUI:
+    Update()
+
+    Gui, Destroy
+    InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
+Return
+
 ; ==============================================================================
 ;                                Remove ToolTip
 ; ==============================================================================
@@ -130,7 +151,7 @@ Dock(x, y, width, height)
 ;                                     Left
 ; ==============================================================================
 #a::
-    Globals()
+    Update()
     ; Resize if the window is already on the left.
     If (pos_x == -left_offset)
     {
@@ -138,7 +159,7 @@ Dock(x, y, width, height)
             Dock(-left_offset, pos_y, screen_width + left_offset * 2, window_height)
         Else
         {
-            new_width := (Round(window_width / alignment) - 1) * alignment
+            new_width := (Round((window_width - left_offset * 2) / alignment) - 1) * alignment
             Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
         }
     }
@@ -154,14 +175,14 @@ Return
 ;                                 Left Reverse
 ; ==============================================================================
 $+#a::
-    Globals()
+    Update()
     If (pos_x == -left_offset)
     {
         If (window_width >= screen_width)
             Dock(-left_offset, pos_y, min_width + left_offset * 2, window_height)
         Else
         {
-            new_width := (Round(window_width / alignment) + 1) * alignment
+            new_width := (Round((window_width - left_offset * 2) / alignment) + 1) * alignment
             Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
         }
     }
@@ -175,7 +196,7 @@ Return
 ;                                     Right
 ; ==============================================================================
 #s::
-    Globals()
+    Update()
 
     If (pos_x == screen_width - window_width + left_offset)
     {
@@ -183,7 +204,7 @@ Return
             Dock(-left_offset, pos_y, screen_width + left_offset * 2, window_height)
         Else
         {
-            new_width := (Round(window_width / alignment) - 1) * alignment
+            new_width := (Round((window_width - left_offset * 2) / alignment) - 1) * alignment
             Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
         }
     }
@@ -197,7 +218,7 @@ Return
 ;                             Right Reverse
 ; ==============================================================================
 +#s::
-    Globals()
+    Update()
 
     If (pos_x == screen_width - window_width + left_offset)
     {
@@ -205,7 +226,7 @@ Return
             Dock(screen_width - min_width - left_offset, pos_y, min_width + left_offset * 2, window_height)
         Else
         {
-            new_width := (Round(window_width / alignment) + 1) * alignment
+            new_width := (Round((window_width - left_offset * 2) / alignment) + 1) * alignment
             Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
         }
     }
@@ -219,7 +240,7 @@ Return
 ;                                      Up
 ; ==============================================================================
 #w::
-    Globals()
+    Update()
 
     If (window_height <= screen_height * 0.6)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
@@ -230,7 +251,7 @@ Return
 ;                                     Down
 ; ==============================================================================
 #r::
-    Globals()
+    Update()
 
     If (window_height <= screen_height * 0.6)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
@@ -241,34 +262,34 @@ Return
 ;                                   Top-Left
 ; ==============================================================================
 #q::
-    Globals()
+    Update()
     Dock(-left_offset, 0, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Top-Right
 ; ==============================================================================
 #f::
-    Globals()
+    Update()
     Dock(screen_width - window_width + left_offset, 0, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Bottom-Left
 ; ==============================================================================
 #z::
-    Globals()
+    Update()
     Dock(-left_offset, screen_height - window_height + top_offset, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Bottom-Right
 ; ==============================================================================
 #c::
-    Globals()
+    Update()
     Dock(screen_width - window_width + left_offset, screen_height - window_height + top_offset, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                    Center
 ; ==============================================================================
 #x::
-    Globals()
+    Update()
     Dock((screen_width / 2) - (window_width / 2) , (screen_height / 2) - (window_height / 2) + (top_offset / 2), window_width, window_height)
 Return

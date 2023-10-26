@@ -7,6 +7,7 @@
 SetTitleMatchMode, 2
 SetBatchLines, 20ms
 SendMode, Event
+#Include, Tiler.ahk
 ; ==============================================================================
 ;                                      GUI
 ; ==============================================================================
@@ -18,6 +19,7 @@ SendMode, Event
     Gui, Add, Button, W320 GOpenLatest, Open latest output
     Gui, Add, Button, W320 GTileWindows, Tile Windows
     Gui, Add, Button, W320 GGridWindows, Grid Windows
+    Gui, Add, Button, W320 GDockerGUI, Docker
     Gui, Show
 Return
 ; ==============================================================================
@@ -28,13 +30,18 @@ Return
 ; #Include, GameRemaps.ahk
 ; #Include, PicrossTouch.ahk
 #Include, Scraper.ahk
-#Include, Tiler.ahk
 #Include, Helpers.ahk
 ; ==============================================================================
 ;                                  Gui Destroy
 ; ==============================================================================
 ~Escape::
     Gui, Destroy
+Return
+; ==============================================================================
+;                                  GUI Submit
+; ==============================================================================
+GUISubmit:
+    Gui, Submit
 Return
 ; ==============================================================================
 ;                                   Set Price

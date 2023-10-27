@@ -112,6 +112,7 @@ Update()
         top_offset  := 0
         ; @AHK++AlignAssignmentOff
     }
+    ; TODO: Precompute aligned coordinates to an array
 }
 ; ==============================================================================
 ;                                      GUI
@@ -167,7 +168,10 @@ Dock(x, y, width, height)
     ; and stretch it vertically
     Else
     {
-        new_width := (Round(window_width / alignment)) * alignment
+        If (window_width - left_offset * 2 < min_width)
+            new_width := min_width
+        Else
+            new_width := (Round(window_width / alignment)) * alignment
         Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
     }
 Return
@@ -188,7 +192,10 @@ $+#a::
     }
     Else
     {
-        new_width := (Round(window_width / alignment)) * alignment
+        If (window_width - left_offset * 2 < min_width)
+            new_width := min_width
+        Else
+            new_width := (Round(window_width / alignment)) * alignment
         Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
     }
 Return
@@ -236,7 +243,10 @@ Return
     }
     Else
     {
-        new_width := (Round(window_width / alignment)) * alignment
+        If (window_width - left_offset * 2 < min_width)
+            new_width := min_width
+        Else
+            new_width := (Round(window_width / alignment)) * alignment
         Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
     }
 Return

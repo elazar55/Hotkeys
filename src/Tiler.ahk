@@ -112,7 +112,6 @@ Update()
         top_offset  := 0
         ; @AHK++AlignAssignmentOff
     }
-    CalculateGrid()
 }
 CalculateGrid()
 {

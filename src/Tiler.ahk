@@ -112,7 +112,16 @@ Update()
         top_offset  := 0
         ; @AHK++AlignAssignmentOff
     }
-    ; TODO: Precompute aligned coordinates to an array
+    CalculateGrid()
+}
+CalculateGrid()
+{
+    global aligned_widths := []
+    Loop, % screen_width / alignment
+    {
+        aligned_widths[A_Index] := (alignment * A_Index)
+        ; MsgBox, % aligned_widths[A_Index]
+    }
 }
 ; ==============================================================================
 ;                                      GUI

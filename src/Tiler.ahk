@@ -38,15 +38,6 @@ Update()
         ; @AHK++AlignAssignmentOff
     }
 }
-CalculateGrid()
-{
-    global aligned_widths := []
-    Loop, % screen_width / alignment
-    {
-        aligned_widths[A_Index] := (alignment * A_Index)
-        ; MsgBox, % aligned_widths[A_Index]
-    }
-}
 ; ==============================================================================
 ;                                      GUI
 ; ==============================================================================

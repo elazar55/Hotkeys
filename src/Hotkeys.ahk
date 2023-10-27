@@ -7,7 +7,16 @@
 SetTitleMatchMode, 2
 SetBatchLines, 20ms
 SendMode, Event
+; ==============================================================================
+;                                   Includes
+; ==============================================================================
+; #Include, Fez.ahk
+; #Include, Hearthstone.ahk
+; #Include, GameRemaps.ahk
+; #Include, PicrossTouch.ahk
 #Include, Tiler.ahk
+#Include, Scraper.ahk
+#Include, Helpers.ahk
 ; ==============================================================================
 ;                                      GUI
 ; ==============================================================================
@@ -22,15 +31,6 @@ SendMode, Event
     Gui, Add, Button, W320 GDockerGUI, Docker
     Gui, Show
 Return
-; ==============================================================================
-;                                   Includes
-; ==============================================================================
-; #Include, Fez.ahk
-; #Include, Hearthstone.ahk
-; #Include, GameRemaps.ahk
-; #Include, PicrossTouch.ahk
-#Include, Scraper.ahk
-#Include, Helpers.ahk
 ; ==============================================================================
 ;                                  Gui Destroy
 ; ==============================================================================

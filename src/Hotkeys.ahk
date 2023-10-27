@@ -26,8 +26,8 @@ SendMode, Event
     Gui, Add, Button, W320 GScrape, Scrape
     Gui, Add, Button, W320 GOpenOrder, Open order.html
     Gui, Add, Button, W320 GOpenLatest, Open latest output
-    Gui, Add, Button, W320 GTileWindows, Tile Windows
-    Gui, Add, Button, W320 GGridWindows, Grid Windows
+    ; Gui, Add, Button, W320 GTileWindows, Tile Windows
+    ; Gui, Add, Button, W320 GGridWindows, Grid Windows
     Gui, Add, Button, W320 GDockerGUI, Docker
     Gui, Show
 Return

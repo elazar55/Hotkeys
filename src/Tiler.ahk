@@ -5,11 +5,14 @@
 ; @AHK++AlignAssignmentOn
 global screen_width  := 1920
 global screen_height := 1050
+global pos_x         :=
+global pos_y         :=
 global alignment     := 2**6
 global min_width     := alignment * Round((screen_width / 3) / alignment)
-global left_offset   := 7
-global top_offset    := 7
+global window_width  :=
+global window_height :=
 ; @AHK++AlignAssignmentOff
+CoordMode, ToolTip, Screen
 Return
 ; ==============================================================================
 ;                                    Docker
@@ -19,14 +22,9 @@ Return
 ; ==============================================================================
 Update()
 {
-    ; @AHK++AlignAssignmentOn
-    global left_offset   := 7
-    global top_offset    := 7
-    global pos_x         :=
-    global pos_y         :=
-    global window_width  :=
-    global window_height :=
-    ; @AHK++AlignAssignmentOff
+    global left_offset := 7
+    global top_offset := 7
+
     WinGetPos, pos_x, pos_y, window_width, window_height, A, , ,
     WinGet, title, ProcessName, A, , ,
 
@@ -46,8 +44,9 @@ DockerGUI:
 
     Gui, Destroy
     InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
-Return
+    min_width := alignment * Round((screen_width / 3) / alignment)
 
+Return
 ; ==============================================================================
 ;                                Remove ToolTip
 ; ==============================================================================
@@ -61,8 +60,6 @@ Dock(x, y, width, height)
 {
     global left_offset
     global top_offset
-
-    CoordMode, ToolTip, Screen
 
     tip_x := x + left_offset
     If (x == -left_offset)
@@ -81,12 +78,9 @@ Dock(x, y, width, height)
     If (pos_x == -left_offset)
     {
         If (window_width - left_offset * 2 <= min_width)
-            Dock(-left_offset, pos_y, screen_width + left_offset * 2, window_height)
+            new_width := screen_width
         Else
-        {
             new_width := (Round((window_width - left_offset * 2) / alignment) - 1) * alignment
-            Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
-        }
     }
     ; Otherwise, place it on the left, resize it to the nearest alignment,
     ; and stretch it vertically
@@ -96,8 +90,8 @@ Dock(x, y, width, height)
             new_width := min_width
         Else
             new_width := (Round(window_width / alignment)) * alignment
-        Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
     }
+    Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
 Return
 ; ==============================================================================
 ;                                 Left Reverse
@@ -107,12 +101,9 @@ $+#a::
     If (pos_x == -left_offset)
     {
         If (window_width >= screen_width)
-            Dock(-left_offset, pos_y, min_width + left_offset * 2, window_height)
+            new_width := min_width
         Else
-        {
             new_width := (Round((window_width - left_offset * 2) / alignment) + 1) * alignment
-            Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
-        }
     }
     Else
     {
@@ -120,23 +111,21 @@ $+#a::
             new_width := min_width
         Else
             new_width := (Round(window_width / alignment)) * alignment
-        Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
     }
+    Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
 Return
 ; ==============================================================================
 ;                                     Right
 ; ==============================================================================
 #s::
     Update()
-
     If (pos_x == screen_width - window_width + left_offset)
     {
         If (window_width - left_offset * 2 <= min_width)
-            Dock(-left_offset, pos_y, screen_width + left_offset * 2, window_height)
+            new_width := screen_width
         Else
         {
             new_width := (Round((window_width - left_offset * 2) / alignment) - 1) * alignment
-            Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
         }
     }
     Else
@@ -145,25 +134,20 @@ Return
             new_width := min_width
         Else
             new_width := (Round(window_width / alignment)) * alignment
-
-        Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
     }
+    Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
 Return
 ; ==============================================================================
 ;                             Right Reverse
 ; ==============================================================================
 +#s::
     Update()
-
     If (pos_x == screen_width - window_width + left_offset)
     {
         If (window_width >= screen_width)
-            Dock(screen_width - min_width - left_offset, pos_y, min_width + left_offset * 2, window_height)
+            new_width := min_width
         Else
-        {
             new_width := (Round((window_width - left_offset * 2) / alignment) + 1) * alignment
-            Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
-        }
     }
     Else
     {
@@ -171,8 +155,8 @@ Return
             new_width := min_width
         Else
             new_width := (Round(window_width / alignment)) * alignment
-        Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
     }
+    Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
 Return
 ; ==============================================================================
 ;                                      Up

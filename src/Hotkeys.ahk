@@ -78,12 +78,13 @@ Return
 ; ==============================================================================
 ;                                  Title Case
 ; ==============================================================================
+#t::
 TitleCase:
     Send, ^c
     ClipWait, 1
 
     StringLower, Clipboard, Clipboard, T
-    Clipboard := RegExReplace(Clipboard, "(?<!^)\b(The|Is|To|And|On|In|A|An|Or|But|For|Of)\b", "$L0")
+    Clipboard := RegExReplace(Clipboard, "(?<!(^)|(: ))\b(The|Is|To|And|On|In|A|An|Or|But|For|Of|Vs)\b", "$L0")
 
     Send, ^v
     Beep(1200, 20)

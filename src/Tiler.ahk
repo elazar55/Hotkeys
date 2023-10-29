@@ -90,9 +90,9 @@ AlignWidth(resize)
         new_width := min_width
     ; Resize
     Else
-        new_width := (Round(window_width / alignment) + resize) * alignment
+        new_width := (Round((window_width - left_offset * 2) / alignment) + resize) * alignment
 
-    Return new_width
+    Return new_width + left_offset * 2
 }
 ; ==============================================================================
 ;                                     Left
@@ -107,7 +107,7 @@ AlignWidth(resize)
     Else
         new_width := AlignWidth(0)
 
-    Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
+    Dock(-left_offset, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
 ;                                 Left Reverse
@@ -119,7 +119,7 @@ $+#a::
     Else
         new_width := AlignWidth(0)
 
-    Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
+    Dock(-left_offset, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
 ;                                     Right
@@ -131,7 +131,7 @@ Return
     Else
         new_width := AlignWidth(0)
 
-    Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
+    Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
 ;                             Right Reverse
@@ -143,7 +143,7 @@ Return
     Else
         new_width := AlignWidth(0)
 
-    Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
+    Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
 ;                                      Up

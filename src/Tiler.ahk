@@ -13,6 +13,7 @@ global window_width  :=
 global window_height :=
 ; @AHK++AlignAssignmentOff
 CoordMode, ToolTip, Screen
+CoordMode, Mouse, Screen
 Return
 ; ==============================================================================
 ;                                    Docker
@@ -202,3 +203,15 @@ Return
     Update()
     Dock((screen_width / 2) - (window_width / 2) , (screen_height / 2) - (window_height / 2) + (top_offset / 2), window_width, window_height)
 Return
+; ~LButton::
+;     Update()
+;     while (GetKeyState("LButton", "p"))
+;     {
+;         MouseGetPos, pos_x, pos_y, , ,
+;         pos_x := (Round((pos_x) / alignment)) * alignment
+;         pos_y := (Round((pos_y) / alignment)) * alignment
+;         ToolTip, %pos_x% : %pos_y%, , ,
+;         ; WinMove, A, , pos_x - window_width / 2, pos_y - window_height / 2, , , ,
+;     }
+;     ToolTip
+; Return

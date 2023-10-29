@@ -70,27 +70,43 @@ Dock(x, y, width, height)
     WinMove, A, , x, y, width, height, ,
 }
 ; ==============================================================================
+;                                  Align Width
+; ==============================================================================
+AlignWidth(resize)
+{
+    ; @AHK++AlignAssignmentOn
+    global left_offset
+    global alignment
+    global min_width
+    global screen_width
+    global window_width
+    ; @AHK++AlignAssignmentOff
+
+    ; Undersize
+    If (window_width - left_offset * 2 <= min_width && resize < 0)
+        new_width := screen_width
+    ; Oversize
+    Else If (window_width - left_offset * 2 >= screen_width && resize > 0)
+        new_width := min_width
+    ; Resize
+    Else
+        new_width := (Round(window_width / alignment) + resize) * alignment
+
+    Return new_width
+}
+; ==============================================================================
 ;                                     Left
 ; ==============================================================================
 #a::
     Update()
     ; Resize if the window is already on the left.
     If (pos_x == -left_offset)
-    {
-        If (window_width - left_offset * 2 <= min_width)
-            new_width := screen_width
-        Else
-            new_width := (Round((window_width - left_offset * 2) / alignment) - 1) * alignment
-    }
+        new_width := AlignWidth(-1)
     ; Otherwise, place it on the left, resize it to the nearest alignment,
     ; and stretch it vertically
     Else
-    {
-        If (window_width - left_offset * 2 < min_width)
-            new_width := min_width
-        Else
-            new_width := (Round(window_width / alignment)) * alignment
-    }
+        new_width := AlignWidth(0)
+
     Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
 Return
 ; ==============================================================================
@@ -99,19 +115,10 @@ Return
 $+#a::
     Update()
     If (pos_x == -left_offset)
-    {
-        If (window_width >= screen_width)
-            new_width := min_width
-        Else
-            new_width := (Round((window_width - left_offset * 2) / alignment) + 1) * alignment
-    }
+        new_width := AlignWidth(1)
     Else
-    {
-        If (window_width - left_offset * 2 < min_width)
-            new_width := min_width
-        Else
-            new_width := (Round(window_width / alignment)) * alignment
-    }
+        new_width := AlignWidth(0)
+
     Dock(-left_offset, pos_y, new_width + left_offset * 2, window_height)
 Return
 ; ==============================================================================
@@ -120,21 +127,10 @@ Return
 #s::
     Update()
     If (pos_x == screen_width - window_width + left_offset)
-    {
-        If (window_width - left_offset * 2 <= min_width)
-            new_width := screen_width
-        Else
-        {
-            new_width := (Round((window_width - left_offset * 2) / alignment) - 1) * alignment
-        }
-    }
+        new_width := AlignWidth(-1)
     Else
-    {
-        If (window_width - left_offset * 2 < min_width)
-            new_width := min_width
-        Else
-            new_width := (Round(window_width / alignment)) * alignment
-    }
+        new_width := AlignWidth(0)
+
     Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
 Return
 ; ==============================================================================
@@ -143,19 +139,10 @@ Return
 +#s::
     Update()
     If (pos_x == screen_width - window_width + left_offset)
-    {
-        If (window_width >= screen_width)
-            new_width := min_width
-        Else
-            new_width := (Round((window_width - left_offset * 2) / alignment) + 1) * alignment
-    }
+        new_width := AlignWidth(1)
     Else
-    {
-        If (window_width - left_offset * 2 < min_width)
-            new_width := min_width
-        Else
-            new_width := (Round(window_width / alignment)) * alignment
-    }
+        new_width := AlignWidth(0)
+
     Dock(screen_width - new_width - left_offset, pos_y, new_width + left_offset * 2, window_height)
 Return
 ; ==============================================================================

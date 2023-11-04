@@ -106,8 +106,11 @@ AlignWidth(resize)
     ; Otherwise, place it on the left, resize it to the nearest alignment,
     ; and stretch it vertically
     Else
+    {
         new_width := AlignWidth(0)
-
+        window_height := screen_height + top_offset
+        pos_y := 0
+    }
     Dock(-left_offset, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
@@ -118,7 +121,11 @@ $+#a::
     If (pos_x == -left_offset)
         new_width := AlignWidth(1)
     Else
+    {
         new_width := AlignWidth(0)
+        window_height := screen_height + top_offset
+        pos_y := 0
+    }
 
     Dock(-left_offset, pos_y, new_width, window_height)
 Return
@@ -130,7 +137,11 @@ Return
     If (pos_x == screen_width - window_width + left_offset)
         new_width := AlignWidth(-1)
     Else
+    {
         new_width := AlignWidth(0)
+        window_height := screen_height + top_offset
+        pos_y := 0
+    }
 
     Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)
 Return
@@ -142,7 +153,11 @@ Return
     If (pos_x == screen_width - window_width + left_offset)
         new_width := AlignWidth(1)
     Else
+    {
         new_width := AlignWidth(0)
+        window_height := screen_height + top_offset
+        pos_y := 0
+    }
 
     Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)
 Return

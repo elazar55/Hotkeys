@@ -98,6 +98,9 @@ Return
 #F1::
     Gui, Destroy
     Gui, +AlwaysOnTop
+    Gui, Add, Button, W96 X10 GScrapeGameFAQs, Scrape Source
+    Gui, Add, Edit, W192 XP+96 YP Vsource, %source%
+
     Gui, Add, Button, W96 X10 GPublisher, Publisher
     Gui, Add, Edit, W192 XP+96 YP Vpublisher, %publisher%
 
@@ -113,16 +116,60 @@ Return
     Gui, Add, Edit, W48 XP+48 YP Vmonth, %month%
     Gui, Add, Edit, W48 XP+48 YP Vyear, %year%
 
-    Gui, Add, Button, W96 X10, Source
-    Gui, Add, Edit, W192 XP+96 YP Vsource, %source%
-
     Gui, Show
+Return
+
+ScrapeGameFAQs:
+    Gui, Submit
+    UrlDownloadToFile, %source%, Game_Data.html
+
+    If (ErrorLevel)
+    {
+        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+        Exit
+    }
+
+    FileRead, source_string, Game_Data.html
+
+    pos := 1
+    pos := RegExMatch(source_string, "(?<=\t\t\t\t<td>)\w+", region)
+    pos := RegExMatch(source_string, "(?<=datePublished"":"")\d+", year, pos)
+    pos := RegExMatch(source_string, "\d+", month, pos + 4)
+    pos := RegExMatch(source_string, "\d+", day, pos + 2)
+    pos := RegExMatch(source_string, "(?<=""publisher"":"")(.+?)(?="",)", publisher, pos)
+    pos := RegExMatch(source_string, "(?<=<a href=""/games/company/).*?"">(.+?)(?=</a>)", developer)
+    developer := developer1
+    pos := RegExMatch(source_string, "(?<=rating=).+?(?=&amp|%2C)", rating)
+    rating := StrReplace(rating, "-", ":")
+
+    Switch month
+    {
+    case 01: month = Jan
+    case 02: month = Feb
+    case 03: month = Mar
+    case 04: month = Apr
+    case 05: month = May
+    case 06: month = June
+    case 07: month = July
+    case 08: month = Aug
+    case 09: month = Sep
+    case 10: month = Oct
+    case 11: month = Nov
+    case 12: month = Dec
+    }
+
+; MsgBox, %region%
+; MsgBox, %year%
+; MsgBox, %month%
+; MsgBox, %day%
+; MsgBox, %publisher%
+; MsgBox, %developer%
+; MsgBox, %rating%
 Return
 
 CheckWindow()
 {
     Gui, Submit
-    Gui, Destroy
     Sleep, 1000
     WinGetTitle, title, A, , ,
     If (!InStr(title, "Google Chrome", 1))
@@ -142,6 +189,7 @@ Publisher:
     Send, %publisher%
     Send, {Tab}{Tab}
     Send, %source%
+    SoundBeep, 1200, 192
 Return
 
 Developer:
@@ -153,6 +201,7 @@ Developer:
     Send, %developer%
     Send, {Tab}{Tab}
     Send, %source%
+    SoundBeep, 1200, 192
 Return
 
 RatingCategories:
@@ -164,6 +213,7 @@ RatingCategories:
     Send, %rating%
     Send, {Tab}{Tab}
     Send, %source%
+    SoundBeep, 1200, 192
 Return
 
 ReleaseDate:
@@ -182,4 +232,5 @@ ReleaseDate:
     Send, %year%{Tab}
     Send, {Tab}
     Send, %source%
+    SoundBeep, 1200, 192
 Return

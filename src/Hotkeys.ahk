@@ -96,25 +96,35 @@ Return
 Return
 ; ==============================================================================
 #F1::
+GameGUI:
+    button_width := 96
+    edit_width := 320
+    date_width := edit_width / 4
+
     Gui, Destroy
     Gui, +AlwaysOnTop
-    Gui, Add, Button, W96 X10 GScrapeGameFAQs, Scrape Source
-    Gui, Add, Edit, W192 XP+96 YP Vsource, %source%
 
-    Gui, Add, Button, W96 X10 GPublisher, Publisher
-    Gui, Add, Edit, W192 XP+96 YP Vpublisher, %publisher%
+    Gui, Add, Button, W%button_width% X10, Title
+    Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vtitle, %title%
 
-    Gui, Add, Button, W96 X10 GDeveloper, Developer
-    Gui, Add, Edit, W192 XP+96 YP Vdeveloper, %developer%
+    Gui, Add, Button, W%button_width% X10 Default GScrapeGameFAQs, Scrape Source
+    Gui, Add, Edit, R1 W%edit_width% XP+%button_width% YP Vsource, %source%
+    GuiControl, Focus, source
 
-    Gui, Add, Button, W96 X10 GRatingCategories, Rating Categories
-    Gui, Add, Edit, W192 XP+96 YP Vrating, %rating%
+    Gui, Add, Button, W%button_width% X10 GPublisher, Publisher
+    Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vpublisher, %publisher%
 
-    Gui, Add, Button, W96 X10 GReleaseDate, Release date
-    Gui, Add, Edit, W48 XP+96 YP Vregion, %region%
-    Gui, Add, Edit, W48 XP+48 YP Vday, %day%
-    Gui, Add, Edit, W48 XP+48 YP Vmonth, %month%
-    Gui, Add, Edit, W48 XP+48 YP Vyear, %year%
+    Gui, Add, Button, W%button_width% X10 GDeveloper, Developer
+    Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vdeveloper, %developer%
+
+    Gui, Add, Button, W%button_width% X10 GRatingCategories, Rating Categories
+    Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vrating, %rating%
+
+    Gui, Add, Button, W%button_width% X10 GReleaseDate, Release date
+    Gui, Add, Edit, W%date_width% XP+%button_width% YP Vregion, %region%
+    Gui, Add, Edit, W%date_width% XP+%date_width% YP Vday, %day%
+    Gui, Add, Edit, W%date_width% XP+%date_width% YP Vmonth, %month%
+    Gui, Add, Edit, W%date_width% XP+%date_width% YP Vyear, %year%
 
     Gui, Show
 Return
@@ -132,7 +142,8 @@ ScrapeGameFAQs:
     FileRead, source_string, Game_Data.html
 
     pos := 1
-    pos := RegExMatch(source_string, "(?<=\t\t\t\t<td>)\w+", region)
+    pos := RegExMatch(source_string, "(?<=<td colspan=""6"" class=""bold"">).+?(?=</td>)", title)
+    pos := RegExMatch(source_string, "(?<=\t\t\t\t<td>)\w+", region, pos)
     pos := RegExMatch(source_string, "(?<=datePublished"":"")\d+", year, pos)
     pos := RegExMatch(source_string, "\d+", month, pos + 4)
     pos := RegExMatch(source_string, "\d+", day, pos + 2)
@@ -157,14 +168,7 @@ ScrapeGameFAQs:
     case 11: month = Nov
     case 12: month = Dec
     }
-
-; MsgBox, %region%
-; MsgBox, %year%
-; MsgBox, %month%
-; MsgBox, %day%
-; MsgBox, %publisher%
-; MsgBox, %developer%
-; MsgBox, %rating%
+    Gosub, GameGUI
 Return
 
 CheckWindow()
@@ -184,40 +188,49 @@ Publisher:
     CheckWindow()
 
     Send, {CtrlDown}f{CtrlUp}
-    Send, New information proposal : Publisher
+    Clipboard := "New information proposal : Publisher"
+    Send, {CtrlDown}v{CtrlUp}
     Send, {Escape}{Tab}
-    Send, %publisher%
+    Clipboard := publisher
+    Send, {CtrlDown}v{CtrlUp}
     Send, {Tab}{Tab}
-    Send, %source%
+    Clipboard := source
+    Send, {CtrlDown}v{CtrlUp}
 Return
 
 Developer:
     CheckWindow()
 
     Send, {CtrlDown}f{CtrlUp}
-    Send, New information proposal : Developer
+    Clipboard := "New information proposal : Developer"
+    Send, {CtrlDown}v{CtrlUp}
     Send, {Escape}{Tab}
-    Send, %developer%
+    Clipboard := developer
+    Send, {CtrlDown}v{CtrlUp}
     Send, {Tab}{Tab}
-    Send, %source%
+    Clipboard := source
+    Send, {CtrlDown}v{CtrlUp}
 Return
 
 RatingCategories:
     CheckWindow()
 
     Send, {CtrlDown}f{CtrlUp}
-    Send, New information proposal : Rating Categories
+    Clipboard := "New information proposal : Rating Categories"
+    Send, {CtrlDown}v{CtrlUp}
     Send, {Escape}{Tab}
     Send, %rating%
     Send, {Tab}{Tab}
-    Send, %source%
+    Clipboard := source
+    Send, {CtrlDown}v{CtrlUp}
 Return
 
 ReleaseDate:
     CheckWindow()
 
     Send, {CtrlDown}f{CtrlUp}
-    Send, New information proposal : Release date
+    Clipboard := "New information proposal : Release date(s)"
+    Send, {CtrlDown}v{CtrlUp}
     Send, {Escape}{Tab}
     Send, %region%{Tab}
 
@@ -228,5 +241,6 @@ ReleaseDate:
     Send, %month%{Tab}
     Send, %year%{Tab}
     Send, {Tab}
-    Send, %source%
+    Clipboard := source
+    Send, {CtrlDown}v{CtrlUp}
 Return

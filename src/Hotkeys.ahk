@@ -189,7 +189,6 @@ Publisher:
     Send, %publisher%
     Send, {Tab}{Tab}
     Send, %source%
-    SoundBeep, 1200, 192
 Return
 
 Developer:
@@ -201,7 +200,6 @@ Developer:
     Send, %developer%
     Send, {Tab}{Tab}
     Send, %source%
-    SoundBeep, 1200, 192
 Return
 
 RatingCategories:
@@ -213,7 +211,6 @@ RatingCategories:
     Send, %rating%
     Send, {Tab}{Tab}
     Send, %source%
-    SoundBeep, 1200, 192
 Return
 
 ReleaseDate:
@@ -232,5 +229,4 @@ ReleaseDate:
     Send, %year%{Tab}
     Send, {Tab}
     Send, %source%
-    SoundBeep, 1200, 192
 Return

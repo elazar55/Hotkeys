@@ -184,53 +184,52 @@ CheckWindow()
     }
 }
 
+Search(text)
+{
+    Send, {CtrlDown}f{CtrlUp}
+    Clipboard := text
+    Send, {CtrlDown}v{CtrlUp}
+}
+Paste(text)
+{
+    Clipboard := text
+    Send, {CtrlDown}v{CtrlUp}
+}
+
 Publisher:
     CheckWindow()
 
-    Send, {CtrlDown}f{CtrlUp}
-    Clipboard := "New information proposal : Publisher"
-    Send, {CtrlDown}v{CtrlUp}
+    Search("New information proposal : Publisher")
     Send, {Escape}{Tab}
-    Clipboard := publisher
-    Send, {CtrlDown}v{CtrlUp}
+    Paste(publisher)
     Send, {Tab}{Tab}
-    Clipboard := source
-    Send, {CtrlDown}v{CtrlUp}
+    Paste(source)
 Return
 
 Developer:
     CheckWindow()
 
-    Send, {CtrlDown}f{CtrlUp}
-    Clipboard := "New information proposal : Developer"
-    Send, {CtrlDown}v{CtrlUp}
+    Search("New information proposal : Developer")
     Send, {Escape}{Tab}
-    Clipboard := developer
-    Send, {CtrlDown}v{CtrlUp}
+    Paste(developer)
     Send, {Tab}{Tab}
-    Clipboard := source
-    Send, {CtrlDown}v{CtrlUp}
+    Paste(source)
 Return
 
 RatingCategories:
     CheckWindow()
 
-    Send, {CtrlDown}f{CtrlUp}
-    Clipboard := "New information proposal : Rating Categories"
-    Send, {CtrlDown}v{CtrlUp}
+    Search("New information proposal : Rating Categories")
     Send, {Escape}{Tab}
     Send, %rating%
     Send, {Tab}{Tab}
-    Clipboard := source
-    Send, {CtrlDown}v{CtrlUp}
+    Paste(source)
 Return
 
 ReleaseDate:
     CheckWindow()
 
-    Send, {CtrlDown}f{CtrlUp}
-    Clipboard := "New information proposal : Release date(s)"
-    Send, {CtrlDown}v{CtrlUp}
+    Search("New information proposal : Release date(s)")
     Send, {Escape}{Tab}
     Send, %region%{Tab}
 
@@ -241,6 +240,5 @@ ReleaseDate:
     Send, %month%{Tab}
     Send, %year%{Tab}
     Send, {Tab}
-    Clipboard := source
-    Send, {CtrlDown}v{CtrlUp}
+    Paste(source)
 Return

@@ -95,6 +95,8 @@ Return
     Reload
 Return
 ; ==============================================================================
+;                                 Screenscraper
+; ==============================================================================
 #F1::
 GameGUI:
     button_width := 96
@@ -128,7 +130,7 @@ GameGUI:
 
     Gui, Show
 Return
-; ==============================================================================
+; ============================== Scrape GameFAQs ===============================
 ScrapeGameFAQs:
     Gui, Submit
     UrlDownloadToFile, %source%, Game_Data.html
@@ -170,7 +172,7 @@ ScrapeGameFAQs:
     }
     Gosub, GameGUI
 Return
-
+; =============================== Check Window =================================
 CheckWindow()
 {
     Gui, Submit
@@ -195,7 +197,7 @@ Paste(text)
     Clipboard := text
     Send, {CtrlDown}v{CtrlUp}
 }
-; ==============================================================================
+; ================================= Publisher ==================================
 Publisher:
     CheckWindow()
 
@@ -205,7 +207,7 @@ Publisher:
     Send, {Tab}{Tab}
     Paste(source)
 Return
-; ==============================================================================
+; ================================= Developer ==================================
 Developer:
     CheckWindow()
 
@@ -215,30 +217,24 @@ Developer:
     Send, {Tab}{Tab}
     Paste(source)
 Return
-; ==============================================================================
+; ============================= Rating Categories ==============================
 RatingCategories:
     CheckWindow()
 
     Search("New information proposal : Rating Categories")
-    Send, {Escape}{Tab}
-    Send, %rating%
-    Send, {Tab}{Tab}
+    Send, {Escape}{Tab}%rating%{Tab}{Tab}
     Paste(source)
 Return
-; ==============================================================================
+; =============================== Releas eDate =================================
 ReleaseDate:
     CheckWindow()
 
     Search("New information proposal : Release date(s)")
-    Send, {Escape}{Tab}
-    Send, %region%{Tab}
+    Send, {Escape}{Tab}%region%{Tab}
 
     If (day == 22)
         Send, 2
 
-    Send, %day%{Tab}
-    Send, %month%{Tab}
-    Send, %year%{Tab}
-    Send, {Tab}
+    Send, %day%{Tab}%month%{Tab}%year%{Tab}{Tab}
     Paste(source)
 Return

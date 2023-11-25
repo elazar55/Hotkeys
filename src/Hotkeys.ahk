@@ -128,7 +128,7 @@ GameGUI:
 
     Gui, Show
 Return
-
+; ==============================================================================
 ScrapeGameFAQs:
     Gui, Submit
     UrlDownloadToFile, %source%, Game_Data.html
@@ -183,19 +183,19 @@ CheckWindow()
         Exit
     }
 }
-
+; ================================== Search ====================================
 Search(text)
 {
     Send, {CtrlDown}f{CtrlUp}
-    Clipboard := text
-    Send, {CtrlDown}v{CtrlUp}
+    Paste(text)
 }
+; =================================== Paste ====================================
 Paste(text)
 {
     Clipboard := text
     Send, {CtrlDown}v{CtrlUp}
 }
-
+; ==============================================================================
 Publisher:
     CheckWindow()
 
@@ -205,7 +205,7 @@ Publisher:
     Send, {Tab}{Tab}
     Paste(source)
 Return
-
+; ==============================================================================
 Developer:
     CheckWindow()
 
@@ -215,7 +215,7 @@ Developer:
     Send, {Tab}{Tab}
     Paste(source)
 Return
-
+; ==============================================================================
 RatingCategories:
     CheckWindow()
 
@@ -225,7 +225,7 @@ RatingCategories:
     Send, {Tab}{Tab}
     Paste(source)
 Return
-
+; ==============================================================================
 ReleaseDate:
     CheckWindow()
 

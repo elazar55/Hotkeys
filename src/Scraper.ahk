@@ -111,8 +111,7 @@ Scrape:
                 ; Clean up tags from extra_data images
                 extra_data[j + 1] := StrReplace(extra_data[j + 1], "<img src=""")
                 extra_data[j + 1] := StrReplace(extra_data[j + 1], """>")
-
-                WriteOutData(extra_data[j + 1], extra_data[j + 2], "-", "-", skus[index], extra_data[j + 6], output_file)
+                WriteOutData(extra_data[j + 1], extra_data[j + 3] . " x " extra_data[j + 2], "-", "-", skus[index], extra_data[j + 6], output_file)
             }
         ; Update progress bar
         GuiControl, , textbox, % titles[index]

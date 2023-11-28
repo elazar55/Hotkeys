@@ -82,8 +82,8 @@ TitleCase:
     Send, ^c
     ClipWait, 1
 
-    StringLower, Clipboard, Clipboard, T
-    needle := "(?<!(^)|(: ))\b(The|Is|To|And|On|In|A|An|Or|But|For|Of|Vs)\b"
+    StringLower, Clipboard, % Trim(Clipboard), T
+    needle := "(?<!(^)|(: ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs)\b"
     Clipboard := RegExReplace(Clipboard, needle, "$L0")
 
     Send, ^v
@@ -94,4 +94,29 @@ Return
 ; ==============================================================================
 #d::
     Reload
+Return
+; ==============================================================================
+;                                   Jobalots
+; ==============================================================================
+#j::
+    ;@AHK++AlignAssignmentOn
+    file   := "auctions.html"
+    titles := []
+    links  := []
+    ;@AHK++AlignAssignmentOff
+
+    FileRead, source_string, %file%
+
+    pos := 1
+
+; while(pos := RegExMatch(source_string, "(?<=<a href=""/products/)\w+", match, pos + StrLen(pos)))
+; {
+;     MsgBox, %match%
+; }
+; while(pos := RegExMatch(source_string, "\d+\sx\s\w+\s(Customer Returns|Brand New).+?RRP â‚¬\d+\.\d+", match, pos + StrLen(pos)))
+; {
+;     match := StrReplace(match, "â‚¬", "€")
+;     MsgBox, %match%
+;     titles.Push(match)
+; }
 Return

@@ -3,40 +3,60 @@
 ; ==============================================================================
 #F1::
 GameGUI:
+    ;@AHK++AlignAssignmentOn
     button_width := 96
-    edit_width := 320
-    date_width := edit_width / 4
+    edit_width   := 320
+    date_width   := edit_width / 4
+    ;@AHK++AlignAssignmentOff
 
     Gui, Destroy
     Gui, +AlwaysOnTop
 
+    ; ================================= Title ==================================
     Gui, Add, Button, W%button_width% X10, Title
     Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vtitle, %title%
 
+    ; ============================= Scrape Source ==============================
     Gui, Add, Button, W%button_width% X10 Default GScrapeGameFAQs, Scrape Source
     Gui, Add, Edit, R1 W%edit_width% XP+%button_width% YP Vsource, %source%
     GuiControl, Focus, source
 
+    ; =============================== Publisher ================================
     Gui, Add, Button, W%button_width% X10 GPublisher, Publisher
     Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vpublisher, %publisher%
 
+    ; =============================== Developer ================================
     Gui, Add, Button, W%button_width% X10 GDeveloper, Developer
     Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vdeveloper, %developer%
 
+    ; =========================== Rating Categories ============================
     Gui, Add, Button, W%button_width% X10 GRatingCategories, Rating Categories
-    Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vrating, %rating%
+    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vrating Choose1, %rating_list%
 
+    ; ============================= Release date ===============================
     Gui, Add, Button, W%button_width% X10 GReleaseDate, Release date
     Gui, Add, Edit, W%date_width% XP+%button_width% YP Vregion, %region%
     Gui, Add, Edit, W%date_width% XP+%date_width% YP Vday, %day%
     Gui, Add, Edit, W%date_width% XP+%date_width% YP Vmonth, %month%
     Gui, Add, Edit, W%date_width% XP+%date_width% YP Vyear, %year%
 
+    ; ================================= Genre ==================================
+    Gui, Add, Button, W%button_width% X10 GGenre, Genre
+    Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vgenre, %genre%
+
     Gui, Show
 Return
 ; ============================== Scrape GameFAQs ===============================
 ScrapeGameFAQs:
     Gui, Submit
+
+    RegExMatch(source, "gamefaqs.+?/data", match)
+    If (match == "")
+    {
+        MsgBox, Wrong URL
+        Exit
+    }
+
     UrlDownloadToFile, %source%, Game_Data.html
 
     If (ErrorLevel)
@@ -48,16 +68,25 @@ ScrapeGameFAQs:
     FileRead, source_string, Game_Data.html
 
     pos := 1
-    pos := RegExMatch(source_string, "(?<=<td colspan=""6"" class=""bold"">).+?(?=</td>)", title)
+    pos := RegExMatch(source_string, "(?<=genre&quot;:&quot;).+?(?=&quot;,&quot;)", genre, pos)
+    genre := StrReplace(genre, "Miscellaneous,Edutainment", "Educational")
+
+    pos := RegExMatch(source_string, "(?<=rating=).+?(?=&amp;publisher)", rating_list, pos)
+    rating_list := StrReplace(rating_list, "%2C", "|")
+    rating_list := StrReplace(rating_list, "-", ":")
+
+    pos := RegExMatch(source_string, "(?<=<a href=""/games/company/).*?"">(.+?)(?=</a>)", developer, pos)
+    developer := developer1
+
+    pos := RegExMatch(source_string, "(?<=<td colspan=""6"" class=""bold"">).+?(?=</td>)", title, pos)
+
     pos := RegExMatch(source_string, "(?<=\t\t\t\t<td>)\w+", region, pos)
+    region := StrReplace(region, "JP", "Japan")
+
     pos := RegExMatch(source_string, "(?<=datePublished"":"")\d+", year, pos)
     pos := RegExMatch(source_string, "\d+", month, pos + 4)
     pos := RegExMatch(source_string, "\d+", day, pos + 2)
     pos := RegExMatch(source_string, "(?<=""publisher"":"")(.+?)(?="",)", publisher, pos)
-    pos := RegExMatch(source_string, "(?<=<a href=""/games/company/).*?"">(.+?)(?=</a>)", developer)
-    developer := developer1
-    pos := RegExMatch(source_string, "(?<=rating=).+?(?=&amp|%2C)", rating)
-    rating := StrReplace(rating, "-", ":")
 
     Switch month
     {
@@ -80,7 +109,7 @@ Return
 CheckWindow()
 {
     Gui, Submit
-    Sleep, 1000
+    Sleep, 20
     WinGetTitle, title, A, , ,
     If (!InStr(title, "Google Chrome", 1))
     {
@@ -101,6 +130,16 @@ Paste(text)
     Clipboard := text
     Send, {CtrlDown}v{CtrlUp}
 }
+; =================================== Genre ====================================
+Genre:
+    CheckWindow()
+
+    Search("New information proposal : Genre(s)")
+    Send, {Escape}{Tab}%genre%{Tab}{Tab}
+    Paste(source)
+    Send, {ShiftDown}{Tab}{ShiftUp}
+    Beep(1200, 25)
+Return
 ; ================================= Publisher ==================================
 Publisher:
     CheckWindow()
@@ -110,6 +149,8 @@ Publisher:
     Paste(publisher)
     Send, {Tab}{Tab}
     Paste(source)
+    Send, {ShiftDown}{Tab}{ShiftUp}
+    Beep(1200, 25)
 Return
 ; ================================= Developer ==================================
 Developer:
@@ -120,6 +161,8 @@ Developer:
     Paste(developer)
     Send, {Tab}{Tab}
     Paste(source)
+    Send, {ShiftDown}{Tab}{ShiftUp}
+    Beep(1200, 25)
 Return
 ; ============================= Rating Categories ==============================
 RatingCategories:
@@ -128,6 +171,8 @@ RatingCategories:
     Search("New information proposal : Rating Categories")
     Send, {Escape}{Tab}%rating%{Tab}{Tab}
     Paste(source)
+    Send, {ShiftDown}{Tab}{ShiftUp}
+    Beep(1200, 25)
 Return
 ; =============================== Releas eDate =================================
 ReleaseDate:
@@ -141,4 +186,6 @@ ReleaseDate:
 
     Send, %day%{Tab}%month%{Tab}%year%{Tab}{Tab}
     Paste(source)
+    Send, {ShiftDown}{Tab}{ShiftUp}
+    Beep(1200, 25)
 Return

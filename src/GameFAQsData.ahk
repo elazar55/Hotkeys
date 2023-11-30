@@ -8,7 +8,6 @@ GameGUI:
     edit_width   := 320
     date_width   := edit_width / 4
     ;@AHK++AlignAssignmentOff
-
     Gui, Destroy
     Gui, +AlwaysOnTop
 
@@ -23,7 +22,7 @@ GameGUI:
 
     ; =============================== Publisher ================================
     Gui, Add, Button, W%button_width% X10 GPublisher, Publisher
-    Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vpublisher, %publisher%
+    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vpublisher Choose%entry%, %publisher_list%
 
     ; =============================== Developer ================================
     Gui, Add, Button, W%button_width% X10 GDeveloper, Developer
@@ -31,34 +30,49 @@ GameGUI:
 
     ; =========================== Rating Categories ============================
     Gui, Add, Button, W%button_width% X10 GRatingCategories, Rating Categories
-    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vrating Choose1, %rating_list%
+    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vrating Choose%entry%, %rating_list%
 
     ; ============================= Release date ===============================
     Gui, Add, Button, W%button_width% X10 GReleaseDate, Release date
-    Gui, Add, Edit, W%date_width% XP+%button_width% YP Vregion, %region%
-    Gui, Add, Edit, W%date_width% XP+%date_width% YP Vday, %day%
-    Gui, Add, Edit, W%date_width% XP+%date_width% YP Vmonth, %month%
-    Gui, Add, Edit, W%date_width% XP+%date_width% YP Vyear, %year%
+    Gui, Add, DDL, W%date_width% XP+%button_width% YP Vregion Choose%entry%, %region_list%
+    Gui, Add, DDL, W%date_width% XP+%date_width% YP Vday Choose%entry%, %day_list%
+    Gui, Add, DDL, W%date_width% XP+%date_width% YP Vmonth Choose%entry%, %month_list%
+    Gui, Add, DDL, W%date_width% XP+%date_width% YP Vyear Choose%entry%, %year_list%
 
     ; ================================= Genre ==================================
     Gui, Add, Button, W%button_width% X10 GGenre, Genre
     Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vgenre, %genre%
 
+    ; ============================= Select Entry ===============================
+    Gui, Add, Button, W%button_width% X10 GEntry, Select Entry
+    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Ventry Choose%entry%, %entries%
+
     Gui, Show
 Return
-; ============================== Scrape GameFAQs ===============================
+; ==============================================================================
+;                                  IsValidURL
+; ==============================================================================
+IsValidURL(url)
+{
+    RegExMatch(url, "gamefaqs.+?/data", match)
+    If (match == "")
+        Return False
+
+    Return True
+}
+; ==============================================================================
+;                                Scrape GameFAQs
+; ==============================================================================
 ScrapeGameFAQs:
     Gui, Submit
 
-    RegExMatch(source, "gamefaqs.+?/data", match)
-    If (match == "")
+    If (!IsValidURL(source))
     {
         MsgBox, Wrong URL
         Exit
     }
 
     UrlDownloadToFile, %source%, Game_Data.html
-
     If (ErrorLevel)
     {
         MsgBox, UrlDownloadToFile Error: %ErrorLevel%
@@ -67,45 +81,80 @@ ScrapeGameFAQs:
 
     FileRead, source_string, Game_Data.html
 
-    pos := 1
+    ;@AHK++AlignAssignmentOn
+    publisher_list :=
+    region_list    :=
+    rating_list    :=
+    day_list       :=
+    month_list     :=
+    year_list      :=
+    pos            := 1
+    entries        :=
+    entry          := 1
+    ;@AHK++AlignAssignmentOff
+
     pos := RegExMatch(source_string, "(?<=genre&quot;:&quot;).+?(?=&quot;,&quot;)", genre, pos)
     genre := StrReplace(genre, "Miscellaneous,Edutainment", "Educational")
-
-    pos := RegExMatch(source_string, "(?<=rating=).+?(?=&amp;publisher)", rating_list, pos)
-    rating_list := StrReplace(rating_list, "%2C", "|")
-    rating_list := StrReplace(rating_list, "-", ":")
+    genre := StrReplace(genre, "Miscellaneous,Compilation", "Compilation")
 
     pos := RegExMatch(source_string, "(?<=<a href=""/games/company/).*?"">(.+?)(?=</a>)", developer, pos)
     developer := developer1
 
     pos := RegExMatch(source_string, "(?<=<td colspan=""6"" class=""bold"">).+?(?=</td>)", title, pos)
 
-    pos := RegExMatch(source_string, "(?<=\t\t\t\t<td>)\w+", region, pos)
-    region := StrReplace(region, "JP", "Japan")
-
-    pos := RegExMatch(source_string, "(?<=datePublished"":"")\d+", year, pos)
-    pos := RegExMatch(source_string, "\d+", month, pos + 4)
-    pos := RegExMatch(source_string, "\d+", day, pos + 2)
-    pos := RegExMatch(source_string, "(?<=""publisher"":"")(.+?)(?="",)", publisher, pos)
-
-    Switch month
+    pos := 1
+    While (pos := RegExMatch(source_string, "(?:<td><a href=""\/games\/company\/.+?>)(.+?)(?=</a></td>)", match, pos + StrLen(match1)))
     {
-    case 01: month = Jan
-    case 02: month = Feb
-    case 03: month = Mar
-    case 04: month = Apr
-    case 05: month = May
-    case 06: month = June
-    case 07: month = July
-    case 08: month = Aug
-    case 09: month = Sep
-    case 10: month = Oct
-    case 11: month = Nov
-    case 12: month = Dec
+        publisher_list := publisher_list . match1 . "|"
+
+        RegExMatch(source_string, "(?<=<td>)\w+(?=</td>)", match, pos - 20)
+        region_list := region_list . match . "|"
+
+        pos := RegExMatch(source_string, "\d{2}\/\d{2}\/\d{2}", match, pos + StrLen(match))
+        date_array := StrSplit(match, "/")
+
+        Switch date_array[1]
+        {
+        case 01: date_array[1] := "Jan"
+        case 02: date_array[1] := "Feb"
+        case 03: date_array[1] := "Mar"
+        case 04: date_array[1] := "Apr"
+        case 05: date_array[1] := "May"
+        case 06: date_array[1] := "June"
+        case 07: date_array[1] := "July"
+        case 08: date_array[1] := "Aug"
+        case 09: date_array[1] := "Sep"
+        case 10: date_array[1] := "Oct"
+        case 11: date_array[1] := "Nov"
+        case 12: date_array[1] := "Dec"
+        }
+        date_array[3] := "20" . date_array[3]
+
+        month_list := month_list . date_array[1] . "|"
+        day_list := day_list . date_array[2] . "|"
+        year_list := year_list . date_array[3] . "|"
+
+        RegExMatch(source_string, "(?<=<td>).+?(?=</td>)", match, pos + StrLen(match))
+        Switch match
+        {
+        case "A": match := "CERO" . ":" . match
+        case "B": match := "CERO" . ":" . match
+        case "C": match := "CERO" . ":" . match
+        case "D": match := "CERO" . ":" . match
+        case "Z": match := "CERO" . ":" . match
+        case "E": match := "ESRB" . ":" . match
+        case "3+": match := "PEGI" . ":" . "3"
+        }
+        rating_list := rating_list . match . "|"
+
+        entries := entries . A_Index . "|"
     }
+
     Gosub, GameGUI
 Return
-; =============================== Check Window =================================
+; ==============================================================================
+;                                 Check Window
+; ==============================================================================
 CheckWindow()
 {
     Gui, Submit
@@ -174,7 +223,7 @@ RatingCategories:
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
 Return
-; =============================== Releas eDate =================================
+; =============================== Release Date =================================
 ReleaseDate:
     CheckWindow()
 
@@ -188,4 +237,11 @@ ReleaseDate:
     Paste(source)
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
+Return
+; ==============================================================================
+;                                     Entry
+; ==============================================================================
+Entry:
+    Gui, Submit
+    Gosub, GameGUI
 Return

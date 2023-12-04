@@ -1,7 +1,7 @@
 ; ==============================================================================
 ;                                 Screenscraper
 ; ==============================================================================
-#F1::
+#g::
 GameGUI:
     ;@AHK++AlignAssignmentOn
     button_width := 96
@@ -12,8 +12,8 @@ GameGUI:
     Gui, +AlwaysOnTop
 
     ; ================================= Title ==================================
-    Gui, Add, Button, W%button_width% X10, Title
-    Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vtitle, %title%
+    Gui, Add, Button, W%button_width% X10 GTitle, Title
+    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vtitle Choose%entry%, %title_list%
 
     ; ============================= Scrape Source ==============================
     Gui, Add, Button, W%button_width% X10 Default GScrapeGameFAQs, Scrape Source
@@ -43,9 +43,17 @@ GameGUI:
     Gui, Add, Button, W%button_width% X10 GGenre, Genre
     Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vgenre, %genre%
 
+    ; ============================= Local Players ==============================
+    Gui, Add, Button, W%button_width% X10 GLocalPlayers, Local Players
+    Gui, Add, Edit, W%edit_width% XP+%button_width% YP Vlocal_players, %local_players%
+
+    ; ============================= Select Media ===============================
+    Gui, Add, Button, W%button_width% X10 GSelectMedia, Select Media
+    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vmedia Choose1, Case : Back|Case : Front
+
     ; ============================= Select Entry ===============================
     Gui, Add, Button, W%button_width% X10 GEntry, Select Entry
-    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Ventry Choose%entry%, %entries%
+    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Ventry AltSubmit Choose%entry%, %entries%
 
     Gui, Show
 Return
@@ -82,6 +90,7 @@ ScrapeGameFAQs:
     FileRead, source_string, Game_Data.html
 
     ;@AHK++AlignAssignmentOn
+    title_list     :=
     publisher_list :=
     region_list    :=
     rating_list    :=
@@ -93,65 +102,98 @@ ScrapeGameFAQs:
     entry          := 1
     ;@AHK++AlignAssignmentOff
 
+    ; ================================= Genre ==================================
     pos := RegExMatch(source_string, "(?<=genre&quot;:&quot;).+?(?=&quot;,&quot;)", genre, pos)
     genre := StrReplace(genre, "Miscellaneous,Edutainment", "Educational")
     genre := StrReplace(genre, "Miscellaneous,Compilation", "Compilation")
+    genre := StrReplace(genre, "Simulation,Virtual,Pet", "Simulation")
 
+    ; =============================== Developer ================================
     pos := RegExMatch(source_string, "(?<=<a href=""/games/company/).*?"">(.+?)(?=</a>)", developer, pos)
     developer := developer1
 
-    pos := RegExMatch(source_string, "(?<=<td colspan=""6"" class=""bold"">).+?(?=</td>)", title, pos)
-
+    ; ============================ Regeional Data ==============================
     pos := 1
-    While (pos := RegExMatch(source_string, "(?:<td><a href=""\/games\/company\/.+?>)(.+?)(?=</a></td>)", match, pos + StrLen(match1)))
+    While (pos := RegExMatch(source_string, "(?<=<td colspan=""6"" class=""bold"">).+?(?=</td>)", match, pos + StrLen(match)))
     {
-        publisher_list := publisher_list . match1 . "|"
+        ; =============================== Title ================================
+        title_list := title_list . match . "|"
 
-        RegExMatch(source_string, "(?<=<td>)\w+(?=</td>)", match, pos - 20)
+        ; ============================== Entries ===============================
+        entries := entries . A_Index . " - " . match . "|"
+
+        ; ============================== Region ================================
+        pos := RegExMatch(source_string, "(?<=<td>)\w+(?=</td>)", match, pos + StrLen(match))
         region_list := region_list . match . "|"
 
+        ; ============================= Publisher ==============================
+        pos := RegExMatch(source_string, "(?:<td><a href=""\/games\/company\/.+?>)(.+?)(?=</a></td>)", match, pos)
+        publisher_list := publisher_list . match1 . "|"
+
+        ; =============================== Date =================================
         pos := RegExMatch(source_string, "\d{2}\/\d{2}\/\d{2}", match, pos + StrLen(match))
         date_array := StrSplit(match, "/")
 
-        Switch date_array[1]
-        {
-        case 01: date_array[1] := "Jan"
-        case 02: date_array[1] := "Feb"
-        case 03: date_array[1] := "Mar"
-        case 04: date_array[1] := "Apr"
-        case 05: date_array[1] := "May"
-        case 06: date_array[1] := "June"
-        case 07: date_array[1] := "July"
-        case 08: date_array[1] := "Aug"
-        case 09: date_array[1] := "Sep"
-        case 10: date_array[1] := "Oct"
-        case 11: date_array[1] := "Nov"
-        case 12: date_array[1] := "Dec"
-        }
-        date_array[3] := "20" . date_array[3]
+        If (date_array[3] > 24)
+            date_array[3] := "19" . date_array[3]
+        Else
+            date_array[3] := "20" . date_array[3]
 
-        month_list := month_list . date_array[1] . "|"
+        month_list := month_list . MonthDateToName(date_array[1]) . "|"
         day_list := day_list . date_array[2] . "|"
         year_list := year_list . date_array[3] . "|"
 
+        ; ============================== Rating ================================
         RegExMatch(source_string, "(?<=<td>).+?(?=</td>)", match, pos + StrLen(match))
-        Switch match
-        {
-        case "A": match := "CERO" . ":" . match
-        case "B": match := "CERO" . ":" . match
-        case "C": match := "CERO" . ":" . match
-        case "D": match := "CERO" . ":" . match
-        case "Z": match := "CERO" . ":" . match
-        case "E": match := "ESRB" . ":" . match
-        case "3+": match := "PEGI" . ":" . "3"
-        }
-        rating_list := rating_list . match . "|"
+        rating_list := rating_list . RatingShortToFull(match) . "|"
 
-        entries := entries . A_Index . "|"
+        ; =========================== Local Players ============================
+        RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
+
     }
 
     Gosub, GameGUI
 Return
+; ==============================================================================
+;                               ParseRatingString
+; ==============================================================================
+RatingShortToFull(abbreviation)
+{
+    Switch abbreviation
+    {
+    case "A": Return "CERO" . ":" . abbreviation
+    case "B": Return "CERO" . ":" . abbreviation
+    case "C": Return "CERO" . ":" . abbreviation
+    case "D": Return "CERO" . ":" . abbreviation
+    case "Z": Return "CERO" . ":" . abbreviation
+    case "E": Return "ESRB" . ":" . abbreviation
+    case "G": Return "ACB" . ":" . abbreviation
+    case "3+": Return "PEGI" . ":" . "3"
+    Default: Return abbreviation
+    }
+}
+; ==============================================================================
+;                                MonthDateToName
+; ==============================================================================
+MonthDateToName(month_num)
+{
+    Switch month_num
+    {
+    case 01: Return "Jan"
+    case 02: Return "Feb"
+    case 03: Return "Mar"
+    case 04: Return "Apr"
+    case 05: Return "May"
+    case 06: Return "June"
+    case 07: Return "July"
+    case 08: Return "Aug"
+    case 09: Return "Sep"
+    case 10: Return "Oct"
+    case 11: Return "Nov"
+    case 12: Return "Dec"
+    Default: Return "Invalid"
+    }
+}
 ; ==============================================================================
 ;                                 Check Window
 ; ==============================================================================
@@ -167,19 +209,40 @@ CheckWindow()
         Exit
     }
 }
-; ================================== Search ====================================
+; ==============================================================================
+;                                    Search
+; ==============================================================================
 Search(text)
 {
     Send, {CtrlDown}f{CtrlUp}
     Paste(text)
+    Send, {Enter}
 }
-; =================================== Paste ====================================
+; ==============================================================================
+;                                     Paste
+; ==============================================================================
 Paste(text)
 {
     Clipboard := text
     Send, {CtrlDown}v{CtrlUp}
 }
-; =================================== Genre ====================================
+; ==============================================================================
+;                                     Title
+; ==============================================================================
+Title:
+    CheckWindow()
+
+    Search("New information proposal : Game name (by Region)")
+    Send, {Escape}{Tab}%region%{Tab}
+    Paste(title)
+    Send, {Tab}{Tab}
+    Paste(source)
+    Send, {ShiftDown}{Tab}{ShiftUp}
+    Beep(1200, 25)
+Return
+; ==============================================================================
+;                                     Genre
+; ==============================================================================
 Genre:
     CheckWindow()
 
@@ -189,7 +252,9 @@ Genre:
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
 Return
-; ================================= Publisher ==================================
+; ==============================================================================
+;                                   Publisher
+; ==============================================================================
 Publisher:
     CheckWindow()
 
@@ -201,7 +266,9 @@ Publisher:
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
 Return
-; ================================= Developer ==================================
+; ==============================================================================
+;                                   Developer
+; ==============================================================================
 Developer:
     CheckWindow()
 
@@ -213,7 +280,9 @@ Developer:
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
 Return
-; ============================= Rating Categories ==============================
+; ==============================================================================
+;                               Rating Categories
+; ==============================================================================
 RatingCategories:
     CheckWindow()
 
@@ -223,7 +292,9 @@ RatingCategories:
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
 Return
-; =============================== Release Date =================================
+; ==============================================================================
+;                                 Release Date
+; ==============================================================================
 ReleaseDate:
     CheckWindow()
 
@@ -234,6 +305,35 @@ ReleaseDate:
         Send, 2
 
     Send, %day%{Tab}%month%{Tab}%year%{Tab}{Tab}
+    Paste(source)
+    Send, {ShiftDown}{Tab}{ShiftUp}
+    Beep(1200, 25)
+Return
+; ==============================================================================
+;                                 Select Media
+; ==============================================================================
+SelectMedia:
+    CheckWindow()
+
+    Search("Info type :")
+    Send, {Enter}{Escape}{Tab}%media%{Tab}
+
+    If (region != "EU")
+        Send, ->
+
+    Send, %region%
+    Search("Support Number :")
+    Send, {Escape}{Tab}uni{Tab}{Tab}{Tab}
+    Paste(StrReplace(source, "data", "boxes"))
+    Send, {ShiftDown}{Tab}{Tab}{ShiftUp}
+Return
+; ==============================================================================
+;                                 Local Players
+; ==============================================================================
+LocalPlayers:
+    CheckWindow()
+    Search("New information proposal : Number of Players")
+    Send, {Escape}{Tab}%local_players%{Tab}{Tab}
     Paste(source)
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)

@@ -101,22 +101,50 @@ Return
 #j::
     ;@AHK++AlignAssignmentOn
     file   := "auctions.html"
+    output := "output.html"
+    images := []
     titles := []
-    links  := []
+    skus   := []
     ;@AHK++AlignAssignmentOff
 
     FileRead, source_string, %file%
+    FileDelete, %output%
+    FileAppend, % "<html>`n<style>`n`ttable, th, td { border:1px solid black; }`n`timg { width: 150px; }`n</style>`n<head>`n</head>`n<body>`n<table>`n", %output%
 
     pos := 1
+    while (pos := RegExMatch(source_string, "`n)(?<=<img class=""full-width"" src="").+(?=\?v=\d+"">)", match, pos + StrLen(match)))
+    {
+        FileAppend, `t<tr>`n, %output%
 
-; while(pos := RegExMatch(source_string, "(?<=<a href=""/products/)\w+", match, pos + StrLen(pos)))
-; {
-;     MsgBox, %match%
-; }
-; while(pos := RegExMatch(source_string, "\d+\sx\s\w+\s(Customer Returns|Brand New).+?RRP â‚¬\d+\.\d+", match, pos + StrLen(pos)))
-; {
-;     match := StrReplace(match, "â‚¬", "€")
-;     MsgBox, %match%
-;     titles.Push(match)
-; }
+        images.Push(match)
+
+        pos := RegExMatch(source_string, "(?<=<a href=""/products/)\w+(?="" target=""_blank"">)", match, pos + StrLen(match))
+        skus.Push(match)
+
+        pos := RegExMatch(source_string, "`n)\\n)", match, pos + StrLen(match))
+        titles.Push(match)
+
+        FileAppend, % "`t`t<td><img src=""" . images[images.Length()] . """></br>" . titles[titles.Length()] . "</td>`n", %output%
+
+        If (InStr(match, "Mixed"))
+        {
+            UrlDownloadToFile, % "https://eu.jobalots.com/products/" . skus[skus.Length()], lot.html
+            If (ErrorLevel)
+            {
+                MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+                Exit
+            }
+            FileRead, lot_string, lot.html
+
+            lot_pos := 1
+            while (lot_pos := RegExMatch(lot_string, "`n)(?<=<td><img src="").+(?=""></td>)", lot_match, lot_pos + StrLen(lot_match)))
+            {
+                FileAppend, `t`t<td><img src="%lot_match%"></td>`n, %output%
+            }
+        }
+
+        FileAppend, `t</tr>`n, %output%
+    }
+    FileAppend, </table>`n</body>`n</html>`n, %output%
+    Beep(1200, 25)
 Return

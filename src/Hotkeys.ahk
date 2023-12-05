@@ -98,7 +98,7 @@ Return
 ; ==============================================================================
 ;                                   Jobalots
 ; ==============================================================================
-#j::
+#F1::
     ;@AHK++AlignAssignmentOn
     file      := "auctions.html"
     output    := "output.html"
@@ -123,6 +123,8 @@ Return
         title := StrReplace(match, "RAW Customer Returns ")
         title := RegExReplace(title, " - RRP .+")
 
+        ToolTip, %title%, , ,
+
         FileAppend, % "`t`t<td><img src=""" . image . """></br>" . title . "</td>`n", %output%
 
         If (InStr(title, "Mixed"))
@@ -143,12 +145,13 @@ Return
                 lot_pos := RegExMatch(lot_string, "`n)(?<=<td>).+(?=</td>)", lot_match, lot_pos + StrLen(lot_match))
                 title := lot_match
 
-                FileAppend, `t`t<td><img src="%lot_match%"></br>%title%</td>`n, %output%
+                FileAppend, `t`t<td><img src="%img%"></br>%title%</td>`n, %output%
             }
         }
 
         FileAppend, `t</tr>`n, %output%
     }
     FileAppend, </table>`n</body>`n</html>`n, %output%
+    ToolTip
     Beep(1200, 25)
 Return

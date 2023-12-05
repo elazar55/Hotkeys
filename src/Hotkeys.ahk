@@ -103,11 +103,32 @@ Return
     file      := "auctions.html"
     output    := "output.html"
     img_width := 128
+    border    := "1px solid black"
+    font_size := "12px"
     ;@AHK++AlignAssignmentOff
 
     FileRead, source_string, %file%
     FileDelete, %output%
-    FileAppend, % "<html>`n<style>`n`ttable, th, td { border:1px solid black; font-size: 12px; }`n`timg { width: " . img_width . "px; }`n</style>`n<head>`n</head>`n<body>`n<table>`n", %output%
+    FileAppend, % "<html>`n", %output%
+    FileAppend, % "<style>`n`", %output%
+    FileAppend, % "`ttable, th, td`n", %output%
+    FileAppend, % "`t{`n", %output%
+    FileAppend, % "`t`tborder: " . border . ";`n", %output%
+    FileAppend, % "`t`tfont-size: " . font_size . ";`n", %output%
+    FileAppend, % "`t}`n", %output%
+    FileAppend, % "`timg`n", %output%
+    FileAppend, % "`t{`n", %output%
+    FileAppend, % "`t`twidth: " . img_width . "px;`n", %output%
+    FileAppend, % "`t}`n", %output%
+    FileAppend, % "`tspan`n", %output%
+    FileAppend, % "`t{`n", %output%
+    FileAppend, % "`t`tbackground: Yellow;`n", %output%
+    FileAppend, % "`t}`n", %output%
+    FileAppend, % "</style>`n", %output%
+    FileAppend, % "<head>`n", %output%
+    FileAppend, % "</head>`n", %output%
+    FileAppend, % "<body>`n", %output%
+    FileAppend, % "<table>`n", %output%
 
     pos := 1
     while (pos := RegExMatch(source_string, "`n)(?<=<img class=""full-width"" src="").+(?=\?v=\d+"">)", match, pos + StrLen(match)))
@@ -123,9 +144,22 @@ Return
         title := StrReplace(match, "RAW Customer Returns ")
         title := RegExReplace(title, " - RRP .+")
 
+        if (InStr(title, "Twitch", False))
+            title := "<span>" . title "</span>"
+        title := RegExReplace(title, " - RRP .+")
+        if (InStr(title, "electronic and photo", False))
+            title := "<span>" . title "</span>"
+
+        pos := RegExMatch(source_string, "(?<=""pa-theme-color"">)(\d{2})(?:<\/span>)(\w)", match, pos + StrLen(match))
+        time := match1 . match2 . match3 . ":"
+        pos := RegExMatch(source_string, "(?<=""pa-theme-color"">)(\d{2})(?:<\/span>)(\w)", match, pos + StrLen(match))
+        time := time . match1 . match2 . match3 . ":"
+        pos := RegExMatch(source_string, "(?<=""pa-theme-color"">)(\d{2})(?:<\/span>)(\w)", match, pos + StrLen(match))
+        time := time . match1 . match2 . match3
+
         ToolTip, %title%, , ,
 
-        FileAppend, % "`t`t<td><img src=""" . image . """></br>" . title . "</td>`n", %output%
+        FileAppend, % "`t`t<td><a href=""https://eu.jobalots.com/products/" . sku . """ target=""_blank""><img src=""" . image . """></a><p>" . title . "</p><p>" . time . "</p></td>`n", %output%
 
         If (InStr(title, "Mixed"))
         {
@@ -145,7 +179,7 @@ Return
                 lot_pos := RegExMatch(lot_string, "`n)(?<=<td>).+(?=</td>)", lot_match, lot_pos + StrLen(lot_match))
                 title := lot_match
 
-                FileAppend, `t`t<td><img src="%img%"></br>%title%</td>`n, %output%
+                FileAppend, `t`t<td><a href="https://eu.jobalots.com/products/%sku%"target="_blank"><img src="%img%"></a></br>%title%</td>`n, %output%
             }
         }
 

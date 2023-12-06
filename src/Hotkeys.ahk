@@ -141,13 +141,10 @@ Return
         sku := match
 
         pos := RegExMatch(source_string, "`n)\d+.+(?=\n)", match, pos + StrLen(match))
-        title := StrReplace(match, "RAW Customer Returns ")
-        title := RegExReplace(title, " - RRP .+")
+        title := RegExReplace(match, "i)\bOf\b|\bAnd\b|\bWith\b|\bFor\b|\bBrand\b|\bNew\b|\bRAW\b|\bCustomer\b|\bReturns\b|( - RRP .+)")
 
-        if (InStr(title, "Twitch", False))
-            title := "<span>" . title "</span>"
-        title := RegExReplace(title, " - RRP .+")
-        if (InStr(title, "electronic and photo", False))
+        RegExMatch(title, "i)Twitch|Electronic", match)
+        if (match)
             title := "<span>" . title "</span>"
 
         pos := RegExMatch(source_string, "(?<=""pa-theme-color"">)(\d{2})(?:<\/span>)(\w)", match, pos + StrLen(match))
@@ -177,7 +174,7 @@ Return
                 img := lot_match
 
                 lot_pos := RegExMatch(lot_string, "`n)(?<=<td>).+(?=</td>)", lot_match, lot_pos + StrLen(lot_match))
-                title := lot_match
+                title := RegExReplace(lot_match, "i)\bOf\b|\bAnd\b|\bWith\b|\bFor\b|\bBrand\b|\bNew\b|\bRAW\b|\bCustomer\b|\bReturns\b|( - RRP .+)")
 
                 FileAppend, `t`t<td><a href="https://eu.jobalots.com/products/%sku%"target="_blank"><img src="%img%"></a></br>%title%</td>`n, %output%
             }

@@ -107,6 +107,7 @@ ScrapeGameFAQs:
     genre := StrReplace(genre, "Miscellaneous,Edutainment", "Educational")
     genre := StrReplace(genre, "Miscellaneous,Compilation", "Compilation")
     genre := StrReplace(genre, "Simulation,Virtual,Pet", "Simulation")
+    genre := StrReplace(genre, "Adventure,Visual Novel", "Adventure / Visual Novel")
 
     ; =============================== Developer ================================
     pos := RegExMatch(source_string, "(?<=<a href=""/games/company/).*?"">(.+?)(?=</a>)", developer, pos)
@@ -167,7 +168,9 @@ RatingShortToFull(abbreviation)
     case "D": Return "CERO" . ":" . abbreviation
     case "Z": Return "CERO" . ":" . abbreviation
     case "E": Return "ESRB" . ":" . abbreviation
+    case "E10+": Return "ESRB" . ":" . "E10"
     case "G": Return "ACB" . ":" . abbreviation
+    case "ALL": Return "GRB" . ":" . abbreviation
     case "3+": Return "PEGI" . ":" . "3"
     Default: Return abbreviation
     }

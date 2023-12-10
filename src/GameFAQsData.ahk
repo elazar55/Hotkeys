@@ -60,13 +60,14 @@ Return
 ; ==============================================================================
 ;                                  IsValidURL
 ; ==============================================================================
-IsValidURL(url)
+CheckIfValidURL(url)
 {
     RegExMatch(url, "gamefaqs.+?/data", match)
     If (match == "")
-        Return False
-
-    Return True
+    {
+        MsgBox, Wrong URL
+        Exit
+    }
 }
 ; ==============================================================================
 ;                                Scrape GameFAQs
@@ -74,11 +75,7 @@ IsValidURL(url)
 ScrapeGameFAQs:
     Gui, Submit
 
-    If (!IsValidURL(source))
-    {
-        MsgBox, Wrong URL
-        Exit
-    }
+    CheckIfValidURL(source)
 
     UrlDownloadToFile, %source%, Game_Data.html
     If (ErrorLevel)
@@ -86,8 +83,6 @@ ScrapeGameFAQs:
         MsgBox, UrlDownloadToFile Error: %ErrorLevel%
         Exit
     }
-
-    FileRead, source_string, Game_Data.html
 
     ;@AHK++AlignAssignmentOn
     title_list     :=
@@ -101,6 +96,8 @@ ScrapeGameFAQs:
     entries        :=
     entry          := 1
     ;@AHK++AlignAssignmentOff
+
+    FileRead, source_string, Game_Data.html
 
     ; ================================= Genre ==================================
     pos := RegExMatch(source_string, "(?<=genre&quot;:&quot;).+?(?=&quot;,&quot;)", genre, pos)
@@ -150,7 +147,6 @@ ScrapeGameFAQs:
 
         ; =========================== Local Players ============================
         RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
-
     }
 
     Gosub, GameGUI

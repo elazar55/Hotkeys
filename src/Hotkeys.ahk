@@ -18,6 +18,7 @@ SendMode, Event
 #Include, Scraper.ahk
 #Include, Helpers.ahk
 #Include, GameFAQsData.ahk
+#Include, Jobalots.ahk
 ; ==============================================================================
 ;                                      GUI
 ; ==============================================================================

@@ -203,8 +203,7 @@ CheckWindow()
     WinGetTitle, title, A, , ,
     If (!InStr(title, "Google Chrome", 1))
     {
-        SoundBeep, 600, 192
-        SoundBeep, 500, 192
+        Beep(500, 25)
         Exit
     }
 }

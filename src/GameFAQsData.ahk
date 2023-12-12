@@ -17,7 +17,7 @@ GameGUI:
 
     ; ============================= Scrape Source ==============================
     Gui, Add, Button, W%button_width% X10 Default GScrapeGameFAQs, Scrape Source
-    Gui, Add, Edit, R1 W%edit_width% XP+%button_width% YP Vsource, %source%
+    Gui, Add, Edit, R1 W%edit_width% XP+%button_width% YP GScrapeGameFAQs Vsource, %source%
     GuiControl, Focus, source
 
     ; =============================== Publisher ================================
@@ -144,6 +144,35 @@ ScrapeGameFAQs:
 
         ; =========================== Local Players ============================
         RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
+    }
+
+    ; =================================== Boxes ====================================
+    boxes_url := StrReplace(source, "data", "boxes")
+    UrlDownloadToFile, %boxes_url%, Boxes_Data.html
+    If (ErrorLevel)
+    {
+        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+        Exit
+    }
+    FileRead, boxes_string, Boxes_Data.html
+    RegExMatch(boxes_string, "`n)(?<=<a href="")\/.+\/boxes\/(\d+)", match)
+    boxes_url := boxes_url . match1
+    UrlDownloadToFile, %boxes_url%, Boxes_Data.html
+    If (ErrorLevel)
+    {
+        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+        Exit
+    }
+    FileRead, boxes_string, Boxes_Data.html
+    RegExMatch(boxes_string, "(?<=""image"":"").+(?=_thumb.jpg"")", match)
+    front_cover := "https://gamefaqs.gamespot.com" . match . "_front.jpg"
+    back_cover := "https://gamefaqs.gamespot.com" . match . "_back.jpg"
+    ; MsgBox, %back_cover%
+    UrlDownloadToFile, %back_cover%, C:/Users/Elazar/Downloads/back_cover.jpg
+    If (ErrorLevel)
+    {
+        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+        Exit
     }
 
     Gosub, GameGUI

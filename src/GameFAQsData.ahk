@@ -17,7 +17,7 @@ GameGUI:
 
     ; ============================= Scrape Source ==============================
     Gui, Add, Button, W%button_width% X10 Default GScrapeGameFAQs, Scrape Source
-    Gui, Add, Edit, R1 W%edit_width% XP+%button_width% YP GScrapeGameFAQs Vsource, %source%
+    Gui, Add, Edit, R1 W%edit_width% XP+%button_width% YP Vsource, %source%
     GuiControl, Focus, source
 
     ; =============================== Publisher ================================
@@ -88,15 +88,8 @@ ScrapeGameFAQs:
     Gui, Submit
 
     CheckIfValidURL(source)
-
-    ; UrlDownloadToFile, %source%, Game_Data.html
-    ; If (ErrorLevel)
-    ; {
-    ;     MsgBox, UrlDownloadToFile Error: %ErrorLevel%
-    ;     Exit
-    ; }
-    ; FileRead, source_string, Game_Data.html
     source_string := UrlDownloadWrapper(source, "Game_Data.html")
+
     ;@AHK++AlignAssignmentOn
     title_list     :=
     publisher_list :=
@@ -159,31 +152,26 @@ ScrapeGameFAQs:
 
     ; =================================== Boxes ====================================
     boxes_url := StrReplace(source, "data", "boxes")
-    UrlDownloadToFile, %boxes_url%, Boxes_Data.html
-    If (ErrorLevel)
+    boxes_src_as_string := UrlDownloadWrapper(boxes_url, "Boxes_Data.html")
+
+    pos := 1
+    While (pos := RegExMatch(boxes_src_as_string, "`n)(?<=<a href="")\/.+\/boxes\/(\d+)", match, pos + StrLen(match)))
     {
-        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
-        Exit
-    }
-    FileRead, boxes_string, Boxes_Data.html
-    RegExMatch(boxes_string, "`n)(?<=<a href="")\/.+\/boxes\/(\d+)", match)
-    boxes_url := boxes_url . match1
-    UrlDownloadToFile, %boxes_url%, Boxes_Data.html
-    If (ErrorLevel)
-    {
-        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
-        Exit
-    }
-    FileRead, boxes_string, Boxes_Data.html
-    RegExMatch(boxes_string, "(?<=""image"":"").+(?=_thumb.jpg"")", match)
-    front_cover := "https://gamefaqs.gamespot.com" . match . "_front.jpg"
-    back_cover := "https://gamefaqs.gamespot.com" . match . "_back.jpg"
-    ; MsgBox, %back_cover%
-    UrlDownloadToFile, %back_cover%, C:/Users/Elazar/Downloads/back_cover.jpg
-    If (ErrorLevel)
-    {
-        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
-        Exit
+        boxshot_url := boxes_url . "/" . match1
+        boxshot_src_as_string := UrlDownloadWrapper(boxshot_url, "Boxshot_Data.html")
+
+        cover_pos := 1
+        While (cover_pos := RegExMatch(boxshot_src_as_string, "(?<=data-img="").+?(?="")", cover_match, cover_pos + StrLen(cover_match)))
+        {
+            cover := "https://gamefaqs.gamespot.com" . cover_match
+            RegExMatch(cover_match, "[^\/]*$", filename)
+            UrlDownloadToFile, %cover%, C:/Users/Elazar/Downloads/%filename%
+            If (ErrorLevel)
+            {
+                MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+                Exit
+            }
+        }
     }
 
     Gosub, GameGUI

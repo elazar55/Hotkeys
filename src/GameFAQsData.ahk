@@ -101,10 +101,7 @@ ScrapeGameFAQs:
 
     ; ================================= Genre ==================================
     pos := RegExMatch(source_string, "(?<=genre&quot;:&quot;).+?(?=&quot;,&quot;)", genre, pos)
-    genre := StrReplace(genre, "Miscellaneous,Edutainment", "Educational")
-    genre := StrReplace(genre, "Miscellaneous,Compilation", "Compilation")
-    genre := StrReplace(genre, "Simulation,Virtual,Pet", "Simulation")
-    genre := StrReplace(genre, "Adventure,Visual Novel", "Adventure / Visual Novel")
+    genre := TransformGenre(genre)
 
     ; =============================== Developer ================================
     pos := RegExMatch(source_string, "(?<=<a href=""/games/company/).*?"">(.+?)(?=</a>)", developer, pos)
@@ -151,6 +148,22 @@ ScrapeGameFAQs:
 
     Gosub, GameGUI
 Return
+; ==============================================================================
+;                                Transform Genre
+; ==============================================================================
+TransformGenre(genre)
+{
+    Switch genre
+    {
+    case "Miscellaneous,Edutainment": Return "Educational"
+    case "Miscellaneous,Compilation": Return "Compilation"
+    case "Simulation,Virtual,Pet": Return "Simulation"
+    case "Adventure,Visual Novel": Return "Adventure / Visual Novel"
+    case "Action,Fighting,2D": Return "Fight / 2D"
+    case "Action,Rhythm,Music": Return "Rhythm"
+    Default: Return genre
+    }
+}
 ; ==============================================================================
 ;                               ParseRatingString
 ; ==============================================================================

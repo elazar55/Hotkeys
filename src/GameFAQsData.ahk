@@ -57,6 +57,18 @@ GameGUI:
 
     Gui, Show
 Return
+
+UrlDownloadWrapper(url, file)
+{
+    UrlDownloadToFile, %url%, %file%
+    If (ErrorLevel)
+    {
+        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+        Exit
+    }
+    FileRead, file_as_string, %file%
+    Return file_as_string
+}
 ; ==============================================================================
 ;                                  IsValidURL
 ; ==============================================================================
@@ -77,13 +89,14 @@ ScrapeGameFAQs:
 
     CheckIfValidURL(source)
 
-    UrlDownloadToFile, %source%, Game_Data.html
-    If (ErrorLevel)
-    {
-        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
-        Exit
-    }
-
+    ; UrlDownloadToFile, %source%, Game_Data.html
+    ; If (ErrorLevel)
+    ; {
+    ;     MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+    ;     Exit
+    ; }
+    ; FileRead, source_string, Game_Data.html
+    source_string := UrlDownloadWrapper(source, "Game_Data.html")
     ;@AHK++AlignAssignmentOn
     title_list     :=
     publisher_list :=
@@ -96,8 +109,6 @@ ScrapeGameFAQs:
     entries        :=
     entry          := 1
     ;@AHK++AlignAssignmentOff
-
-    FileRead, source_string, Game_Data.html
 
     ; ================================= Genre ==================================
     pos := RegExMatch(source_string, "(?<=genre&quot;:&quot;).+?(?=&quot;,&quot;)", genre, pos)

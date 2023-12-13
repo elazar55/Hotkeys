@@ -51,6 +51,10 @@ GameGUI:
     Gui, Add, Button, W%button_width% X10 GSelectMedia, Select Media
     Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vmedia Choose1, Case : Back|Case : Front
 
+    ; ================================ Images ==================================
+    Gui, Add, Button, W%button_width% X10 GImages, Select Images
+    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vimage, %images_list%
+
     ; ============================= Select Entry ===============================
     Gui, Add, Button, W%button_width% X10 GEntry, Select Entry
     Gui, Add, DDL, W%edit_width% XP+%button_width% YP Ventry AltSubmit Choose%entry%, %entries%
@@ -98,6 +102,7 @@ ScrapeGameFAQs:
     day_list       :=
     month_list     :=
     year_list      :=
+    images_list    :=
     pos            := 1
     entries        :=
     entry          := 1
@@ -159,18 +164,12 @@ ScrapeGameFAQs:
     {
         boxshot_url := boxes_url . "/" . match1
         boxshot_src_as_string := UrlDownloadWrapper(boxshot_url, "Boxshot_Data.html")
+        RegExMatch(boxes_src_as_string, "`n)(?<=<div class=""meta"">).+(?=<br/>)", image_title, pos + StrLen(match))
 
         cover_pos := 1
         While (cover_pos := RegExMatch(boxshot_src_as_string, "(?<=data-img="").+?(?="")", cover_match, cover_pos + StrLen(cover_match)))
         {
-            cover := "https://gamefaqs.gamespot.com" . cover_match
-            RegExMatch(cover_match, "[^\/]*$", filename)
-            UrlDownloadToFile, %cover%, C:/Users/Elazar/Downloads/%filename%
-            If (ErrorLevel)
-            {
-                MsgBox, UrlDownloadToFile Error: %ErrorLevel%
-                Exit
-            }
+            images_list := images_list . image_title . " " . cover_match . "|"
         }
     }
 
@@ -365,6 +364,24 @@ SelectMedia:
     Send, {Escape}{Tab}uni{Tab}{Tab}{Tab}
     Paste(StrReplace(source, "data", "boxes"))
     Send, {ShiftDown}{Tab}{Tab}{ShiftUp}
+Return
+; ==============================================================================
+;                                    Images
+; ==============================================================================
+Images:
+    Gui, Submit
+    FileDelete, C:\Users\Elazar\Downloads\*.jpg
+    FileDelete, C:\Users\Elazar\Downloads\*.png
+    RegExMatch(image, "\/.+", image)
+    RegExMatch(image, "[^\/]*$", filename)
+
+    UrlDownloadToFile, https://gamefaqs.gamespot.com%image%, C:/Users/Elazar/Downloads/%filename%
+    If (ErrorLevel)
+    {
+        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+        Exit
+    }
+    Run, DS_Resize.bat, C:\Users\Elazar\Downloads\, ,
 Return
 ; ==============================================================================
 ;                                 Local Players

@@ -6,7 +6,6 @@ GameGUI:
     ;@AHK++AlignAssignmentOn
     button_width := 96
     edit_width   := 320
-    date_width   := edit_width / 4
     ;@AHK++AlignAssignmentOff
     Gui, Destroy
     Gui, +AlwaysOnTop
@@ -34,10 +33,10 @@ GameGUI:
 
     ; ============================= Release date ===============================
     Gui, Add, Button, W%button_width% X10 GReleaseDate, Release date
-    Gui, Add, DDL, W%date_width% XP+%button_width% YP Vregion Choose%entry%, %region_list%
-    Gui, Add, DDL, W%date_width% XP+%date_width% YP Vday Choose%entry%, %day_list%
-    Gui, Add, DDL, W%date_width% XP+%date_width% YP Vmonth Choose%entry%, %month_list%
-    Gui, Add, DDL, W%date_width% XP+%date_width% YP Vyear Choose%entry%, %year_list%
+    Gui, Add, DDL, % "W" . edit_width / 4 . " XP+" . button_width . " YP Vregion Choose" . entry, %region_list%
+    Gui, Add, DDL, % "W" . edit_width / 4 . " XP+" . edit_width / 4 . " YP Vday Choose" . entry, %day_list%
+    Gui, Add, DDL, % "W" . edit_width / 4 . " XP+" . edit_width / 4 . " YP Vmonth Choose" . entry, %month_list%
+    Gui, Add, DDL, % "W" . edit_width / 4 . " XP+" . edit_width / 4 . " YP Vyear Choose" . entry, %year_list%
 
     ; ================================= Genre ==================================
     Gui, Add, Button, W%button_width% X10 GGenre, Genre
@@ -53,7 +52,8 @@ GameGUI:
 
     ; ================================ Images ==================================
     Gui, Add, Button, W%button_width% X10 GImages, Select Images
-    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vimage, %images_list%
+    image_rows := StrSplit(images_list, "|").Length() - 1
+    Gui, Add, ListBox, W%edit_width% XP+%button_width% YP Vimage AltSubmit Multi R%image_rows% Choose%image%, %images_list%
 
     ; ============================= Select Entry ===============================
     Gui, Add, Button, W%button_width% X10 GEntry, Select Entry
@@ -372,14 +372,21 @@ Images:
     Gui, Submit
     FileDelete, C:\Users\Elazar\Downloads\*.jpg
     FileDelete, C:\Users\Elazar\Downloads\*.png
-    RegExMatch(image, "\/.+", image)
-    RegExMatch(image, "[^\/]*$", filename)
+    list := StrSplit(images_list, "|")
 
-    UrlDownloadToFile, https://gamefaqs.gamespot.com%image%, C:/Users/Elazar/Downloads/%filename%
-    If (ErrorLevel)
+    Loop, Parse, image, |,
     {
-        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
-        Exit
+        current_item := list[A_LoopField]
+
+        RegExMatch(current_item, "\/.+", current_item)
+        RegExMatch(current_item, "[^\/]*$", filename)
+
+        UrlDownloadToFile, https://gamefaqs.gamespot.com%current_item%, C:/Users/Elazar/Downloads/%filename%
+        If (ErrorLevel)
+        {
+            MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+            Exit
+        }
     }
     Run, DS_Resize.bat, C:\Users\Elazar\Downloads\, ,
 Return

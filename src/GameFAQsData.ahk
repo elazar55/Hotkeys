@@ -48,7 +48,7 @@ GameGUI:
 
     ; ============================= Select Media ===============================
     Gui, Add, Button, W%button_width% X10 GSelectMedia, Select Media
-    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vmedia Choose1, Case : Back|Case : Front
+    Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vmedia Choose1, Case : Back|Case : Front|Case : Spine
 
     ; ================================ Images ==================================
     Gui, Add, Button, W%button_width% X10 GImages, Select Images
@@ -394,8 +394,11 @@ Images:
             MsgBox, UrlDownloadToFile Error: %ErrorLevel%
             Exit
         }
-        If (platform == "DS" && (side == "front" || side == "back"))
-            Run, magick.exe %filename% -resize 513x458! -set filename:f `%t `%[filename:f].png, %path%\, ,
+        If (platform == "DS")
+            if (side == "front" || side == "back")
+                Run, magick.exe %filename% -resize 513x458! -set filename:f `%t `%[filename:f].png, %path%\, ,
+            else if (side == "side")
+                Run, magick.exe %filename% -rotate 90 -resize 63x458! -set filename:f `%t `%[filename:f].png, %path%\, ,
     }
 Return
 ; ==============================================================================

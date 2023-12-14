@@ -61,7 +61,9 @@ GameGUI:
 
     Gui, Show
 Return
-
+; ==============================================================================
+;                              UrlDownloadWrapper
+; ==============================================================================
 UrlDownloadWrapper(url, file)
 {
     UrlDownloadToFile, %url%, %file%
@@ -370,25 +372,31 @@ Return
 ; ==============================================================================
 Images:
     Gui, Submit
-    FileDelete, C:\Users\Elazar\Downloads\*.jpg
-    FileDelete, C:\Users\Elazar\Downloads\*.png
+
+    path = C:\Users\Elazar\Downloads
     list := StrSplit(images_list, "|")
+
+    FileDelete, %path%\*.jpg
+    FileDelete, %path%\*.png
 
     Loop, Parse, image, |,
     {
-        current_item := list[A_LoopField]
+        this_image := list[A_LoopField]
 
-        RegExMatch(current_item, "\/.+", current_item)
-        RegExMatch(current_item, "[^\/]*$", filename)
+        RegExMatch(this_image, "^\w+", platform)
+        RegExMatch(this_image, "\/.+", this_image)
+        RegExMatch(this_image, "[^\/]*$", filename)
+        RegExMatch(filename, "[a-z]+(?=\.)", side)
 
-        UrlDownloadToFile, https://gamefaqs.gamespot.com%current_item%, C:/Users/Elazar/Downloads/%filename%
+        UrlDownloadToFile, https://gamefaqs.gamespot.com%this_image%, %path%/%filename%
         If (ErrorLevel)
         {
             MsgBox, UrlDownloadToFile Error: %ErrorLevel%
             Exit
         }
+        If (platform == "DS" && (side == "front" || side == "back"))
+            Run, magick.exe %filename% -resize 513x458! -set filename:f `%t `%[filename:f].png, %path%\, ,
     }
-    Run, DS_Resize.bat, C:\Users\Elazar\Downloads\, ,
 Return
 ; ==============================================================================
 ;                                 Local Players

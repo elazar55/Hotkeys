@@ -79,10 +79,14 @@ ScrapeGameFAQs:
     month_list     :=
     year_list      :=
     images_list    :=
+    product_ID     :=
     pos            := 1
     entries        :=
     entry          := 1
     ;@AHK++AlignAssignmentOff
+
+    ; =============================== Platform =================================
+    RegExMatch(source, "`(?<=https://gamefaqs.gamespot.com/)\w+(?=/)", platform)
 
     ; ================================= Genre ==================================
     pos := RegExMatch(source_string, "(?<=genre&quot;:&quot;).+?(?=&quot;,&quot;)", genre, pos)
@@ -93,14 +97,16 @@ ScrapeGameFAQs:
     developer := developer1
 
     ; ============================ Regeional Data ==============================
+    start := InStr(source_string, "<div class=""pod gdata"" data-pid=""")
+    end := InStr(source_string, "<div class=""pod gdata hide"" data-pid=""", 0, start)
+    If (end != 0)
+        source_string := SubStr(source_string, start, end - start)
+
     pos := 1
     While (pos := RegExMatch(source_string, "(?<=<td colspan=""6"" class=""bold"">).+?(?=</td>)", match, pos + StrLen(match)))
     {
         ; =============================== Title ================================
         title_list := title_list . match . "|"
-
-        ; ============================== Entries ===============================
-        entries := entries . A_Index . " - " . match . "|"
 
         ; ============================== Region ================================
         pos := RegExMatch(source_string, "(?<=<td>)\w+(?=</td>)", match, pos + StrLen(match))
@@ -110,9 +116,24 @@ ScrapeGameFAQs:
         pos := RegExMatch(source_string, "(?:<td><a href=""\/games\/company\/.+?>)(.+?)(?=</a></td>)", match, pos)
         publisher_list := publisher_list . match1 . "|"
 
+        ; ============================== Product ID ================================
+        pos := RegExMatch(source_string, "(?<=<td>).*?(?=</td>)", match, pos + StrLen(match))
+        product_ID := match
+
+        ; ======================= !!Barcode Stub ===============================
+        pos := RegExMatch(source_string, "(?<=<td>).*?(?=</td>)", match, pos + StrLen(match))
+
+        ; ============================== Entries ===============================
+        entries := entries . A_Index . " - " . product_ID . "|"
+
         ; =============================== Date =================================
-        pos := RegExMatch(source_string, "\d{2}\/\d{2}\/\d{2}", match, pos + StrLen(match))
-        date_array := StrSplit(match, "/")
+        pos := RegExMatch(source_string, "(?<=<td>).*?(?=</td>)", match, pos + StrLen(match))
+
+        RegExMatch(match, "\d{2}\/\d{2}\/\d{2}", date_format)
+        If (date_format == "")
+            date_array := [00, 00, 00]
+        Else
+            date_array := StrSplit(match, "/")
 
         If (date_array[3] > 24)
             date_array[3] := "19" . date_array[3]
@@ -124,14 +145,11 @@ ScrapeGameFAQs:
         year_list := year_list . date_array[3] . "|"
 
         ; ============================== Rating ================================
-        RegExMatch(source_string, "(?<=<td>).+?(?=</td>)", match, pos + StrLen(match))
+        pos := RegExMatch(source_string, "(?<=<td>).+?(?=</td>)", match, pos + StrLen(match))
         rating_list := rating_list . RatingShortToFull(match) . "|"
-
-        ; =========================== Local Players ============================
-        RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
     }
-    ; =============================== Platform =================================
-    RegExMatch(source, "`(?<=https://gamefaqs.gamespot.com/)\w+(?=/)", platform)
+    ; =========================== Local Players ============================
+    RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
 
     ; =================================== Boxes ====================================
     boxes_url := StrReplace(source, "data", "boxes")
@@ -215,6 +233,7 @@ RatingShortToFull(abbreviation)
     case "G": Return "ACB" . ":" . abbreviation
     case "ALL": Return "GRB" . ":" . abbreviation
     case "3+": Return "PEGI" . ":" . "3"
+    case "7+": Return "PEGI" . ":" . "7"
     Default: Return abbreviation
     }
 }

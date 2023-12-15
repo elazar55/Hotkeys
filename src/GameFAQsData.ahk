@@ -62,32 +62,6 @@ GameGUI:
     Gui, Show
 Return
 ; ==============================================================================
-;                              UrlDownloadWrapper
-; ==============================================================================
-UrlDownloadWrapper(url, file)
-{
-    UrlDownloadToFile, %url%, %file%
-    If (ErrorLevel)
-    {
-        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
-        Exit
-    }
-    FileRead, file_as_string, %file%
-    Return file_as_string
-}
-; ==============================================================================
-;                                  IsValidURL
-; ==============================================================================
-CheckIfValidURL(url)
-{
-    RegExMatch(url, "gamefaqs.+?/data", match)
-    If (match == "")
-    {
-        MsgBox, Wrong URL
-        Exit
-    }
-}
-; ==============================================================================
 ;                                Scrape GameFAQs
 ; ==============================================================================
 ScrapeGameFAQs:
@@ -177,6 +151,32 @@ ScrapeGameFAQs:
 
     Gosub, GameGUI
 Return
+; ==============================================================================
+;                              UrlDownloadWrapper
+; ==============================================================================
+UrlDownloadWrapper(url, file)
+{
+    UrlDownloadToFile, %url%, %file%
+    If (ErrorLevel)
+    {
+        MsgBox, UrlDownloadToFile Error: %ErrorLevel%
+        Exit
+    }
+    FileRead, file_as_string, %file%
+    Return file_as_string
+}
+; ==============================================================================
+;                                  IsValidURL
+; ==============================================================================
+CheckIfValidURL(url)
+{
+    RegExMatch(url, "gamefaqs.+?/data", match)
+    If (match == "")
+    {
+        MsgBox, Wrong URL
+        Exit
+    }
+}
 ; ==============================================================================
 ;                                Transform Genre
 ; ==============================================================================

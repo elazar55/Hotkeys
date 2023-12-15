@@ -130,6 +130,8 @@ ScrapeGameFAQs:
         ; =========================== Local Players ============================
         RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
     }
+    ; =============================== Platform =================================
+    RegExMatch(source, "`(?<=https://gamefaqs.gamespot.com/)\w+(?=/)", platform)
 
     ; =================================== Boxes ====================================
     boxes_url := StrReplace(source, "data", "boxes")
@@ -138,9 +140,12 @@ ScrapeGameFAQs:
     pos := 1
     While (pos := RegExMatch(boxes_src_as_string, "`n)(?<=<a href="")\/.+\/boxes\/(\d+)", match, pos + StrLen(match)))
     {
+        RegExMatch(boxes_src_as_string, "`n)(?<=<div class=""meta"">).+(?=<br/>)", image_title, pos + StrLen(match))
+        If (!InStr(image_title, platform))
+            continue
+
         boxshot_url := boxes_url . "/" . match1
         boxshot_src_as_string := UrlDownloadWrapper(boxshot_url, "Boxshot_Data.html")
-        RegExMatch(boxes_src_as_string, "`n)(?<=<div class=""meta"">).+(?=<br/>)", image_title, pos + StrLen(match))
 
         cover_pos := 1
         While (cover_pos := RegExMatch(boxshot_src_as_string, "(?<=data-img="").+?(?="")", cover_match, cover_pos + StrLen(cover_match)))

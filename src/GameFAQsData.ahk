@@ -86,15 +86,22 @@ ScrapeGameFAQs:
     ;@AHK++AlignAssignmentOff
 
     ; =============================== Platform =================================
+    ; Line 23
     RegExMatch(source, "`(?<=https://gamefaqs.gamespot.com/)\w+(?=/)", platform)
 
     ; ================================= Genre ==================================
+    ; Line 27
     pos := RegExMatch(source_string, "(?<=genre&quot;:&quot;).+?(?=&quot;,&quot;)", genre, pos)
     genre := TransformGenre(genre)
 
     ; =============================== Developer ================================
+    ; Line 233
     pos := RegExMatch(source_string, "(?<=<a href=""/games/company/).*?"">(.+?)(?=</a>)", developer, pos)
     developer := developer1
+
+    ; =========================== Local Players ============================
+    ; Line 246
+    RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
 
     ; ============================ Regeional Data ==============================
     start := InStr(source_string, "<div class=""pod gdata"" data-pid=""")
@@ -103,9 +110,11 @@ ScrapeGameFAQs:
         source_string := SubStr(source_string, start, end - start)
 
     pos := 1
+    ; Line 292
     While (pos := RegExMatch(source_string, "(?<=<td colspan=""6"" class=""bold"">).+?(?=</td>)", match, pos + StrLen(match)))
     {
         ; =============================== Title ================================
+        title := match
         title_list := title_list . match . "|"
 
         ; ============================== Region ================================
@@ -124,14 +133,14 @@ ScrapeGameFAQs:
         pos := RegExMatch(source_string, "(?<=<td>).*?(?=</td>)", match, pos + StrLen(match))
 
         ; ============================== Entries ===============================
-        entries := entries . A_Index . " - " . product_ID . "|"
+        entries := entries . A_Index . " - " . title . " (" . product_ID . ") |"
 
         ; =============================== Date =================================
         pos := RegExMatch(source_string, "(?<=<td>).*?(?=</td>)", match, pos + StrLen(match))
 
         RegExMatch(match, "\d{2}\/\d{2}\/\d{2}", date_format)
         If (date_format == "")
-            date_array := [00, 00, 00]
+            date_array := [00, 00, 25]
         Else
             date_array := StrSplit(match, "/")
 
@@ -148,8 +157,6 @@ ScrapeGameFAQs:
         pos := RegExMatch(source_string, "(?<=<td>).+?(?=</td>)", match, pos + StrLen(match))
         rating_list := rating_list . RatingShortToFull(match) . "|"
     }
-    ; =========================== Local Players ============================
-    RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
 
     ; =================================== Boxes ====================================
     boxes_url := StrReplace(source, "data", "boxes")

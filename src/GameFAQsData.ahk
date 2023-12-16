@@ -5,7 +5,7 @@
 GameGUI:
     ;@AHK++AlignAssignmentOn
     button_width := 96
-    edit_width   := 320
+    edit_width   := 400
     ;@AHK++AlignAssignmentOff
     Gui, Destroy
     Gui, +AlwaysOnTop
@@ -106,8 +106,9 @@ ScrapeGameFAQs:
     ; ============================ Regeional Data ==============================
     start := InStr(source_string, "<div class=""pod gdata"" data-pid=""")
     end := InStr(source_string, "<div class=""pod gdata hide"" data-pid=""", 0, start)
-    If (end != 0)
-        source_string := SubStr(source_string, start, end - start)
+    If (end == 0)
+        end := StrLen(source_string)
+    source_string := SubStr(source_string, start, end - start)
 
     pos := 1
     ; Line 292
@@ -431,6 +432,7 @@ Images:
             else if (side == "side")
                 Run, magick.exe %filename% -rotate 90 -resize 63x458! -set filename:f `%t `%[filename:f].png, %path%\, ,
     }
+    Gosub, GameGUI
 Return
 ; ==============================================================================
 ;                                 Local Players

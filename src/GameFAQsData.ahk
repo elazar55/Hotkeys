@@ -51,14 +51,16 @@ GameGUI:
     Gui, Add, DDL, W%edit_width% XP+%button_width% YP Vmedia Choose1, Case : Back|Case : Front|Case : Spine
 
     ; ================================ Images ==================================
-    Gui, Add, Button, W%button_width% X10 GImages, Select Images
+    Gui, Add, Button, % "W" . button_width / 4 . " X10 GPickFolder", ...
+    If (dl_folder == "")
+        dl_folder = C:\Users\%A_UserName%\Downloads
+    Gui, Add, Button, % "W" . button_width / 4 * 3 . " XP+" . button_width / 4 . " GImages", Images
     image_rows := StrSplit(images_list, "|").Length() - 1
-    Gui, Add, ListBox, W%edit_width% XP+%button_width% YP Vimage AltSubmit Multi R%image_rows% Choose%image%, %images_list%
+    Gui, Add, ListBox, % "W" . edit_width . " XP+" . button_width / 4 * 3 . " YP Vimage AltSubmit Multi R" . image_rows . " Choose" . image, %images_list%
 
     ; ============================= Select Entry ===============================
     Gui, Add, Button, W%button_width% X10 GEntry, Select Entry
     Gui, Add, DDL, W%edit_width% XP+%button_width% YP Ventry AltSubmit Choose%entry%, %entries%
-
     Gui, Show
 Return
 ; ==============================================================================
@@ -221,6 +223,8 @@ TransformGenre(genre)
     case "Adventure,Visual Novel": Return "Adventure / Visual Novel"
     case "Action,Fighting,2D": Return "Fight / 2D"
     case "Action,Rhythm,Music": Return "Rhythm"
+    case "Simulation,Virtual,Virtual Life": Return "Simulation / Life"
+    case "Sports,Individual,Horse Racing": Return "Horses Race"
     Default: Return genre
     }
 }
@@ -400,16 +404,23 @@ SelectMedia:
     Send, {ShiftDown}{Tab}{Tab}{ShiftUp}
 Return
 ; ==============================================================================
+;                                  Pick Folder
+; ==============================================================================
+PickFolder:
+    Gui, hide
+    FileSelectFolder, dl_folder, *%dl_folder%, 3
+    Gui, Show
+Return
+; ==============================================================================
 ;                                    Images
 ; ==============================================================================
 Images:
     Gui, Submit
 
-    path = C:\Users\Elazar\Downloads
     list := StrSplit(images_list, "|")
 
-    FileDelete, %path%\*.jpg
-    FileDelete, %path%\*.png
+    FileDelete, %dl_folder%\*.jpg
+    FileDelete, %dl_folder%\*.png
 
     Loop, Parse, image, |,
     {
@@ -420,7 +431,7 @@ Images:
         RegExMatch(this_image, "[^\/]*$", filename)
         RegExMatch(filename, "[a-z]+(?=\.)", side)
 
-        UrlDownloadToFile, https://gamefaqs.gamespot.com%this_image%, %path%/%filename%
+        UrlDownloadToFile, https://gamefaqs.gamespot.com%this_image%, %dl_folder%/%filename%
         If (ErrorLevel)
         {
             MsgBox, UrlDownloadToFile Error: %ErrorLevel%
@@ -428,9 +439,9 @@ Images:
         }
         If (platform == "DS")
             if (side == "front" || side == "back")
-                Run, magick.exe %filename% -resize 513x458! -set filename:f `%t `%[filename:f].png, %path%\, ,
+                Run, magick.exe %filename% -resize 513x458! -set filename:f `%t `%[filename:f].png, %dl_folder%\, ,
             else if (side == "side")
-                Run, magick.exe %filename% -rotate 90 -resize 63x458! -set filename:f `%t `%[filename:f].png, %path%\, ,
+                Run, magick.exe %filename% -rotate 90 -resize 63x458! -set filename:f `%t `%[filename:f].png, %dl_folder%\, ,
     }
     Gosub, GameGUI
 Return

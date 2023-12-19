@@ -424,16 +424,15 @@ Images:
 
     Loop, Parse, image, |,
     {
-        this_image := list[A_LoopField]
+        loop_field := list[A_LoopField]
+        RegExMatch(loop_field, "^(\w+)(?: - )(\w+)(?: )(.+\/\d+_)(.+(?=\.))(.+)", match)
+        platform := match1
+        region := match2
+        side := match4
+        image_url := match3 . match4 . match5
+        filename := region . "_" . side . match5
 
-        RegExMatch(this_image, "^\w+", platform)
-        RegExMatch(this_image, "(?<= - )\w+", region)
-        RegExMatch(this_image, "\/.+", this_image)
-        RegExMatch(this_image, "[^\/]*$", filename)
-        filename = %region%_%filename%
-        RegExMatch(filename, "[a-z]+(?=\.)", side)
-
-        UrlDownloadToFile, https://gamefaqs.gamespot.com%this_image%, %dl_folder%/%filename%
+        UrlDownloadToFile, https://gamefaqs.gamespot.com%image_url%, %dl_folder%/%filename%
         If (ErrorLevel)
         {
             MsgBox, UrlDownloadToFile Error: %ErrorLevel%

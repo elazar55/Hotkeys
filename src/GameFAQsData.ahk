@@ -427,8 +427,10 @@ Images:
         this_image := list[A_LoopField]
 
         RegExMatch(this_image, "^\w+", platform)
+        RegExMatch(this_image, "(?<= - )\w+", region)
         RegExMatch(this_image, "\/.+", this_image)
         RegExMatch(this_image, "[^\/]*$", filename)
+        filename = %region%_%filename%
         RegExMatch(filename, "[a-z]+(?=\.)", side)
 
         UrlDownloadToFile, https://gamefaqs.gamespot.com%this_image%, %dl_folder%/%filename%

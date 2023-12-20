@@ -61,6 +61,10 @@ GameGUI:
     ; ============================= Select Entry ===============================
     Gui, Add, Button, W%button_width% X10 GEntry, Select Entry
     Gui, Add, DDL, W%edit_width% XP+%button_width% YP Ventry AltSubmit Choose%entry%, %entries%
+
+    ; =============================== Checklist ================================
+    Gui, Add, Edit, % "Vchecklist Y6 R25 XP+" . edit_width + 2, %checklist%
+
     Gui, Show
 Return
 ; ==============================================================================
@@ -85,6 +89,7 @@ ScrapeGameFAQs:
     pos            := 1
     entries        :=
     entry          := 1
+    checklist      :=
     ;@AHK++AlignAssignmentOff
 
     ; =============================== Platform =================================
@@ -315,6 +320,8 @@ Title:
     Paste(source)
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
+
+    checklist := checklist . region . " Title`n"
 Return
 ; ==============================================================================
 ;                                     Genre
@@ -327,6 +334,8 @@ Genre:
     Paste(source)
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
+
+    checklist := checklist . " Genre`n"
 Return
 ; ==============================================================================
 ;                                   Publisher
@@ -341,6 +350,8 @@ Publisher:
     Paste(source)
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
+
+    checklist := checklist . "Publisher`n"
 Return
 ; ==============================================================================
 ;                                   Developer
@@ -355,6 +366,8 @@ Developer:
     Paste(source)
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
+
+    checklist := checklist . "Developer`n"
 Return
 ; ==============================================================================
 ;                               Rating Categories
@@ -367,6 +380,8 @@ RatingCategories:
     Paste(source)
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
+
+    checklist := checklist . rating . "`n"
 Return
 ; ==============================================================================
 ;                                 Release Date
@@ -384,6 +399,8 @@ ReleaseDate:
     Paste(source)
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
+    checklist := checklist . region . " Release Date`n"
+
 Return
 ; ==============================================================================
 ;                                 Select Media
@@ -402,6 +419,8 @@ SelectMedia:
     Send, {Escape}{Tab}uni{Tab}{Tab}{Tab}
     Paste(StrReplace(source, "data", "boxes"))
     Send, {ShiftDown}{Tab}{Tab}{ShiftUp}
+
+    checklist := checklist . region . " " . media . "`n"
 Return
 ; ==============================================================================
 ;                                  Pick Folder
@@ -426,11 +445,14 @@ Images:
     {
         loop_field := list[A_LoopField]
         RegExMatch(loop_field, "^(\w+)(?: - )(\w+)(?: )(.+\/\d+_)(.+(?=\.))(.+)", match)
-        platform := match1
-        region := match2
-        side := match4
+
+        ;@AHK++AlignAssignmentOn
+        platform  := match1
+        region    := match2
+        side      := match4
         image_url := match3 . match4 . match5
-        filename := region . "_" . side . match5
+        filename  := region . "_" . side . match5
+        ;@AHK++AlignAssignmentOff
 
         UrlDownloadToFile, https://gamefaqs.gamespot.com%image_url%, %dl_folder%/%filename%
         If (ErrorLevel)
@@ -456,6 +478,8 @@ LocalPlayers:
     Paste(source)
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
+
+    checklist := checklist . "Local Players`n"
 Return
 ; ==============================================================================
 ;                                     Entry

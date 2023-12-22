@@ -16,7 +16,7 @@ GameGUI:
 
     ; ============================= Scrape Source ==============================
     Gui, Add, Button, W%button_width% X10 Default GScrapeGameFAQs, Scrape Source
-    Gui, Add, Edit, R1 W%edit_width% XP+%button_width% YP Vsource, %source%
+    Gui, Add, Edit, R1 W%edit_width% XP+%button_width% YP Vsource GScrapeGameFAQs, %source%
     GuiControl, Focus, source
 
     ; =============================== Publisher ================================
@@ -65,6 +65,7 @@ GameGUI:
     ; =============================== Checklist ================================
     Gui, Add, Edit, % "Vchecklist Y6 R25 XP+" . edit_width + 2, %checklist%
 
+    Send, ^a
     Gui, Show
 Return
 ; ==============================================================================
@@ -238,21 +239,29 @@ TransformGenre(genre)
 ; ==============================================================================
 RatingShortToFull(abbreviation)
 {
+    ratings_board := "Not Found"
+
     Switch abbreviation
     {
-    case "A": Return "CERO" . ":" . abbreviation
-    case "B": Return "CERO" . ":" . abbreviation
-    case "C": Return "CERO" . ":" . abbreviation
-    case "D": Return "CERO" . ":" . abbreviation
-    case "Z": Return "CERO" . ":" . abbreviation
-    case "E": Return "ESRB" . ":" . abbreviation
-    case "E10+": Return "ESRB" . ":" . "E10"
-    case "G": Return "ACB" . ":" . abbreviation
-    case "ALL": Return "GRB" . ":" . abbreviation
-    case "3+": Return "PEGI" . ":" . "3"
-    case "7+": Return "PEGI" . ":" . "7"
-    Default: Return abbreviation
+        ;@AHK++AlignAssignmentOn
+        case "A": ratings_board    := "CERO"
+        case "B": ratings_board    := "CERO"
+        case "C": ratings_board    := "CERO"
+        case "D": ratings_board    := "CERO"
+        case "Z": ratings_board    := "CERO"
+        case "E": ratings_board    := "ESRB"
+        case "E10+": ratings_board := "ESRB"
+        case "G": ratings_board    := "ACB"
+        case "PG": ratings_board   := "ACB"
+        case "ALL": ratings_board  := "GRB"
+        case "3+": ratings_board   := "PEGI"
+        case "7+": ratings_board   := "PEGI"
+        case "12+": ratings_board  := "PEGI"
+        ;@AHK++AlignAssignmentOff
     }
+
+    abbreviation := StrReplace(abbreviation, "+")
+    Return ratings_board . ":" . abbreviation
 }
 ; ==============================================================================
 ;                                MonthDateToName
@@ -335,7 +344,7 @@ Genre:
     Send, {ShiftDown}{Tab}{ShiftUp}
     Beep(1200, 25)
 
-    checklist := checklist . " Genre`n"
+    checklist := checklist . "Genre`n"
 Return
 ; ==============================================================================
 ;                                   Publisher

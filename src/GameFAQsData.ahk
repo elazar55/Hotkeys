@@ -175,7 +175,8 @@ ScrapeGameFAQs:
     While (pos := RegExMatch(boxes_src_as_string, "`n)(?<=<a href="")\/.+\/boxes\/(\d+)", match, pos + StrLen(match)))
     {
         RegExMatch(boxes_src_as_string, "`n)(?<=<div class=""meta"">).+(?=<br/>)", image_title, pos + StrLen(match))
-        If (!InStr(image_title, platform))
+        RegExMatch(image_title, "\w+", title_platform)
+        If (title_platform != platform)
             continue
 
         boxshot_url := boxes_url . "/" . match1
@@ -453,14 +454,14 @@ Images:
     Loop, Parse, image, |,
     {
         loop_field := list[A_LoopField]
-        RegExMatch(loop_field, "^(\w+)(?: - )(\w+)(?: )(.+\/\d+_)(.+(?=\.))(.+)", match)
+        RegExMatch(loop_field, "^(\w+)(?: - )(\w+)(?: )(.+\/(\d+)_)(.+(?=\.))(.+)", match)
 
         ;@AHK++AlignAssignmentOn
         platform  := match1
         region    := match2
-        side      := match4
-        image_url := match3 . match4 . match5
-        filename  := region . "_" . side . match5
+        side      := match5
+        image_url := match3 . match5 . match6
+        filename  := match4 . "_" . region . "_" . side . match6
         ;@AHK++AlignAssignmentOff
 
         UrlDownloadToFile, https://gamefaqs.gamespot.com%image_url%, %dl_folder%/%filename%

@@ -65,8 +65,8 @@ GameGUI:
     ; =============================== Checklist ================================
     Gui, Add, Edit, % "Vchecklist Y6 R25 XP+" . edit_width + 2, %checklist%
 
-    Send, ^a
     Gui, Show
+    Send, ^a
 Return
 ; ==============================================================================
 ;                                Scrape GameFAQs
@@ -85,6 +85,7 @@ ScrapeGameFAQs:
     day_list       :=
     month_list     :=
     year_list      :=
+    local_players  :=
     images_list    :=
     product_ID     :=
     pos            := 1
@@ -232,6 +233,7 @@ TransformGenre(genre)
     case "Action,Rhythm,Music": Return "Rhythm"
     case "Simulation,Virtual,Virtual Life": Return "Simulation / Life"
     case "Sports,Individual,Horse Racing": Return "Horses Race"
+    case "Sports,Team,Baseball,Arcade": Return "Sports / Baseball"
     Default: Return genre
     }
 }

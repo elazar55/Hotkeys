@@ -183,10 +183,14 @@ ScrapeGameFAQs:
         boxshot_url := boxes_url . "/" . match1
         boxshot_src_as_string := UrlDownloadWrapper(boxshot_url, "Boxshot_Data.html")
 
+        RegExMatch(boxshot_src_as_string, "(?<=<h3>).*(?=</h3>)", name)
+
         cover_pos := 1
         While (cover_pos := RegExMatch(boxshot_src_as_string, "(?<=data-img="").+?(?="")", cover_match, cover_pos + StrLen(cover_match)))
         {
-            images_list := images_list . image_title . " " . cover_match . "|"
+            RegExMatch(cover_match, "(?<=_)\w+", side)
+            ; MsgBox, %cover_match%
+            images_list := images_list . image_title . " " . side . " - " . name . " - " . cover_match . "|"
         }
     }
 
@@ -294,7 +298,7 @@ MonthDateToName(month_num)
 CheckWindow()
 {
     Gui, Submit
-    Sleep, 20
+    Sleep, 200
     WinGetTitle, title, A, , ,
     If (!InStr(title, "Google Chrome", 1))
     {
@@ -456,14 +460,15 @@ Images:
     Loop, Parse, image, |,
     {
         loop_field := list[A_LoopField]
-        RegExMatch(loop_field, "^(\w+)(?: - )(\w+)(?: )(.+\/(\d+)_)(.+(?=\.))(.+)", match)
+        RegExMatch(loop_field, "(\w+)(?: - )(\w+)(?: )(\w+)(?: - )(.+)(?: - )(.+(_.+))", match)
 
         ;@AHK++AlignAssignmentOn
         platform  := match1
         region    := match2
-        side      := match5
-        image_url := match3 . match5 . match6
-        filename  := match4 . "_" . region . "_" . side . match6
+        side      := match3
+        image_url := match5
+        filename  := StrReplace(match4, "/", "-") . match6
+        ; MsgBox, %filename%
         ;@AHK++AlignAssignmentOff
 
         UrlDownloadToFile, https://gamefaqs.gamespot.com%image_url%, %dl_folder%/%filename%
@@ -474,9 +479,9 @@ Images:
         }
         If (platform == "DS")
             if (side == "front" || side == "back")
-                Run, magick.exe %filename% -resize 513x458! -set filename:f `%t `%[filename:f].png, %dl_folder%\, ,
+                Run, magick.exe "%filename%" -resize 513x458! -set filename:f `%t `%[filename:f].png, %dl_folder%\, ,
             else if (side == "side")
-                Run, magick.exe %filename% -rotate 90 -resize 63x458! -set filename:f `%t `%[filename:f].png, %dl_folder%\, ,
+                Run, magick.exe "%filename%" -rotate 90 -resize 63x458! -set filename:f `%t `%[filename:f].png, %dl_folder%\, ,
     }
     Gosub, GameGUI
 Return

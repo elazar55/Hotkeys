@@ -183,7 +183,7 @@ ScrapeGameFAQs:
         boxshot_url := boxes_url . "/" . match1
         boxshot_src_as_string := UrlDownloadWrapper(boxshot_url, "Boxshot_Data.html")
 
-        RegExMatch(boxshot_src_as_string, "(?<=<h3>).*(?=</h3>)", name)
+        RegExMatch(boxshot_src_as_string, "`n)(?<= \().*?(?=(\))|(,.*)</h3>)", name)
 
         cover_pos := 1
         While (cover_pos := RegExMatch(boxshot_src_as_string, "(?<=data-img="").+?(?="")", cover_match, cover_pos + StrLen(cover_match)))
@@ -298,7 +298,7 @@ MonthDateToName(month_num)
 CheckWindow()
 {
     Gui, Submit
-    Sleep, 200
+    Sleep, 10
     WinGetTitle, title, A, , ,
     If (!InStr(title, "Google Chrome", 1))
     {
@@ -468,6 +468,7 @@ Images:
         side      := match3
         image_url := match5
         filename  := StrReplace(match4, "/", "-") . match6
+        filename  := StrReplace(filename, ":", ";")
         ; MsgBox, %filename%
         ;@AHK++AlignAssignmentOff
 

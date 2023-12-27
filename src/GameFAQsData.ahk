@@ -85,7 +85,7 @@ ScrapeGameFAQs:
     day_list       :=
     month_list     :=
     year_list      :=
-    local_players  :=
+    local_players  := 0
     images_list    :=
     product_ID     :=
     pos            := 1
@@ -108,16 +108,17 @@ ScrapeGameFAQs:
     pos := RegExMatch(source_string, "(?<=<a href=""/games/company/).*?"">(.+?)(?=</a>)", developer, pos)
     developer := developer1
 
-    ; =========================== Local Players ============================
-    ; Line 246
-    RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
-
     ; ============================ Regeional Data ==============================
+    ; Cut out data from other platforms
     start := InStr(source_string, "<div class=""pod gdata"" data-pid=""")
     end := InStr(source_string, "<div class=""pod gdata hide"" data-pid=""", 0, start)
     If (end == 0)
         end := StrLen(source_string)
     source_string := SubStr(source_string, start, end - start)
+
+    ; =========================== Local Players ============================
+    ; Line 246
+    RegExMatch(source_string, "`n)(?<=<span>).+?(?= Players?</span>)", local_players)
 
     pos := 1
     ; Line 292
@@ -183,14 +184,14 @@ ScrapeGameFAQs:
         boxshot_url := boxes_url . "/" . match1
         boxshot_src_as_string := UrlDownloadWrapper(boxshot_url, "Boxshot_Data.html")
 
-        RegExMatch(boxshot_src_as_string, "`n)(?<= \().*?(?=(\))|(,.*)</h3>)", name)
+        RegExMatch(boxshot_src_as_string, "`n)(?:<h3>.*?\()(.*?)(?=\)</h3>)", name)
 
         cover_pos := 1
         While (cover_pos := RegExMatch(boxshot_src_as_string, "(?<=data-img="").+?(?="")", cover_match, cover_pos + StrLen(cover_match)))
         {
             RegExMatch(cover_match, "(?<=_)\w+", side)
             ; MsgBox, %cover_match%
-            images_list := images_list . image_title . " " . side . " - " . name . " - " . cover_match . "|"
+            images_list := images_list . image_title . " " . side . " - " . name1 . " - " . cover_match . "|"
         }
     }
 

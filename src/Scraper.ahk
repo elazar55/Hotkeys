@@ -150,7 +150,7 @@ ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
     match_pos := 1
     While (match_pos)
     {
-        match_pos := RegExMatch(file_string, "(?<=jobalots.com\/products\/)\w+", url_match, match_pos + StrLen(price_match))
+        match_pos := RegExMatch(file_string, "(?<=jobalots.com\/products\/).+(?="">\s)", url_match, match_pos + StrLen(price_match))
         match_pos := RegExMatch(file_string, "s)(?<=Jobalots auction - ).+?(?=<\/a>)", title_match, match_pos + StrLen(url_match))
         match_pos := RegExMatch(file_string, "s)data-label=""Price"">.*?translate=""no"">â‚¬(\d+),(\d+)", price_match, match_pos + StrLen(title_match))
 
@@ -194,7 +194,7 @@ ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
     }
 
     RegExMatch(source_string, "(?<=<td><img src="").+?(?=""><\/td>)", image)
-    RegExMatch(source_string, "(?<=\Q<meta property=""og:url"" content=""https://eu.jobalots.com/products/\E)\w+", sku)
+    RegExMatch(source_string, "(?<=\Q<meta property=""og:url"" content=""https://eu.jobalots.com/products/\E).+?(?="">)", sku)
     RegExMatch(source_string, "(?<=\Q><strong>Weight:</strong>\E\s)\d+\.\d+", weight)
     RegExMatch(source_string, "â‚¬\d+\.\d+ (\w+)", asin)
 

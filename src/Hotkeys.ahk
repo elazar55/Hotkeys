@@ -84,7 +84,7 @@ TitleCase:
     ClipWait, 1
 
     StringLower, Clipboard, % Trim(Clipboard), T
-    needle := "(?<!(^)|(: ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs)\b"
+    needle := "(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs)\b"
     Clipboard := RegExReplace(Clipboard, needle, "$L0")
 
     Send, ^v

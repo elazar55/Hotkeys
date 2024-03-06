@@ -50,7 +50,7 @@ Scrape:
     urls       := []
     titles     := []
     prices     := []
-    order_html := "../res/order.html"
+    order_html := "order.html"
     images     := []
     skus       := []
     weights    := []
@@ -176,7 +176,7 @@ ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
 ; ==============================================================================
 ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
 {
-    source_file := "../res/item.html"
+    source_file := "item.html"
     UrlDownloadToFile, %address%, %source_file%
 
     If (ErrorLevel)
@@ -206,8 +206,8 @@ ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
     RegexMatchAll(source_string, extra_data, "(?<=<td>).+?(?=<\/td>)")
 
     ; Download product images
-    subfolder_name := "../" . "Orders" . "/" . jleu . "/" . sku . "/" . "images"
-    DownloadImagesFromString(source_string, subfolder_name)
+    subfolder_name := "../" . "Orders" . "/" . jleu . "/" . sku . "/"
+    DownloadImagesFromString(source_string, subfolder_name, sku)
     Return true
 }
 ; ==============================================================================
@@ -222,7 +222,7 @@ RegexMatchAll(haystack, results, pattern)
 ; ==============================================================================
 ;                          Download Images From String
 ; ==============================================================================
-DownloadImagesFromString(source_string, subfolder_name)
+DownloadImagesFromString(source_string, subfolder_name, sku)
 {
     ; Create directory if it doesn't exist
     If (!FileExist(subfolder_name))
@@ -232,7 +232,7 @@ DownloadImagesFromString(source_string, subfolder_name)
     RegexMatchAll(source_string, image_urls, "(?<=<a href="")//eu.jobalots.com/cdn/shop/\w+/.+?.jpg.*?(?="" class=)")
     For i, url in image_urls
     {
-        file_path = %subfolder_name%/%i%.jpg
+        file_path = %subfolder_name%/%sku%_%i%.jpg
 
         If (!FileExist(file_path))
         {
@@ -250,7 +250,7 @@ DownloadImagesFromString(source_string, subfolder_name)
 ;                                Open order.html
 ; ==============================================================================
 OpenOrder:
-    Run, notepad.exe ..\res\order.html, , ,
+    Run, notepad.exe order.html, , ,
 Return
 ; ==============================================================================
 ;                                Open Latest

@@ -96,3 +96,7 @@ Return
 #d::
     Reload
 Return
+
+; TODO: Comment divider snippets
+; TODO: Folders for files
+; TODO: Move UrlDownloadWrapper()

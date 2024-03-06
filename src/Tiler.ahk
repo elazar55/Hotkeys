@@ -8,7 +8,7 @@ global screen_height := 1050
 global pos_x         :=
 global pos_y         :=
 global alignment     := 2**6
-global min_width     := alignment * Round((screen_width / 3) / alignment)
+global min_width     := alignment * Round((screen_width / 4) / alignment)
 global window_width  :=
 global window_height :=
 ; @AHK++AlignAssignmentOff

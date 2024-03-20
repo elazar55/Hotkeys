@@ -167,7 +167,7 @@ Return
 #w::
     Update()
 
-    If (window_height <= screen_height * 0.6)
+    If (window_height <= screen_height)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
     Else
         Dock(pos_x, 0, window_width, Round(window_height / 2 + top_offset / 2))
@@ -178,7 +178,7 @@ Return
 #r::
     Update()
 
-    If (window_height <= screen_height * 0.6)
+    If (window_height <= screen_height)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
     Else
         Dock(pos_x, screen_height / 2, window_width, Round(screen_height / 2 + top_offset))

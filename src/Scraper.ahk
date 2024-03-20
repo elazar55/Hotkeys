@@ -20,14 +20,17 @@ AppendHeaderToFile(file)
 WriteOutData(image, title, price, weight, sku, asin, output_file)
 {
     seperator := ","
+    sku := """=HYPERLINK(""eu.jobalots.com/products/" . sku . """, """ . sku . """)"""
+    if (asin != "")
+        asin := """=HYPERLINK(""amazon.de/dp/" . asin . """, """ . asin . """)"""
 
     FileAppend
         , % image . seperator
         . """" . title . """" . seperator
         . price . seperator
         . weight . seperator
-        . """=HYPERLINK(""eu.jobalots.com/products/" . sku . """, """ . sku . """)""" . seperator
-        . """=HYPERLINK(""amazon.de/dp/" . asin . """, """ . asin . """)""`n"
+        . sku . seperator
+        . asin . "`n"
         , %output_file%
 }
 ; ==============================================================================
@@ -99,11 +102,12 @@ Scrape:
         If (asins[index] = "")
             asins[index] := "Blank"
 
-        ; Write out to the file
-        WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], asins[index], output_file)
-
         ; Lots and mini lots extra data
         If (extra_data.Length() / 7 > 1)
+        {
+            ; Write out to the file
+            ; If the page has multiple items, exclude the parent ASIN
+            WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], "", output_file)
             Loop % (extra_data.Length() / 7)
             {
                 j := (7 * (A_Index - 1))
@@ -113,6 +117,12 @@ Scrape:
                 extra_data[j + 1] := StrReplace(extra_data[j + 1], """>")
                 WriteOutData(extra_data[j + 1], extra_data[j + 3] . " x " extra_data[j + 2], "-", "-", skus[index], extra_data[j + 6], output_file)
             }
+        }
+        else
+        {
+            ; If the item is single, include ASIN
+            WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], asins[index], output_file)
+        }
         ; Update progress bar
         GuiControl, , textbox, % titles[index]
         GuiControl, , progress, % index / urls.Length() * 100

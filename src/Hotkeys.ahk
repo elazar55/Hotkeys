@@ -49,7 +49,13 @@ Return
 #p::
     Clipboard =
     Send, ^c
-    ClipWait, 1
+    ClipWait, 0.1
+    if Clipboard is not float
+    {
+        Beep(800, 20)
+        Return
+    }
+
     increment := 0.40
 
     If (Clipboard >= 15)
@@ -83,9 +89,11 @@ TitleCase:
     Send, ^c
     ClipWait, 1
 
-    StringLower, Clipboard, % Trim(Clipboard), T
-    needle := "(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs)\b"
-    Clipboard := RegExReplace(Clipboard, needle, "$L0")
+    StringLower, Clipboard, % Trim(Clipboard)
+    title_case := "\b\w"
+    prepositions := "(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs)\b"
+    Clipboard := RegExReplace(Clipboard, title_case, "$U0")
+    Clipboard := RegExReplace(Clipboard, prepositions, "$L0")
 
     Send, ^v
     Beep(1200, 20)

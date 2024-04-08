@@ -90,10 +90,16 @@ TitleCase:
     ClipWait, 1
 
     StringLower, Clipboard, % Trim(Clipboard)
-    title_case := "\b\w"
-    prepositions := "(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs)\b"
+
+    ;@AHK++AlignAssignmentOn
+    title_case    := "(?<!')\b\w"
+    prepositions  := "i)(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs)\b"
+    abbreviations := "i)\bMIDI|USB|PC\b"
+    ;@AHK++AlignAssignmentOff
+
     Clipboard := RegExReplace(Clipboard, title_case, "$U0")
     Clipboard := RegExReplace(Clipboard, prepositions, "$L0")
+    Clipboard := RegExReplace(Clipboard, abbreviations, "$U0")
 
     Send, ^v
     Beep(1200, 20)
@@ -104,7 +110,17 @@ Return
 #d::
     Reload
 Return
-
-; TODO: Comment divider snippets
-; TODO: Folders for files
-; TODO: Move UrlDownloadWrapper()
+; ==============================================================================
+;                                    Remaps
+; ==============================================================================
+!Space::Send _
+; ==============================================================================
+;                                  Snake Case
+; ==============================================================================
+#v::
+    Send, ^c
+    ClipWait, 1
+    Clipboard := StrReplace(Clipboard, " ", "_")
+    Send, ^v
+    Beep(1200, 20)
+Return

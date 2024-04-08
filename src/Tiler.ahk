@@ -100,11 +100,13 @@ AlignWidth(resize)
 ; ==============================================================================
 #a::
     Update()
-    ; Resize if the window is already on the left.
-    If (pos_x == -left_offset)
+
+    ; Resize if the window is already docked to the left.
+    If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(-1)
-    ; Otherwise, place it on the left, resize it to the nearest alignment,
-    ; and stretch it vertically
+
+    ; Otherwise, place it on the left, resize it to the nearest alignment, and
+    ; stretch it vertically.
     Else
     {
         new_width := AlignWidth(0)
@@ -118,7 +120,7 @@ Return
 ; ==============================================================================
 $+#a::
     Update()
-    If (pos_x == -left_offset)
+    If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(1)
     Else
     {
@@ -134,7 +136,7 @@ Return
 ; ==============================================================================
 #s::
     Update()
-    If (pos_x == screen_width - window_width + left_offset)
+    If (pos_x == screen_width - window_width + left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(-1)
     Else
     {
@@ -150,7 +152,7 @@ Return
 ; ==============================================================================
 +#s::
     Update()
-    If (pos_x == screen_width - window_width + left_offset)
+    If (pos_x == screen_width - window_width + left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(1)
     Else
     {
@@ -167,7 +169,7 @@ Return
 #w::
     Update()
 
-    If (window_height <= screen_height)
+    If (window_height < screen_height)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
     Else
         Dock(pos_x, 0, window_width, Round(window_height / 2 + top_offset / 2))
@@ -178,7 +180,7 @@ Return
 #r::
     Update()
 
-    If (window_height <= screen_height)
+    If (window_height < screen_height)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
     Else
         Dock(pos_x, screen_height / 2, window_width, Round(screen_height / 2 + top_offset))

@@ -149,11 +149,11 @@ ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
         MsgBox, Error reading %order_html%
         Return False
     }
-    ; ---------------------------------- GUI -----------------------------------
+    ; ================================== GUI ===================================
     global textbox
     Gui, Add, Text, w500 h40 vtextbox
     Gui, show
-    ; --------------------------------------------------------------------------
+    ; ==========================================================================
 
     RegExMatch(file_string, "jleu\w+", jleu)
 

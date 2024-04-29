@@ -16,15 +16,18 @@ CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
 Return
 ; ==============================================================================
-;                                    Docker
-; ==============================================================================
-; ==============================================================================
 ;                                    Update
 ; ==============================================================================
 Update()
 {
+    ; @AHK++AlignAssignmentOn
     global left_offset := 7
-    global top_offset := 7
+    global top_offset  := 7
+    ; @AHK++AlignAssignmentOff
+
+    WinGet, is_maximized, MinMax, A
+    if (is_maximized)
+        WinRestore, A
 
     WinGetPos, pos_x, pos_y, window_width, window_height, A, , ,
     WinGet, title, ProcessName, A, , ,
@@ -46,7 +49,6 @@ DockerGUI:
     Gui, Destroy
     InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
     min_width := alignment * Round((screen_width / 3) / alignment)
-
 Return
 ; ==============================================================================
 ;                                Remove ToolTip
@@ -109,9 +111,11 @@ AlignWidth(resize)
     ; stretch it vertically.
     Else
     {
-        new_width := AlignWidth(0)
+        ; @AHK++AlignAssignmentOn
+        new_width     := AlignWidth(0)
         window_height := screen_height + top_offset
-        pos_y := 0
+        pos_y         := 0
+        ; @AHK++AlignAssignmentOff
     }
     Dock(-left_offset, pos_y, new_width, window_height)
 Return

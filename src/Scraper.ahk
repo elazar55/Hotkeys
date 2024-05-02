@@ -208,7 +208,14 @@ ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
     RegExMatch(source_string, "(?<=\Q><strong>Weight:</strong>\E\s)\d+\.\d+", weight)
     RegExMatch(source_string, "â‚¬\d+\.\d+ (\w+)", asin)
 
-    images.Push(image)
+    ; No image
+    If (InStr(image, "AVAILABLE.png"))
+    {
+        images.Push("N/A")
+    } Else
+    {
+        images.Push(image)
+    }
     weights.Push(weight)
     asins.Push(asin1)
 

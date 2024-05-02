@@ -6,7 +6,7 @@
     ;@AHK++AlignAssignmentOn
     file      := "auctions.html"
     output    := "output.html"
-    img_width := 256
+    img_width := 384
     border    := "1px solid black"
     font_size := "12px"
     ;@AHK++AlignAssignmentOff
@@ -58,9 +58,9 @@
         pos := RegExMatch(source_string, "`n)\d+.+(?=\n)", match, pos + StrLen(match))
         title := RegExReplace(match, "i)\bOf\b|\bAnd\b|\bWith\b|\bFor\b|\bBrand\b|\bNew\b|\bRAW\b|\bCustomer\b|\bReturns\b|( - RRP .+)")
 
-        RegExMatch(title, "i)Twitch|Electronic|Computer", match)
-        if (match)
-            title := "<span>" . title "</span>"
+        ; RegExMatch(title, "i)Twitch|Electronic|Computer", match)
+        ; if (match)
+        ;     title := "<span>" . title "</span>"
 
         pos := RegExMatch(source_string, "(?<=""pa-theme-color"">)(\d{2})(?:<\/span>)(\w)", match, pos + StrLen(match))
         time := match1 . match2 . match3 . ":"
@@ -70,7 +70,11 @@
         time := time . match1 . match2 . match3
 
         pos := RegExMatch(source_string, "(?<=<div><strong>)(\w+ Bid:)(?:</strong><span>)( EUR \d+\.\d{2})", match, pos + StrLen(match))
-        ; MsgBox, %match1%%match2%
+        ; MsgBox, %match%
+        if (InStr(match, "Start Bid:</strong><span> EUR 0.10"))
+        {
+            title := "<span>" . title "</span>"
+        }
         ToolTip, %title%, , ,
 
         FileAppend, % "`t`t<td><a href=""https://eu.jobalots.com/products/" . sku . """ target=""_blank""><img src=""" . image . """></a><div>" . title . "</div><div class=timer>" . time . "</div><div><strong>" . match1 . "</strong>" . match2 . "</div></td>`n", %output%

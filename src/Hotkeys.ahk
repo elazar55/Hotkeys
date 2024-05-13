@@ -102,7 +102,7 @@ title_case:
 
     ;@AHK++AlignAssignmentOn
     title_case    := "(?<!')\b\w"
-    prepositions  := "i)(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs)\b"
+    prepositions  := "i)(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs|With)\b"
     abbreviations := "i)\bMIDI|USB|PC\b"
     ;@AHK++AlignAssignmentOff
 

@@ -8,7 +8,6 @@ global screen_height := 1050
 global pos_x         :=
 global pos_y         :=
 global alignment     := 2**6
-global min_width     := alignment * Round((screen_width / 4) / alignment)
 global window_width  :=
 global window_height :=
 ; @AHK++AlignAssignmentOff
@@ -23,6 +22,7 @@ Update()
     ; @AHK++AlignAssignmentOn
     global left_offset := 7
     global top_offset  := 7
+    min_width_factor   := 4
     ; @AHK++AlignAssignmentOff
 
     WinGet, is_maximized, MinMax, A
@@ -39,6 +39,11 @@ Update()
         top_offset  := 0
         ; @AHK++AlignAssignmentOff
     }
+    else If (RegExMatch(title, "Afterburner"))
+    {
+        min_width_factor := 7
+    }
+    global min_width := alignment * Round((screen_width / min_width_factor) / alignment)
 }
 ; ==============================================================================
 ;                                      GUI

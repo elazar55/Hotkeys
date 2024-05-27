@@ -1,23 +1,15 @@
-﻿; ==============================================================================
+; ==============================================================================
 ;                         Append CSV Headers to a File
 ; ==============================================================================
 AppendHeaderToFile(file)
 {
-    seperator := ","
     FileDelete, %file%
-    FileAppend
-        , % "Image" . seperator
-        . "Title" . seperator
-        . "Price" . seperator
-        . "Weight" . seperator
-        . "SKU" . seperator
-        . "ASIN" . "`n"
-        , %file%
+    WriteOutData("Image", "Title", "Price", "Weight", "SKU", "ASIN", file, "RRP")
 }
 ; ==============================================================================
 ;                                Write Out Data
 ; ==============================================================================
-WriteOutData(image, title, price, weight, sku, asin, output_file)
+WriteOutData(image, title, price, weight, sku, asin, output_file, rrp)
 {
     seperator := ","
     sku := """=HYPERLINK(""eu.jobalots.com/products/" . sku . """, """ . sku . """)"""
@@ -30,7 +22,8 @@ WriteOutData(image, title, price, weight, sku, asin, output_file)
         . price . seperator
         . weight . seperator
         . sku . seperator
-        . asin . "`n"
+        . asin . seperator
+        . rrp . "`n"
         , %output_file%
 }
 ; ==============================================================================
@@ -107,7 +100,7 @@ Scrape:
         {
             ; Write out to the file
             ; If the page has multiple items, exclude the parent ASIN
-            WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], "", output_file)
+            WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], "-", output_file, "-")
             Loop % (extra_data.Length() / 7)
             {
                 j := (7 * (A_Index - 1))
@@ -115,13 +108,13 @@ Scrape:
                 ; Clean up tags from extra_data images
                 extra_data[j + 1] := StrReplace(extra_data[j + 1], "<img src=""")
                 extra_data[j + 1] := StrReplace(extra_data[j + 1], """>")
-                WriteOutData(extra_data[j + 1], extra_data[j + 3] . " x " extra_data[j + 2], "-", "-", skus[index], extra_data[j + 6], output_file)
+                WriteOutData(extra_data[j + 1], extra_data[j + 3] . " x " extra_data[j + 2], "-", "-", skus[index], extra_data[j + 6], output_file, extra_data[j + 4])
             }
         }
         else
         {
             ; If the item is single, include ASIN
-            WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], asins[index], output_file)
+            WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], asins[index], output_file, extra_data[4])
         }
         ; Update progress bar
         GuiControl, , textbox, % titles[index]

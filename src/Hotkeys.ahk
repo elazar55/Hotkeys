@@ -151,6 +151,7 @@ Return
 ; ==============================================================================
 #IfWinActive, ahk_exe chrome.exe
 parens:
++^9::
     Clipboard :=
     Send, ^c
     ClipWait, 0.1
@@ -163,6 +164,7 @@ Return
 ; ==============================================================================
 #IfWinActive, ahk_exe chrome.exe
 quotes:
++^'::
     Clipboard :=
     Send, ^c
     ClipWait, 0.1

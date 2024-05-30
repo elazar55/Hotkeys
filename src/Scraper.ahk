@@ -100,7 +100,7 @@ Scrape:
         {
             ; Write out to the file
             ; If the page has multiple items, exclude the parent ASIN
-            WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], "-", output_file, "-")
+            WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], "", output_file, "-")
             Loop % (extra_data.Length() / 7)
             {
                 j := (7 * (A_Index - 1))
@@ -203,12 +203,10 @@ ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
 
     ; No image
     If (InStr(image, "AVAILABLE.png"))
-    {
         images.Push("N/A")
-    } Else
-    {
+    Else
         images.Push(image)
-    }
+
     weights.Push(weight)
     asins.Push(asin1)
 

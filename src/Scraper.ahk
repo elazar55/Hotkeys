@@ -12,8 +12,9 @@ AppendHeaderToFile(file)
 WriteOutData(image, title, price, weight, sku, asin, output_file, rrp)
 {
     seperator := ","
-    sku := """=HYPERLINK(""eu.jobalots.com/products/" . sku . """, """ . sku . """)"""
-    if (asin != "")
+    if (sku != "SKU")
+        sku := """=HYPERLINK(""eu.jobalots.com/products/" . sku . """, """ . sku . """)"""
+    if (asin != "" && asin != "ASIN")
         asin := """=HYPERLINK(""amazon.de/dp/" . asin . """, """ . asin . """)"""
 
     FileAppend

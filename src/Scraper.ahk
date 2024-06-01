@@ -1,4 +1,5 @@
-﻿; ==============================================================================
+﻿global data_buffer := ""
+; ==============================================================================
 ;                         Append CSV Headers to a File
 ; ==============================================================================
 AppendHeaderToFile(file)
@@ -17,15 +18,15 @@ WriteOutData(image, title, price, weight, sku, asin, output_file, rrp)
     if (asin != "" && asin != "ASIN")
         asin := """=HYPERLINK(""amazon.de/dp/" . asin . """, """ . asin . """)"""
 
-    FileAppend
-        , % image . seperator
+    global data_buffer
+    data_buffer = % data_buffer
+        . image . seperator
         . """" . title . """" . seperator
         . price . seperator
         . weight . seperator
         . sku . seperator
         . asin . seperator
         . rrp . "`n"
-        , %output_file%
 }
 ; ==============================================================================
 ;                              Create Progress Bar
@@ -42,6 +43,7 @@ CreateProgressBar()
 Scrape:
     Gui, Destroy
     SetBatchLines, -1
+    global data_buffer := ""
 
     ; @AHK++AlignAssignmentOn
     urls       := []
@@ -121,12 +123,16 @@ Scrape:
         GuiControl, , textbox, % titles[index]
         GuiControl, , progress, % index / urls.Length() * 100
     }
+    ; Write to file
+    FileAppend, %data_buffer%, %output_file%
+    ; MsgBox, %data_buffer%
+
     GuiControl, , textbox, Finished
     SetBatchLines, 1
 
     ; Open output
     editor := "C:\Users\Elazar\AppData\Local\Programs\Microsoft VS Code\code.exe"
-    RunWait, %editor% %output_file%
+    Run, %editor% %output_file%
 
     Gui, Destroy
     Beep(1200, 25)
@@ -172,7 +178,6 @@ ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
             GuiControl,, textbox, %title_match%
         }
     }
-
     Return True
 }
 ; ==============================================================================

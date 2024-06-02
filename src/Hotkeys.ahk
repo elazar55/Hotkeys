@@ -81,13 +81,24 @@ Return
 ;                                 Sentence Case
 ; ==============================================================================
 sentence_case:
+!#t::
+    ; Backup clipboard
+    clipboard_copy := Clipboard
+
     Send, ^c
     ClipWait, 1
 
     StringLower, Clipboard, Clipboard
     Clipboard := RegExReplace(Clipboard, "(?<=^|\.|\. |】)(\w)", "$U0")
 
+    ; Append full stop
+    if (SubStr(Clipboard, 0, 1) != ".")
+        Clipboard := Clipboard . "."
+
     Send, ^v
+
+    ; Restore clipboard
+    Clipboard := clipboard_copy
     Beep(1200, 20)
 Return
 ; ==============================================================================
@@ -95,9 +106,11 @@ Return
 ; ==============================================================================
 title_case:
 #t::
+    ; Backup clipboard
+    clipboard_copy := Clipboard
+
     Send, ^c
     ClipWait, 1
-
     StringLower, Clipboard, % Trim(Clipboard)
 
     ;@AHK++AlignAssignmentOn
@@ -109,8 +122,10 @@ title_case:
     Clipboard := RegExReplace(Clipboard, title_case, "$U0")
     Clipboard := RegExReplace(Clipboard, prepositions, "$L0")
     Clipboard := RegExReplace(Clipboard, abbreviations, "$U0")
-
     Send, ^v
+
+    ; Restore clipboard
+    Clipboard := clipboard_copy
     Beep(1200, 20)
 Return
 ; ==============================================================================

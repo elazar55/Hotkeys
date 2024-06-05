@@ -1,13 +1,5 @@
 ﻿global data_buffer := ""
 ; ==============================================================================
-;                         Append CSV Headers to a File
-; ==============================================================================
-AppendHeaderToFile(file)
-{
-    FileDelete, %file%
-    WriteOutData("Image", "Title", "Price", "Weight", "SKU", "ASIN", file, "RRP")
-}
-; ==============================================================================
 ;                                Write Out Data
 ; ==============================================================================
 WriteOutData(image, title, price, weight, sku, asin, output_file, rrp)
@@ -71,7 +63,9 @@ Scrape:
     If (!FileExist(outputFolder))
         FileCreateDir, %outputFolder%
 
-    AppendHeaderToFile(output_file)
+    ; Results header
+    FileDelete, %output_file%
+    WriteOutData("Image", "Title", "Price", "Weight", "SKU", "ASIN", output_file, "RRP")
     CreateProgressBar()
 
     ; Loop through and scrape data about each product
@@ -84,7 +78,7 @@ Scrape:
             Return
         }
 
-        ; Smoke test. Nothing should be blank
+        ; Assert
         If (images[index] = "")
             images[index] := "Blank"
         If (titles[index] = "")
@@ -98,12 +92,13 @@ Scrape:
         If (asins[index] = "")
             asins[index] := "Blank"
 
-        ; Lots and mini lots extra data
+        ; Lots and mini lots
         If (extra_data.Length() / 7 > 1)
         {
             ; Write out to the file
             ; If the page has multiple items, exclude the parent ASIN
             WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], "", output_file, "-")
+
             Loop % (extra_data.Length() / 7)
             {
                 j := (7 * (A_Index - 1))
@@ -125,7 +120,6 @@ Scrape:
     }
     ; Write to file
     FileAppend, %data_buffer%, %output_file%
-    ; MsgBox, %data_buffer%
 
     GuiControl, , textbox, Finished
     SetBatchLines, 1

@@ -167,11 +167,17 @@ Return
 #IfWinActive, ahk_exe chrome.exe
 parens:
 +^9::
+    ; Backup clipboard
+    clipboard_copy := Clipboard
+
     Clipboard :=
     Send, ^c
-    ClipWait, 0.1
+    ClipWait, 0.25
     Clipboard := "(" . Clipboard . ")"
     Send, ^v
+
+    ; Restore clipboard
+    Clipboard := clipboard_copy
     Beep(1200, 20)
 Return
 ; ==============================================================================
@@ -180,11 +186,17 @@ Return
 #IfWinActive, ahk_exe chrome.exe
 quotes:
 +^'::
+    ; Backup clipboard
+    clipboard_copy := Clipboard
+
     Clipboard :=
     Send, ^c
-    ClipWait, 0.1
+    ClipWait, 0.25
     Clipboard := """" . Clipboard . """"
     Send, ^v
+
+    ; Restore clipboard
+    Clipboard := clipboard_copy
     Beep(1200, 20)
 Return
 ; ==============================================================================

@@ -7,7 +7,7 @@ global screen_width  := 1920
 global screen_height := 1050
 global pos_x         :=
 global pos_y         :=
-global alignment     := 2**6
+global alignment     := 80
 global window_width  :=
 global window_height :=
 ; @AHK++AlignAssignmentOff
@@ -22,7 +22,7 @@ Update()
     ; @AHK++AlignAssignmentOn
     global left_offset := 7
     global top_offset  := 7
-    min_width_factor   := 4
+    global min_width   := 320 ; alignment * Round((screen_width / min_width_factor) / alignment)
     ; @AHK++AlignAssignmentOff
 
     WinGet, is_maximized, MinMax, A
@@ -35,15 +35,19 @@ Update()
     If (RegExMatch(title, "(Code.exe)|(Playnite.*.exe)"))
     {
         ; @AHK++AlignAssignmentOn
-        left_offset := 0
-        top_offset  := 0
+        left_offset      := 0
+        top_offset       := 0
+        global min_width := 400
         ; @AHK++AlignAssignmentOff
     }
     else If (RegExMatch(title, "Afterburner"))
     {
-        min_width_factor := 7
+        global min_width := 240
     }
-    global min_width := alignment * Round((screen_width / min_width_factor) / alignment)
+    else If (RegExMatch(title, "chrome"))
+    {
+        global min_width := 502
+    }
 }
 ; ==============================================================================
 ;                                      GUI
@@ -91,11 +95,17 @@ AlignWidth(resize)
     ; @AHK++AlignAssignmentOff
 
     ; Undersize
-    If (window_width - left_offset * 2 <= min_width && resize < 0)
+    If (window_width - left_offset * 2 == min_width && resize < 0)
+    {
         new_width := screen_width
+    }
+    Else If ((window_width - left_offset * 2) - alignment < min_width && resize < 0)
+    {
+        new_width := min_width
+    }
     ; Oversize
     Else If (window_width - left_offset * 2 >= screen_width && resize > 0)
-        new_width := min_width
+        new_width := min_width ; (Ceil((min_width - left_offset * 2) / alignment)) * alignment
     ; Resize
     Else
         new_width := (Round((window_width - left_offset * 2) / alignment) + resize) * alignment

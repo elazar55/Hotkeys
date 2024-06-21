@@ -99,6 +99,9 @@ Scrape:
             ; If the page has multiple items, exclude the parent ASIN
             WriteOutData(images[index], titles[index], prices[index], weights[index], skus[index], "", output_file, "-")
 
+            ; Condition of sub-items
+            RegExMatch(titles[index], "Brand New |Customer Returns ", match)
+
             Loop % (extra_data.Length() / 7)
             {
                 j := (7 * (A_Index - 1))
@@ -106,7 +109,7 @@ Scrape:
                 ; Clean up tags from extra_data images
                 extra_data[j + 1] := StrReplace(extra_data[j + 1], "<img src=""")
                 extra_data[j + 1] := StrReplace(extra_data[j + 1], """>")
-                WriteOutData(extra_data[j + 1], extra_data[j + 3] . " x " extra_data[j + 2], "-", "-", skus[index], extra_data[j + 6], output_file, extra_data[j + 4])
+                WriteOutData(extra_data[j + 1], extra_data[j + 3] . " x " . match . extra_data[j + 2], "-", "-", skus[index], extra_data[j + 6], output_file, extra_data[j + 4])
             }
         }
         else

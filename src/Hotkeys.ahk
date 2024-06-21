@@ -56,9 +56,9 @@ Return
 ;                                   Set Price
 ; ==============================================================================
 #p::
-    Clipboard =
+    Clipboard :=
     Send, ^c
-    ClipWait, 0.1
+    ClipWait, 1
     if Clipboard is not float
     {
         Beep(800, 20)
@@ -82,11 +82,10 @@ Return
 ; ==============================================================================
 sentence_case:
 !#t::
-    ; Backup clipboard
-    clipboard_copy := Clipboard
-
+    Clipboard :=
     Send, ^c
     ClipWait, 1
+    Clipboard := Trim(Clipboard, " ")
 
     StringLower, Clipboard, Clipboard
     Clipboard := RegExReplace(Clipboard, "(?<=^|\.|\. |】)(\w)", "$U0")
@@ -96,9 +95,6 @@ sentence_case:
         Clipboard := Clipboard . "."
 
     Send, ^v
-
-    ; Restore clipboard
-    Clipboard := clipboard_copy
     Beep(1200, 20)
 Return
 ; ==============================================================================
@@ -106,11 +102,15 @@ Return
 ; ==============================================================================
 title_case:
 #t::
-    ; Backup clipboard
-    clipboard_copy := Clipboard
-
+    Clipboard :=
     Send, ^c
     ClipWait, 1
+    If (Clipboard = "")
+    {
+        Beep(800, 20)
+        Return
+    }
+    Clipboard := Trim(Clipboard, " ")
     StringLower, Clipboard, % Trim(Clipboard)
 
     ;@AHK++AlignAssignmentOn
@@ -123,15 +123,13 @@ title_case:
     Clipboard := RegExReplace(Clipboard, prepositions, "$L0")
     Clipboard := RegExReplace(Clipboard, abbreviations, "$U0")
     Send, ^v
-
-    ; Restore clipboard
-    Clipboard := clipboard_copy
     Beep(1200, 20)
 Return
 ; ==============================================================================
 ;                                  snake_case
 ; ==============================================================================
 space_to_snake:
+    Clipboard :=
     Send, ^c
     ClipWait, 1
     Clipboard := StrReplace(Clipboard, " ", "_")
@@ -142,12 +140,12 @@ Return
 ;                           camelCase to snake_case
 ; ==============================================================================
 camel_to_snake:
+    Clipboard :=
     Send, ^c
     ClipWait, 1
 
     Clipboard := RegExReplace(Clipboard, "(?<!^)[A-Z_](?![A-Z_])", "_$L0")
     StringLower, Clipboard, Clipboard
-
     Send, ^v
     Beep(1200, 20)
 Return
@@ -155,6 +153,7 @@ Return
 ;                           snake_case to camelCase
 ; ==============================================================================
 snake_to_camnel:
+    Clipboard :=
     Send, ^c
     ClipWait, 1
     Clipboard := RegExReplace(Clipboard, "_(\w)", "$U1")
@@ -167,17 +166,11 @@ Return
 #IfWinActive, ahk_exe chrome.exe
 parens:
 +^9::
-    ; Backup clipboard
-    clipboard_copy := Clipboard
-
     Clipboard :=
     Send, ^c
-    ClipWait, 0.25
+    ClipWait, 1
     Clipboard := "(" . Clipboard . ")"
     Send, ^v
-
-    ; Restore clipboard
-    Clipboard := clipboard_copy
     Beep(1200, 20)
 Return
 ; ==============================================================================
@@ -186,17 +179,11 @@ Return
 #IfWinActive, ahk_exe chrome.exe
 quotes:
 +^'::
-    ; Backup clipboard
-    clipboard_copy := Clipboard
-
     Clipboard :=
     Send, ^c
-    ClipWait, 0.25
+    ClipWait, 1
     Clipboard := """" . Clipboard . """"
     Send, ^v
-
-    ; Restore clipboard
-    Clipboard := clipboard_copy
     Beep(1200, 20)
 Return
 ; ==============================================================================

@@ -53,12 +53,28 @@ Return
 ; ==============================================================================
 #IfWinNotActive, ahk_exe Code.exe
 ; ==============================================================================
-;                                   Set Price
+;                                CopyToClipboard
 ; ==============================================================================
-#p::
+CopyToClipboard()
+{
     Clipboard :=
     Send, ^c
     ClipWait, 1
+
+    If (Clipboard = "")
+    {
+        Beep(800, 20)
+        Exit
+    }
+
+    Clipboard := Trim(Clipboard, " ")
+}
+; ==============================================================================
+;                                   Set Price
+; ==============================================================================
+#p::
+    CopyToClipboard()
+
     if Clipboard is not float
     {
         Beep(800, 20)
@@ -80,18 +96,15 @@ Return
 ; ==============================================================================
 ;                                 Sentence Case
 ; ==============================================================================
-sentence_case:
 !#t::
-    Clipboard :=
-    Send, ^c
-    ClipWait, 1
-    Clipboard := Trim(Clipboard, " ")
+    CopyToClipboard()
 
     StringLower, Clipboard, Clipboard
     Clipboard := RegExReplace(Clipboard, "(?<=^|\.|\. |】)(\w)", "$U0")
+    Clipboard := RegExReplace(Clipboard, "\bi\b", "$U0")
 
     ; Append full stop
-    if (SubStr(Clipboard, 0, 1) != ".")
+    if (SubStr(Clipboard, 0, 1) != "." && SubStr(Clipboard, 0, 1) != "!")
         Clipboard := Clipboard . "."
 
     Send, ^v
@@ -100,17 +113,9 @@ Return
 ; ==============================================================================
 ;                                  Title Case
 ; ==============================================================================
-title_case:
 #t::
-    Clipboard :=
-    Send, ^c
-    ClipWait, 1
-    If (Clipboard = "")
-    {
-        Beep(800, 20)
-        Return
-    }
-    Clipboard := Trim(Clipboard, " ")
+    CopyToClipboard()
+
     StringLower, Clipboard, % Trim(Clipboard)
 
     ;@AHK++AlignAssignmentOn
@@ -128,10 +133,9 @@ Return
 ; ==============================================================================
 ;                                  snake_case
 ; ==============================================================================
-space_to_snake:
-    Clipboard :=
-    Send, ^c
-    ClipWait, 1
+SpaceToSnake:
+    CopyToClipboard()
+
     Clipboard := StrReplace(Clipboard, " ", "_")
     Send, ^v
     Beep(1200, 20)
@@ -139,10 +143,8 @@ Return
 ; ==============================================================================
 ;                           camelCase to snake_case
 ; ==============================================================================
-camel_to_snake:
-    Clipboard :=
-    Send, ^c
-    ClipWait, 1
+CamelToSnake:
+    CopyToClipboard()
 
     Clipboard := RegExReplace(Clipboard, "(?<!^)[A-Z_](?![A-Z_])", "_$L0")
     StringLower, Clipboard, Clipboard
@@ -152,10 +154,9 @@ Return
 ; ==============================================================================
 ;                           snake_case to camelCase
 ; ==============================================================================
-snake_to_camnel:
-    Clipboard :=
-    Send, ^c
-    ClipWait, 1
+SnakeToCamnel:
+    CopyToClipboard()
+
     Clipboard := RegExReplace(Clipboard, "_(\w)", "$U1")
     Send, ^v
     Beep(1200, 20)
@@ -164,10 +165,9 @@ Return
 ;                           Surround with parentheses
 ; ==============================================================================
 #IfWinActive, ahk_exe chrome.exe
-parens:
 +^9::
-    Clipboard :=
-    Send, ^c
+    CopyToClipboard()
+
     ClipWait, 1
     Clipboard := "(" . Clipboard . ")"
     Send, ^v
@@ -177,11 +177,9 @@ Return
 ;                             Surround with quotes
 ; ==============================================================================
 #IfWinActive, ahk_exe chrome.exe
-quotes:
 +^'::
-    Clipboard :=
-    Send, ^c
-    ClipWait, 1
+    CopyToClipboard()
+
     Clipboard := """" . Clipboard . """"
     Send, ^v
     Beep(1200, 20)

@@ -131,7 +131,7 @@ Return
     Beep(1200, 20)
 Return
 ; ==============================================================================
-;                                  snake_case
+;                                  Snake Case
 ; ==============================================================================
 SpaceToSnake:
     CopyToClipboard()
@@ -141,7 +141,7 @@ SpaceToSnake:
     Beep(1200, 20)
 Return
 ; ==============================================================================
-;                           camelCase to snake_case
+;                           Camel Case to Snake Case
 ; ==============================================================================
 CamelToSnake:
     CopyToClipboard()
@@ -152,7 +152,7 @@ CamelToSnake:
     Beep(1200, 20)
 Return
 ; ==============================================================================
-;                           snake_case to camelCase
+;                           Snake Case to Camel Case
 ; ==============================================================================
 SnakeToCamnel:
     CopyToClipboard()
@@ -160,6 +160,25 @@ SnakeToCamnel:
     Clipboard := RegExReplace(Clipboard, "_(\w)", "$U1")
     Send, ^v
     Beep(1200, 20)
+Return
+; ==============================================================================
+;                                  Cursor Keys
+; ==============================================================================
+#^a:: MouseMove, -1, 0, , R
+#^s:: MouseMove, 1, 0, , R
+#^w:: MouseMove, 0, -1, , R
+#^r:: MouseMove, 0, 1, , R
+#^Space::
+    if (toggle := !toggle)
+    {
+        Send {LButton down}
+        Beep(1200, 25)
+    }
+    Else
+    {
+        Send {LButton up}
+        Beep(1000, 25)
+    }
 Return
 ; ==============================================================================
 ;                           Surround with parentheses

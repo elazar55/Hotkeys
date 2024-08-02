@@ -99,16 +99,23 @@ Return
 ; ==============================================================================
 TextTools:
     Gui, Destroy
-    Gui, Add, Edit, W800 Vinput,
-    Gui, Add, Edit, W800 Voutput
-    Gui, Add, Button, W800 GSentenceCase, Sentence Case
-    Gui, Add, Button, W800 GTitleCase, Title Case
-    Gui, Add, Button, W800 GSpaceToSnake, Snake Case
-    Gui, Add, Button, W800 GCamelToSnake, Camel Case to Snake Case
-    Gui, Add, Button, W800 GSnakeToCamnel, Snake Case to Camel Case
-    Gui, Add, Button, W800 GSnakeToTitle, Snake Case to Title Case
-    Gui, Add, Button, W800 GSnakeToSentence, Snake Case to Sentence Case
-    Gui, Add, Button, W800 GDotToTitle, Dot Case to Title Case
+
+    width := 240
+
+    Gui, Add, Edit, W%width% Vinput,
+    Gui, Add, Edit, W%width% Voutput
+    GuiControl,, input, %Clipboard%
+
+    Gui, Add, Button, W%width% GSentenceCase, Sentence Case
+    Gui, Add, Button, W%width% GTitleCase, Title Case
+    Gui, Add, Button, W%width% GUppercase, Upper Case
+    Gui, Add, Button, W%width% GSpaceToSnake, Snake Case
+    Gui, Add, Button, W%width% GCamelToSnake, Camel Case to Snake Case
+    Gui, Add, Button, W%width% GSnakeToCamnel, Snake Case to Camel Case
+    Gui, Add, Button, W%width% GSnakeToTitle, Snake Case to Title Case
+    Gui, Add, Button, W%width% GSnakeToSentence, Snake Case to Sentence Case
+    Gui, Add, Button, W%width% GDotToTitle, Dot Case to Title Case
+    Gui, +AlwaysOnTop
     Gui, Show
 Return
 ; ==============================================================================
@@ -158,6 +165,18 @@ SpaceToSnake:
     Gui, Submit, NoHide
 
     input := StrReplace(input, " ", "_")
+
+    ; Update GUI and Clipboard with result
+    GuiControl,, output, %input%
+    Clipboard := input
+Return
+; ==============================================================================
+;                                  Upper Case
+; ==============================================================================
+Uppercase:
+    Gui, Submit, NoHide
+
+    StringUpper, input, input
 
     ; Update GUI and Clipboard with result
     GuiControl,, output, %input%
@@ -247,6 +266,7 @@ DotToTitle:
     ;@AHK++AlignAssignmentOff
 
     input := RegExReplace(input, "\b\.\b", " ")
+    StringLower, input, % Trim(input)
     input := RegExReplace(input, title_case, "$U0")
     input := RegExReplace(input, prepositions, "$L0")
     input := RegExReplace(input, abbreviations, "$U0")
@@ -275,13 +295,23 @@ Return
     }
 Return
 ; ==============================================================================
+;                                 Always on Top
+; ==============================================================================
+#v::
+    WinSet, AlwaysOnTop, Toggle, A, , ,
+    WinGet, style, ExStyle, A, ,
+    If (style & 0x8)
+        Beep(1200, 25)
+    Else
+        Beep(600, 25)
+Return
+; ==============================================================================
 ;                           Surround with parentheses
 ; ==============================================================================
 #IfWinActive, ahk_exe chrome.exe
 +^9::
     CopyToClipboard()
 
-    ClipWait, 1
     Clipboard := "(" . Clipboard . ")"
     Send, ^v
     Beep(1200, 20)

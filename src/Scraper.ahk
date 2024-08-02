@@ -8,7 +8,7 @@ WriteOutData(image, title, price, weight, sku, asin, output_file, rrp)
     if (sku != "SKU")
         sku := """=HYPERLINK(""eu.jobalots.com/products/" . sku . """, """ . sku . """)"""
     if (asin != "" && asin != "ASIN")
-        asin := """=HYPERLINK(""amazon.de/dp/" . asin . """, """ . asin . """)"""
+        asin := """=HYPERLINK(""amazon.co.uk/dp/" . asin . """, """ . asin . """)"""
 
     global data_buffer
     data_buffer = % data_buffer

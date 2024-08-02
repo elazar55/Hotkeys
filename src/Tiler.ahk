@@ -233,11 +233,39 @@ Return
     Dock(screen_width - window_width + left_offset, screen_height - window_height + top_offset, window_width, window_height)
 Return
 ; ==============================================================================
-;                                    Center
+;                                    Move Along Grid
 ; ==============================================================================
 #x::
     Update()
-    Dock((screen_width / 2) - (window_width / 2) , (screen_height / 2) - (window_height / 2) + (top_offset / 2), window_width, window_height)
+    ;@AHK++AlignAssignmentOn
+    dividend_x := screen_width / (window_width - left_offset * 2)
+    divisor_x  := (pos_x + left_offset) / (window_width - left_offset * 2)
+    ;@AHK++AlignAssignmentOff
+
+    If (window_height - top_offset <= screen_height / 2)
+    {
+        If (pos_y < screen_height / 2)
+            pos_y := 0
+        Else
+            pos_y := screen_height / 2
+    }
+    Else
+    {
+        pos_y := 0
+    }
+
+    if (divisor_x + 1 >= dividend_x)
+    {
+        divisor_x := -1
+
+        If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
+            pos_y := screen_height / 2
+        Else
+            pos_y := 0
+
+    }
+    ; MsgBox, % "1920 x " . " " . Floor(divisor_x) . " / " . dividend_x
+    Dock(screen_width * ((Floor(divisor_x) + 1) / dividend_x) - left_offset, pos_y, window_width, window_height)
 Return
 ; ~LButton::
 ;     Update()

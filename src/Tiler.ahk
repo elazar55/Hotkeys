@@ -262,11 +262,45 @@ Return
             pos_y := screen_height / 2
         Else
             pos_y := 0
-
     }
-    ; MsgBox, % "1920 x " . " " . Floor(divisor_x) . " / " . dividend_x
     Dock(screen_width * ((Floor(divisor_x) + 1) / dividend_x) - left_offset, pos_y, window_width, window_height)
 Return
+; ==============================================================================
+;                            Move Along Grid Reverse
+; ==============================================================================
++#x::
+    Update()
+    ;@AHK++AlignAssignmentOn
+    dividend_x := screen_width / (window_width - left_offset * 2)
+    divisor_x  := (pos_x + left_offset) / (window_width - left_offset * 2)
+    ;@AHK++AlignAssignmentOff
+
+    If (window_height - top_offset <= screen_height / 2)
+    {
+        If (pos_y < screen_height / 2)
+            pos_y := 0
+        Else
+            pos_y := screen_height / 2
+    }
+    Else
+    {
+        pos_y := 0
+    }
+
+    if (divisor_x <= 0)
+    {
+        divisor_x := dividend_x + 1
+
+        If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
+            pos_y := screen_height / 2
+        Else
+            pos_y := 0
+    }
+    Dock(screen_width * ((Floor(divisor_x) - 1) / dividend_x) - left_offset, pos_y, window_width, window_height)
+Return
+; ==============================================================================
+
+; ==============================================================================
 ; ~LButton::
 ;     Update()
 ;     while (GetKeyState("LButton", "p"))

@@ -233,9 +233,77 @@ Return
     Dock(screen_width - window_width + left_offset, screen_height - window_height + top_offset, window_width, window_height)
 Return
 ; ==============================================================================
-;                                    Move Along Grid
+;                                Move Along Grid
 ; ==============================================================================
 #x::
+    Update()
+    ;@AHK++AlignAssignmentOn
+    cells := 5
+    index := (pos_x + left_offset) / (screen_width / cells)
+    ;@AHK++AlignAssignmentOff
+
+    If (window_height - top_offset <= screen_height / 2)
+    {
+        If (pos_y < screen_height / 2)
+            pos_y := 0
+        Else
+            pos_y := screen_height / 2
+    }
+    Else
+    {
+        pos_y := 0
+    }
+
+    if (pos_x >= screen_width - window_width + left_offset)
+    {
+        index := -1
+
+        If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
+            pos_y := screen_height / 2
+        Else
+            pos_y := 0
+    }
+    Dock(screen_width * ((Floor(index) + 1) / cells) - left_offset, pos_y, window_width, window_height)
+Return
+; ==============================================================================
+;                            Move Along Grid Reverse
+; ==============================================================================
++#x::
+    Update()
+    ;@AHK++AlignAssignmentOn
+    cells := 5
+    index := (pos_x + left_offset) / (screen_width / cells)
+    ;@AHK++AlignAssignmentOff
+
+    If (window_height - top_offset <= screen_height / 2)
+    {
+        If (pos_y < screen_height / 2)
+            pos_y := 0
+        Else
+            pos_y := screen_height / 2
+    }
+    Else
+    {
+        pos_y := 0
+    }
+
+    if (pos_x <= 0)
+    {
+        cell_width := screen_width / cells
+        last_cell := Floor((window_width - left_offset) / cell_width)
+        index := cells - last_cell + 1
+
+        If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
+            pos_y := screen_height / 2
+        Else
+            pos_y := 0
+    }
+    Dock(screen_width * ((Floor(index) - 1) / cells) - left_offset, pos_y, window_width, window_height)
+Return
+; ==============================================================================
+;                                    Move Along Width
+; ==============================================================================
+TileWidthMove:
     Update()
     ;@AHK++AlignAssignmentOn
     dividend_x := screen_width / (window_width - left_offset * 2)
@@ -266,9 +334,9 @@ Return
     Dock(screen_width * ((Floor(divisor_x) + 1) / dividend_x) - left_offset, pos_y, window_width, window_height)
 Return
 ; ==============================================================================
-;                            Move Along Grid Reverse
+;                            Move Along Width Reverse
 ; ==============================================================================
-+#x::
+TileWidthMoveReverse:
     Update()
     ;@AHK++AlignAssignmentOn
     dividend_x := screen_width / (window_width - left_offset * 2)

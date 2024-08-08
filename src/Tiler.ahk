@@ -7,7 +7,7 @@ global screen_width  := 1920
 global screen_height := 1050
 global pos_x         :=
 global pos_y         :=
-global alignment     := 80
+global alignment     := 60
 global window_width  :=
 global window_height :=
 ; @AHK++AlignAssignmentOff
@@ -235,10 +235,11 @@ Return
 ; ==============================================================================
 ;                                Move Along Grid
 ; ==============================================================================
+MoveAlongGrid:
 #x::
     Update()
     ;@AHK++AlignAssignmentOn
-    cells := 5
+    cells := 16
     index := (pos_x + left_offset) / (screen_width / cells)
     ;@AHK++AlignAssignmentOff
 
@@ -268,10 +269,11 @@ Return
 ; ==============================================================================
 ;                            Move Along Grid Reverse
 ; ==============================================================================
+MoveAlongGridReverse:
 +#x::
     Update()
     ;@AHK++AlignAssignmentOn
-    cells := 5
+    cells := 16
     index := (pos_x + left_offset) / (screen_width / cells)
     ;@AHK++AlignAssignmentOff
 
@@ -303,11 +305,11 @@ Return
 ; ==============================================================================
 ;                                    Move Along Width
 ; ==============================================================================
-TileWidthMove:
+MoveAlongWidth:
     Update()
     ;@AHK++AlignAssignmentOn
-    dividend_x := screen_width / (window_width - left_offset * 2)
-    divisor_x  := (pos_x + left_offset) / (window_width - left_offset * 2)
+    cells := screen_width / (window_width - left_offset * 2)
+    index := (pos_x + left_offset) / (window_width - left_offset * 2)
     ;@AHK++AlignAssignmentOff
 
     If (window_height - top_offset <= screen_height / 2)
@@ -322,25 +324,25 @@ TileWidthMove:
         pos_y := 0
     }
 
-    if (divisor_x + 1 >= dividend_x)
+    if (pos_x >= screen_width - window_width + left_offset)
     {
-        divisor_x := -1
+        index := -1
 
         If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
             pos_y := screen_height / 2
         Else
             pos_y := 0
     }
-    Dock(screen_width * ((Floor(divisor_x) + 1) / dividend_x) - left_offset, pos_y, window_width, window_height)
+    Dock(screen_width * ((Floor(index) + 1) / cells) - left_offset, pos_y, window_width, window_height)
 Return
 ; ==============================================================================
 ;                            Move Along Width Reverse
 ; ==============================================================================
-TileWidthMoveReverse:
+MoveAlongWidthReverse:
     Update()
     ;@AHK++AlignAssignmentOn
-    dividend_x := screen_width / (window_width - left_offset * 2)
-    divisor_x  := (pos_x + left_offset) / (window_width - left_offset * 2)
+    cells := screen_width / (window_width - left_offset * 2)
+    index := (pos_x + left_offset) / (window_width - left_offset * 2)
     ;@AHK++AlignAssignmentOff
 
     If (window_height - top_offset <= screen_height / 2)
@@ -355,16 +357,18 @@ TileWidthMoveReverse:
         pos_y := 0
     }
 
-    if (divisor_x <= 0)
+    if (index <= 0)
     {
-        divisor_x := dividend_x + 1
+        cell_width := screen_width / cells
+        last_cell := Floor((window_width - left_offset) / cell_width)
+        index := cells - last_cell + 1
 
         If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
             pos_y := screen_height / 2
         Else
             pos_y := 0
     }
-    Dock(screen_width * ((Floor(divisor_x) - 1) / dividend_x) - left_offset, pos_y, window_width, window_height)
+    Dock(screen_width * ((Floor(index) - 1) / cells) - left_offset, pos_y, window_width, window_height)
 Return
 ; ==============================================================================
 

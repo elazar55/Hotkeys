@@ -7,7 +7,7 @@ global screen_width  := 1920
 global screen_height := 1050
 global pos_x         :=
 global pos_y         :=
-global alignment     := 60
+global alignment     := 80
 global window_width  :=
 global window_height :=
 ; @AHK++AlignAssignmentOff
@@ -117,20 +117,26 @@ AlignWidth(resize)
 ; ==============================================================================
 #a::
     Update()
-
     ; Resize if the window is already docked to the left.
     If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(-1)
 
     ; Otherwise, place it on the left, resize it to the nearest alignment, and
-    ; stretch it vertically.
+    ; stretch it vertically if its over half the screen height.
     Else
     {
-        ; @AHK++AlignAssignmentOn
-        new_width     := AlignWidth(0)
-        window_height := screen_height + top_offset
-        pos_y         := 0
-        ; @AHK++AlignAssignmentOff
+        new_width := AlignWidth(0)
+
+        If (window_height - top_offset <= screen_height / 2)
+        {
+            window_height := Round(screen_height / 2 + top_offset)
+            If (pos_y >= screen_height / 2)
+                pos_y := screen_height / 2
+            Else
+                pos_y := 0
+        }
+        Else
+            window_height := screen_height + top_offset
     }
     Dock(-left_offset, pos_y, new_width, window_height)
 Return
@@ -144,10 +150,18 @@ $+#a::
     Else
     {
         new_width := AlignWidth(0)
-        window_height := screen_height + top_offset
-        pos_y := 0
-    }
 
+        If (window_height - top_offset <= screen_height / 2)
+        {
+            window_height := Round(screen_height / 2 + top_offset)
+            If (pos_y >= screen_height / 2)
+                pos_y := screen_height / 2
+            Else
+                pos_y := 0
+        }
+        Else
+            window_height := screen_height + top_offset
+    }
     Dock(-left_offset, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
@@ -160,10 +174,18 @@ Return
     Else
     {
         new_width := AlignWidth(0)
-        window_height := screen_height + top_offset
-        pos_y := 0
-    }
 
+        If (window_height - top_offset <= screen_height / 2)
+        {
+            window_height := screen_height / 2 + top_offset
+            If (pos_y >= screen_height / 2 + top_offset)
+                pos_y := screen_height / 2 + top_offset
+            Else
+                pos_y := 0
+        }
+        Else
+            window_height := screen_height + top_offset
+    }
     Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
@@ -176,8 +198,17 @@ Return
     Else
     {
         new_width := AlignWidth(0)
-        window_height := screen_height + top_offset
-        pos_y := 0
+
+        If (window_height - top_offset <= screen_height / 2)
+        {
+            window_height := screen_height / 2 + top_offset
+            If (pos_y >= screen_height / 2 + top_offset)
+                pos_y := screen_height / 2 + top_offset
+            Else
+                pos_y := 0
+        }
+        Else
+            window_height := screen_height + top_offset
     }
 
     Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)
@@ -235,11 +266,11 @@ Return
 ; ==============================================================================
 ;                                Move Along Grid
 ; ==============================================================================
-MoveAlongGrid:
 #x::
+MoveAlongGrid:
     Update()
     ;@AHK++AlignAssignmentOn
-    cells := 16
+    cells := screen_width / alignment
     index := (pos_x + left_offset) / (screen_width / cells)
     ;@AHK++AlignAssignmentOff
 
@@ -269,11 +300,11 @@ Return
 ; ==============================================================================
 ;                            Move Along Grid Reverse
 ; ==============================================================================
-MoveAlongGridReverse:
 +#x::
+MoveAlongGridReverse:
     Update()
     ;@AHK++AlignAssignmentOn
-    cells := 16
+    cells := screen_width / alignment
     index := (pos_x + left_offset) / (screen_width / cells)
     ;@AHK++AlignAssignmentOff
 
@@ -369,6 +400,21 @@ MoveAlongWidthReverse:
             pos_y := 0
     }
     Dock(screen_width * ((Floor(index) - 1) / cells) - left_offset, pos_y, window_width, window_height)
+Return
+; ==============================================================================
+;                              Jump to Next Window
+; ==============================================================================
+JumpRight:
+    Update()
+    SetTitleMatchMode Regex
+
+    WinGet, num_windows, List, .+, , Start Menu|Program Manager|Chrome|Code|Hotkeys|Window Spy|RetroArcha
+
+    Loop, %num_windows%
+    {
+        win_id := num_windows%A_Index%
+    }
+    SetTitleMatchMode 1
 Return
 ; ==============================================================================
 

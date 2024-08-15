@@ -136,7 +136,10 @@ AlignWidth(resize)
                 pos_y := 0
         }
         Else
+        {
             window_height := screen_height + top_offset
+            pos_y := 0
+        }
     }
     Dock(-left_offset, pos_y, new_width, window_height)
 Return
@@ -160,7 +163,10 @@ $+#a::
                 pos_y := 0
         }
         Else
+        {
             window_height := screen_height + top_offset
+            pos_y := 0
+        }
     }
     Dock(-left_offset, pos_y, new_width, window_height)
 Return
@@ -184,7 +190,10 @@ Return
                 pos_y := 0
         }
         Else
+        {
             window_height := screen_height + top_offset
+            pos_y := 0
+        }
     }
     Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)
 Return
@@ -208,7 +217,10 @@ Return
                 pos_y := 0
         }
         Else
+        {
             window_height := screen_height + top_offset
+            pos_y := 0
+        }
     }
 
     Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)

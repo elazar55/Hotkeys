@@ -13,11 +13,36 @@ global window_height :=
 ; @AHK++AlignAssignmentOff
 CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
+LoadParams()
 Return
+; ==============================================================================
+;                           Load Parameters From File
+; ==============================================================================
+LoadParams()
+{
+    conf_file := "TilerConf.conf"
+    delim := "="
+
+    If (!FileExist(conf_file))
+    {
+        SysGet, mon1, MonitorWorkArea
+
+        FileAppend, alignment%delim%%alignment%`n, %conf_file%
+        FileAppend, screen_width%delim%%mon1Right%`n, %conf_file%
+        FileAppend, screen_height%delim%%mon1Bottom%`n, %conf_file%
+    }
+
+    Loop, Read, %conf_file%
+    {
+        Loop, Parse, A_LoopReadLine,%delim%
+        {
+        }
+    }
+}
 ; ==============================================================================
 ;                                    Update
 ; ==============================================================================
-Update()
+Update(win_id)
 {
     ; @AHK++AlignAssignmentOn
     global left_offset := 7
@@ -25,12 +50,12 @@ Update()
     global min_width   := 320 ; alignment * Round((screen_width / min_width_factor) / alignment)
     ; @AHK++AlignAssignmentOff
 
-    WinGet, is_maximized, MinMax, A
+    WinGet, is_maximized, MinMax, ahk_id %win_id%
     if (is_maximized)
         WinRestore, A
 
-    WinGetPos, pos_x, pos_y, window_width, window_height, A, , ,
-    WinGet, title, ProcessName, A, , ,
+    WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
+    WinGet, title, ProcessName, ahk_id %win_id%
 
     If (RegExMatch(title, "(Code.exe)|(Playnite.*.exe)"))
     {
@@ -53,7 +78,8 @@ Update()
 ;                                      GUI
 ; ==============================================================================
 DockerGUI:
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
 
     Gui, Destroy
     InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
@@ -116,7 +142,8 @@ AlignWidth(resize)
 ;                                     Left
 ; ==============================================================================
 #a::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     ; Resize if the window is already docked to the left.
     If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(-1)
@@ -147,7 +174,8 @@ Return
 ;                                 Left Reverse
 ; ==============================================================================
 $+#a::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(1)
     Else
@@ -174,7 +202,8 @@ Return
 ;                                     Right
 ; ==============================================================================
 #s::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     If (pos_x == screen_width - window_width + left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(-1)
     Else
@@ -201,7 +230,8 @@ Return
 ;                             Right Reverse
 ; ==============================================================================
 +#s::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     If (pos_x == screen_width - window_width + left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(1)
     Else
@@ -229,7 +259,8 @@ Return
 ;                                      Up
 ; ==============================================================================
 #w::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
 
     If (window_height < screen_height)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
@@ -240,7 +271,8 @@ Return
 ;                                     Down
 ; ==============================================================================
 #r::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
 
     If (window_height < screen_height)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
@@ -251,36 +283,50 @@ Return
 ;                                   Top-Left
 ; ==============================================================================
 #q::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     Dock(-left_offset, 0, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Top-Right
 ; ==============================================================================
 #f::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     Dock(screen_width - window_width + left_offset, 0, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Bottom-Left
 ; ==============================================================================
 #z::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     Dock(-left_offset, screen_height - window_height + top_offset, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Bottom-Right
 ; ==============================================================================
 #c::
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     Dock(screen_width - window_width + left_offset, screen_height - window_height + top_offset, window_width, window_height)
+Return
+; ==============================================================================
+;                                 Minimum Size
+; ==============================================================================
+MinSize:
+#b::
+    WinGet, win_id, ID, A
+    Update(win_id)
+    Dock(pos_x, pos_y, 1, 1)
 Return
 ; ==============================================================================
 ;                                Move Along Grid
 ; ==============================================================================
 #x::
 MoveAlongGrid:
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     ;@AHK++AlignAssignmentOn
     cells := screen_width / alignment
     index := (pos_x + left_offset) / (screen_width / cells)
@@ -314,7 +360,8 @@ Return
 ; ==============================================================================
 +#x::
 MoveAlongGridReverse:
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     ;@AHK++AlignAssignmentOn
     cells := screen_width / alignment
     index := (pos_x + left_offset) / (screen_width / cells)
@@ -349,7 +396,8 @@ Return
 ;                                    Move Along Width
 ; ==============================================================================
 MoveAlongWidth:
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     ;@AHK++AlignAssignmentOn
     cells := screen_width / (window_width - left_offset * 2)
     index := (pos_x + left_offset) / (window_width - left_offset * 2)
@@ -382,7 +430,8 @@ Return
 ;                            Move Along Width Reverse
 ; ==============================================================================
 MoveAlongWidthReverse:
-    Update()
+    WinGet, win_id, ID, A
+    Update(win_id)
     ;@AHK++AlignAssignmentOn
     cells := screen_width / (window_width - left_offset * 2)
     index := (pos_x + left_offset) / (window_width - left_offset * 2)
@@ -416,18 +465,38 @@ Return
 ; ==============================================================================
 ;                              Jump to Next Window
 ; ==============================================================================
-JumpRight:
-    Update()
-    SetTitleMatchMode Regex
+; JumpRight:
+;     WinGet, win_id, ID, A
+;     Update(win_id)
+;     SetTitleMatchMode Regex
+;     WinGet, win_handles, List, .+, , Start Menu|Program Manager|Chrome|Code|Hotkeys|Window Spy|RetroArch
 
-    WinGet, num_windows, List, .+, , Start Menu|Program Manager|Chrome|Code|Hotkeys|Window Spy|RetroArcha
+;     positions := []
+;     Loop, %win_handles%
+;     {
+;         Update(win_handles%A_Index%)
 
-    Loop, %num_windows%
-    {
-        win_id := num_windows%A_Index%
-    }
-    SetTitleMatchMode 1
-Return
+;         ;@AHK++AlignAssignmentOn
+;         win_left  := pos_x + left_offset
+;         win_right := pos_x + window_width - left_offset
+;         win_top   := pos_y
+;         win_bot   := pos_y + window_height - left_offset
+;         ;@AHK++AlignAssignmentOff
+
+;         positions.Push(win_left)
+;         positions.Push(win_right)
+;         positions.Push(win_top)
+;         positions.Push(win_bot)
+;     }
+;     Loop, % positions.Length() / 4
+;     {
+;         MsgBox, % positions[((A_Index - 1) * 4 + 0) + 1]
+;             . "`n" . positions[((A_Index - 1) * 4 + 1) + 1]
+;             . "`n" . positions[((A_Index - 1) * 4 + 2) + 1]
+;             . "`n" . positions[((A_Index - 1) * 4 + 3) + 1]
+;     }
+;     SetTitleMatchMode 1
+; Return
 ; ==============================================================================
 
 ; ==============================================================================

@@ -10,35 +10,66 @@ global pos_y         :=
 global alignment     := 80
 global window_width  :=
 global window_height :=
+global conf_file     := "TilerConf.conf"
 ; @AHK++AlignAssignmentOff
 CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
-LoadParams()
+LoadConfig(conf_file)
 Return
 ; ==============================================================================
-;                           Load Parameters From File
+;                                  Load Config
 ; ==============================================================================
-LoadParams()
+LoadConfig(conf_file)
 {
-    conf_file := "TilerConf.conf"
-    delim := "="
-
     If (!FileExist(conf_file))
     {
-        SysGet, mon1, MonitorWorkArea
-
-        FileAppend, alignment%delim%%alignment%`n, %conf_file%
-        FileAppend, screen_width%delim%%mon1Right%`n, %conf_file%
-        FileAppend, screen_height%delim%%mon1Bottom%`n, %conf_file%
+        WriteConfig(conf_file)
+        Return
     }
 
+    delim := "="
     Loop, Read, %conf_file%
     {
-        Loop, Parse, A_LoopReadLine,%delim%
-        {
-        }
+        param := StrSplit(A_LoopReadLine, delim)
+
+        If (param[1] == "alignment")
+            alignment := param[2]
+        Else If (param[1] == "screen_width")
+            screen_width := param[2]
+        Else If (param[1] == "screen_height")
+            screen_height := param[2]
     }
 }
+; ==============================================================================
+;                                 Write Config
+; ==============================================================================
+WriteConfig(conf_file)
+{
+    delim := "="
+
+    FileDelete, %conf_file%
+    FileAppend, screen_width%delim%%screen_width%`n, %conf_file%
+    FileAppend, screen_height%delim%%screen_height%`n, %conf_file%
+    FileAppend, alignment%delim%%alignment%`n, %conf_file%
+}
+; ==============================================================================
+;                                      GUI
+; ==============================================================================
+DockerGUI:
+    WinGet, win_id, ID, A
+    Update(win_id)
+
+    Gui, Destroy
+    InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
+    min_width := alignment * Round((screen_width / 3) / alignment)
+    WriteConfig(conf_file)
+Return
+; ==============================================================================
+;                                Remove ToolTip
+; ==============================================================================
+RemoveToolTip:
+    ToolTip
+return
 ; ==============================================================================
 ;                                    Update
 ; ==============================================================================
@@ -74,23 +105,6 @@ Update(win_id)
         global min_width := 502
     }
 }
-; ==============================================================================
-;                                      GUI
-; ==============================================================================
-DockerGUI:
-    WinGet, win_id, ID, A
-    Update(win_id)
-
-    Gui, Destroy
-    InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
-    min_width := alignment * Round((screen_width / 3) / alignment)
-Return
-; ==============================================================================
-;                                Remove ToolTip
-; ==============================================================================
-RemoveToolTip:
-    ToolTip
-return
 ; ==============================================================================
 ;                                 Dock Function
 ; ==============================================================================
@@ -315,7 +329,6 @@ Return
 ;                                 Minimum Size
 ; ==============================================================================
 MinSize:
-#b::
     WinGet, win_id, ID, A
     Update(win_id)
     Dock(pos_x, pos_y, 1, 1)

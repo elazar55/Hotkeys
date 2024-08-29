@@ -10,24 +10,38 @@ global pos_y         :=
 global alignment     := 80
 global window_width  :=
 global window_height :=
-global conf_file     := "TilerConf.conf"
+global conf_file     := "Tiler.conf"
+global delim         := "="
 ; @AHK++AlignAssignmentOff
 CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
-LoadConfig(conf_file)
+Init()
 Return
 ; ==============================================================================
-;                                  Load Config
+;                                     Init
 ; ==============================================================================
-LoadConfig(conf_file)
+Init()
 {
     If (!FileExist(conf_file))
     {
-        WriteConfig(conf_file)
-        Return
-    }
+        SysGet, mon, MonitorWorkArea
 
-    delim := "="
+        screen_width := monRight
+        screen_height := monBottom
+
+        WriteConfig(conf_file)
+    }
+    Else
+    {
+        ReadConfig(conf_file)
+    }
+}
+; ==============================================================================
+;                                  Load Config
+; ==============================================================================
+ReadConfig(conf_file)
+{
+
     Loop, Read, %conf_file%
     {
         param := StrSplit(A_LoopReadLine, delim)
@@ -45,8 +59,6 @@ LoadConfig(conf_file)
 ; ==============================================================================
 WriteConfig(conf_file)
 {
-    delim := "="
-
     FileDelete, %conf_file%
     FileAppend, screen_width%delim%%screen_width%`n, %conf_file%
     FileAppend, screen_height%delim%%screen_height%`n, %conf_file%

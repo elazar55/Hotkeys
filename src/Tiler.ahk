@@ -73,7 +73,6 @@ DockerGUI:
 
     Gui, Destroy
     InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
-    min_width := alignment * Round((screen_width / 3) / alignment)
     WriteConfig(conf_file)
 Return
 ; ==============================================================================
@@ -100,6 +99,7 @@ Update(win_id)
     WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
     WinGet, title, ProcessName, ahk_id %win_id%
 
+    ; Program specifics
     If (RegExMatch(title, "(Code.exe)|(Playnite.*.exe)"))
     {
         ; @AHK++AlignAssignmentOn
@@ -146,22 +146,26 @@ AlignWidth(resize)
     global window_width
     ; @AHK++AlignAssignmentOff
 
-    ; Undersize
+    ; Undersize left
     If (window_width - left_offset * 2 == min_width && resize < 0)
     {
         new_width := screen_width
     }
+    ; Undersize right
     Else If ((window_width - left_offset * 2) - alignment < min_width && resize < 0)
     {
         new_width := min_width
     }
     ; Oversize
     Else If (window_width - left_offset * 2 >= screen_width && resize > 0)
-        new_width := min_width ; (Ceil((min_width - left_offset * 2) / alignment)) * alignment
+    {
+        new_width := min_width
+    }
     ; Resize
     Else
+    {
         new_width := (Round((window_width - left_offset * 2) / alignment) + resize) * alignment
-
+    }
     Return new_width + left_offset * 2
 }
 ; ==============================================================================
@@ -175,7 +179,7 @@ AlignWidth(resize)
         new_width := AlignWidth(-1)
 
     ; Otherwise, place it on the left, resize it to the nearest alignment, and
-    ; stretch it vertically if its over half the screen height.
+    ; stretch it vertically if it's over half the screen height.
     Else
     {
         new_width := AlignWidth(0)

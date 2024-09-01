@@ -86,18 +86,18 @@ return
 ; ==============================================================================
 Update(win_id)
 {
-    ; @AHK++AlignAssignmentOn
-    global left_offset := 7
-    global top_offset  := 7
-    global min_width   := 320 ; alignment * Round((screen_width / min_width_factor) / alignment)
-    ; @AHK++AlignAssignmentOff
-
     WinGet, is_maximized, MinMax, ahk_id %win_id%
     if (is_maximized)
         WinRestore, A
 
     WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
     WinGet, title, ProcessName, ahk_id %win_id%
+
+    ; @AHK++AlignAssignmentOn
+    global left_offset := 7
+    global top_offset  := 7
+    global min_width   := 320 ; alignment * Round((screen_width / min_width_factor) / alignment)
+    ; @AHK++AlignAssignmentOff
 
     ; Program specifics
     If (RegExMatch(title, "(Code.exe)|(Playnite.*.exe)"))
@@ -128,7 +128,7 @@ Dock(x, y, width, height)
     tip_x := x + left_offset
     If (x == -left_offset)
         tip_x := width - left_offset * 2
-    ToolTip, % width - left_offset * 2 . "x" . height - top_offset, tip_x, y
+    ToolTip, % width - left_offset * 2 . "x" . height - top_offset . "`nx: " . x + left_offset . " y: " y + top_offset, tip_x, y
     SetTimer, RemoveTooltip, -1000
 
     WinMove, A, , x, y, width, height, ,

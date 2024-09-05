@@ -130,13 +130,22 @@ Update(win_id)
 ; ==============================================================================
 Dock(x, y, width, height)
 {
+    ;@AHK++AlignAssignmentOn
     global left_offset
     global top_offset
+    win_left   := x + left_offset
+    win_width  := width - left_offset * 2
+    win_height := height - top_offset
+    tooltip_x  := x + left_offset
+    ; win_right := x + window_width + left_offset
+    ;@AHK++AlignAssignmentOff
 
-    tip_x := x + left_offset
-    If (x <= screen_width * 0.2)
-        tip_x := x + width - left_offset * 2
-    ToolTip, % width - left_offset * 2 . "x" . height - top_offset . "`nx: " . Round(x + left_offset) . " y: " y, tip_x, y
+    If (win_left == 0)
+        tooltip_x := x + win_width
+
+    ToolTip, % Round(win_width) . "x" . Round(win_height) . "`nx: "
+        . Round(win_left) . " y: " Round(y), tooltip_x, y
+
     SetTimer, RemoveTooltip, -1000
 
     WinMove, A, , x, y, width, height, ,
@@ -146,34 +155,26 @@ Dock(x, y, width, height)
 ; ==============================================================================
 AlignWidth(resize)
 {
-    ; @AHK++AlignAssignmentOn
     global left_offset
     global alignment
     global min_width
     global screen_width
     global window_width
-    ; @AHK++AlignAssignmentOff
+    win_width := window_width - left_offset * 2
 
     ; Undersize left
-    If (window_width - left_offset * 2 == min_width && resize < 0)
-    {
+    If (win_width == min_width && resize < 0)
         new_width := screen_width
-    }
     ; Undersize right
-    Else If ((window_width - left_offset * 2) - alignment < min_width && resize < 0)
-    {
+    Else If (win_width - alignment < min_width && resize < 0)
         new_width := min_width
-    }
     ; Oversize
-    Else If (window_width - left_offset * 2 >= screen_width && resize > 0)
-    {
+    Else If (win_width >= screen_width && resize > 0)
         new_width := min_width
-    }
     ; Resize
     Else
-    {
-        new_width := (Round((window_width - left_offset * 2) / alignment) + resize) * alignment
-    }
+        new_width := (win_width / alignment + resize) * alignment
+
     Return new_width + left_offset * 2
 }
 ; ==============================================================================
@@ -194,9 +195,9 @@ DockLeft:
 
         If (window_height - top_offset <= screen_height / 2)
         {
-            window_height := Round(screen_height / 2 + top_offset)
+            window_height := (screen_height / 2 + top_offset)
             If (pos_y >= screen_height * 0.25)
-                pos_y := Round(screen_height / 2)
+                pos_y := (screen_height / 2)
             Else
                 pos_y := 0
         }
@@ -222,9 +223,9 @@ DockLeftReverse:
 
         If (window_height - top_offset <= screen_height / 2)
         {
-            window_height := Round(screen_height / 2 + top_offset)
+            window_height := (screen_height / 2 + top_offset)
             If (pos_y >= screen_height * 0.25)
-                pos_y := Round(screen_height / 2)
+                pos_y := (screen_height / 2)
             Else
                 pos_y := 0
         }
@@ -250,9 +251,9 @@ DockRight:
 
         If (window_height - top_offset <= screen_height / 2)
         {
-            window_height := Round(screen_height / 2 + top_offset)
+            window_height := (screen_height / 2 + top_offset)
             If (pos_y >= screen_height * 0.25)
-                pos_y := Round(screen_height / 2)
+                pos_y := (screen_height / 2)
             Else
                 pos_y := 0
         }
@@ -278,9 +279,9 @@ DockRightReverse:
 
         If (window_height - top_offset <= screen_height / 2)
         {
-            window_height := Round(screen_height / 2 + top_offset)
+            window_height := (screen_height / 2 + top_offset)
             If (pos_y >= screen_height * 0.25)
-                pos_y := Round(screen_height / 2)
+                pos_y := (screen_height / 2)
             Else
                 pos_y := 0
         }
@@ -303,7 +304,7 @@ DockUp:
     If (window_height < screen_height)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
     Else
-        Dock(pos_x, 0, window_width, Round(window_height / 2 + top_offset / 2))
+        Dock(pos_x, 0, window_width, (window_height / 2 + top_offset / 2))
 Return
 ; ==============================================================================
 ;                                     Down
@@ -315,7 +316,7 @@ DockDown:
     If (window_height < screen_height)
         Dock(pos_x, 0, window_width, screen_height + top_offset)
     Else
-        Dock(pos_x, screen_height / 2, window_width, Round(screen_height / 2 + top_offset))
+        Dock(pos_x, screen_height / 2, window_width, (screen_height / 2 + top_offset))
 Return
 ; ==============================================================================
 ;                                   Top-Left
@@ -374,7 +375,7 @@ MoveAlongGrid:
         If (pos_y < screen_height * 0.25)
             pos_y := 0
         Else
-            pos_y := Round(screen_height / 2)
+            pos_y := (screen_height / 2)
     }
     Else
     {
@@ -409,7 +410,7 @@ MoveAlongGridReverse:
         If (pos_y < screen_height * 0.25)
             pos_y := 0
         Else
-            pos_y := Round(screen_height / 2)
+            pos_y := screen_height / 2
     }
     Else
     {

@@ -23,13 +23,15 @@ SendMode, Event
 ;                                      GUI
 ; ==============================================================================
 #m::
+    width := 320
     Gui, Destroy
     Gui, +AlwaysOnTop
-    Gui, Add, Button, W320 GScrape, Scrape
-    Gui, Add, Button, W320 GOpenOrder, Open order.html
-    Gui, Add, Button, W320 GOpenLatest, Open latest output
-    Gui, Add, Button, W320 GDockerGUI, Docker
-    Gui, Add, Button, W320 GTextTools, Text Tools
+    Gui, Add, Button, W%width% GScrape, Scrape
+    Gui, Add, Button, W%width% GOpenOrder, Open order.html
+    Gui, Add, Button, W%width% GOpenLatest, Open latest output
+    Gui, Add, Button, W%width% GDockerGUI, Docker
+    Gui, Add, Button, W%width% GTextTools, Text Tools
+    Gui, Add, Button, W%width% GByteConverter, Byte Converter
     Gui, Show
 Return
 ; ==============================================================================
@@ -53,6 +55,36 @@ Return
 ;                           Exclude VS Code from Here
 ; ==============================================================================
 #IfWinNotActive, ahk_exe Code.exe
+; ==============================================================================
+;                                Byte Converter
+; ==============================================================================
+ByteConverter:
+    width := 64
+    Gui, Destroy
+    Gui, +AlwaysOnTop
+
+    Gui, Add, Edit, vbyte w%width% X10
+    Gui, Add, Text, w%width% XP+%width% YP+5, Byte
+
+    Gui, Add, Edit, vKByte w%width% X10
+    Gui, Add, Text, w%width% XP+%width% YP+5, KB
+
+    Gui, Add, Edit, vMByte w%width% X10
+    Gui, Add, Text, w%width% XP+%width% YP+5, MB
+
+    Gui, Add, Edit, vGByte w%width% X10
+    Gui, Add, Text, w%width% XP+%width% YP+5, GB
+
+    Gui, Add, Button, GByte X10, Go
+
+    Gui, Show
+Return
+Byte:
+    Gui, Submit, NoHide
+    GuiControl, , KByte, % byte / 1024
+    GuiControl, , MByte, % byte / (1024 ** 2)
+    GuiControl, , GByte, % byte / (1024 ** 3)
+Return
 ; ==============================================================================
 ;                                CopyToClipboard
 ; ==============================================================================
@@ -106,22 +138,23 @@ TextTools:
     Gui, Add, Edit, W%width% Voutput
     GuiControl,, input, %Clipboard%
 
-    Gui, Add, Button, W%width% GSentenceCase, Sentence Case
-    Gui, Add, Button, W%width% GTitleCase, Title Case
+    Gui, Add, Button, W%width% GSpaceToSentence, Space to Sentence
+    Gui, Add, Button, W%width% GSpaceToTitle, Space to Title
+    Gui, Add, Button, W%width% GSpaceToSnake, Space to Snake
+    Gui, Add, Button, W%width% GSpaceToKebab, Space to Kebab
+    Gui, Add, Button, W%width% GSnakeToCamnel, Snake to Camel
+    Gui, Add, Button, W%width% GSnakeToTitle, Snake to Title
+    Gui, Add, Button, W%width% GSnakeToSentence, Snake to Sentence
+    Gui, Add, Button, W%width% GCamelToSnake, Camel to Snake
+    Gui, Add, Button, W%width% GDotToTitle, Dot to Title
     Gui, Add, Button, W%width% GUppercase, Upper Case
-    Gui, Add, Button, W%width% GSpaceToSnake, Snake Case
-    Gui, Add, Button, W%width% GCamelToSnake, Camel Case to Snake Case
-    Gui, Add, Button, W%width% GSnakeToCamnel, Snake Case to Camel Case
-    Gui, Add, Button, W%width% GSnakeToTitle, Snake Case to Title Case
-    Gui, Add, Button, W%width% GSnakeToSentence, Snake Case to Sentence Case
-    Gui, Add, Button, W%width% GDotToTitle, Dot Case to Title Case
     Gui, +AlwaysOnTop
     Gui, Show
 Return
 ; ==============================================================================
-;                                 Sentence Case
+;                            Space to Sentence Case
 ; ==============================================================================
-SentenceCase:
+SpaceToSentence:
     Gui, Submit, NoHide
 
     StringLower, input, input
@@ -137,9 +170,9 @@ SentenceCase:
     Clipboard := input
 Return
 ; ==============================================================================
-;                                  Title Case
+;                              Space to Title Case
 ; ==============================================================================
-TitleCase:
+SpaceToTitle:
     Gui, Submit, NoHide
 
     StringLower, input, % Trim(input)
@@ -150,7 +183,7 @@ TitleCase:
     abbreviations := "i)\bMIDI|USB|PC\b"
     ;@AHK++AlignAssignmentOff
 
-    input := RegExReplace(input, title_case, "$U0")
+    input := RegExReplace(Trim(input), title_case, "$U0")
     input := RegExReplace(input, prepositions, "$L0")
     input := RegExReplace(input, abbreviations, "$U0")
 
@@ -159,12 +192,12 @@ TitleCase:
     Clipboard := input
 Return
 ; ==============================================================================
-;                                  Snake Case
+;                              Space to Snake Case
 ; ==============================================================================
 SpaceToSnake:
     Gui, Submit, NoHide
 
-    input := StrReplace(input, " ", "_")
+    input := StrReplace(Trim(input), " ", "_")
 
     ; Update GUI and Clipboard with result
     GuiControl,, output, %input%
@@ -176,7 +209,19 @@ Return
 Uppercase:
     Gui, Submit, NoHide
 
-    StringUpper, input, input
+    StringUpper, input, % Trim(input)
+
+    ; Update GUI and Clipboard with result
+    GuiControl,, output, %input%
+    Clipboard := input
+Return
+; ==============================================================================
+;                              Space to kebab-case
+; ==============================================================================
+SpaceToKebab:
+    Gui, Submit, NoHide
+
+    input := StrReplace(Trim(input), " ", "-")
 
     ; Update GUI and Clipboard with result
     GuiControl,, output, %input%

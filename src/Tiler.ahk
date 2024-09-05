@@ -126,9 +126,9 @@ Dock(x, y, width, height)
     global top_offset
 
     tip_x := x + left_offset
-    If (x == -left_offset)
-        tip_x := width - left_offset * 2
-    ToolTip, % width - left_offset * 2 . "x" . height - top_offset . "`nx: " . x + left_offset . " y: " y + top_offset, tip_x, y
+    If (x <= screen_width * 0.2)
+        tip_x := x + width - left_offset * 2
+    ToolTip, % width - left_offset * 2 . "x" . height - top_offset . "`nx: " . Round(x + left_offset) . " y: " y, tip_x, y
     SetTimer, RemoveTooltip, -1000
 
     WinMove, A, , x, y, width, height, ,
@@ -187,8 +187,8 @@ AlignWidth(resize)
         If (window_height - top_offset <= screen_height / 2)
         {
             window_height := Round(screen_height / 2 + top_offset)
-            If (pos_y >= screen_height / 2)
-                pos_y := screen_height / 2
+            If (pos_y >= screen_height * 0.25)
+                pos_y := Round(screen_height / 2)
             Else
                 pos_y := 0
         }
@@ -215,8 +215,8 @@ $+#a::
         If (window_height - top_offset <= screen_height / 2)
         {
             window_height := Round(screen_height / 2 + top_offset)
-            If (pos_y >= screen_height / 2)
-                pos_y := screen_height / 2
+            If (pos_y >= screen_height * 0.25)
+                pos_y := Round(screen_height / 2)
             Else
                 pos_y := 0
         }
@@ -242,9 +242,9 @@ Return
 
         If (window_height - top_offset <= screen_height / 2)
         {
-            window_height := screen_height / 2 + top_offset
-            If (pos_y >= screen_height / 2 + top_offset)
-                pos_y := screen_height / 2 + top_offset
+            window_height := Round(screen_height / 2 + top_offset)
+            If (pos_y >= screen_height * 0.25)
+                pos_y := Round(screen_height / 2)
             Else
                 pos_y := 0
         }
@@ -270,9 +270,9 @@ Return
 
         If (window_height - top_offset <= screen_height / 2)
         {
-            window_height := screen_height / 2 + top_offset
-            If (pos_y >= screen_height / 2 + top_offset)
-                pos_y := screen_height / 2 + top_offset
+            window_height := Round(screen_height / 2 + top_offset)
+            If (pos_y >= screen_height * 0.25)
+                pos_y := Round(screen_height / 2)
             Else
                 pos_y := 0
         }
@@ -363,10 +363,10 @@ MoveAlongGrid:
 
     If (window_height - top_offset <= screen_height / 2)
     {
-        If (pos_y < screen_height / 2)
+        If (pos_y < screen_height * 0.25)
             pos_y := 0
         Else
-            pos_y := screen_height / 2
+            pos_y := Round(screen_height / 2)
     }
     Else
     {
@@ -398,10 +398,10 @@ MoveAlongGridReverse:
 
     If (window_height - top_offset <= screen_height / 2)
     {
-        If (pos_y < screen_height / 2)
+        If (pos_y < screen_height * 0.25)
             pos_y := 0
         Else
-            pos_y := screen_height / 2
+            pos_y := Round(screen_height / 2)
     }
     Else
     {

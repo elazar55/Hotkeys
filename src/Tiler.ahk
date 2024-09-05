@@ -10,8 +10,11 @@ global pos_y         :=
 global alignment     := 80
 global window_width  :=
 global window_height :=
-global conf_file     := "Tiler.conf"
-global delim         := "="
+global ini_file      := "tiler.ini"
+global dock_left     :=
+global dock_right    :=
+global dock_up       :=
+global dock_down     :=
 ; @AHK++AlignAssignmentOff
 CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
@@ -22,47 +25,50 @@ Return
 ; ==============================================================================
 Init()
 {
-    If (!FileExist(conf_file))
-    {
-        SysGet, mon, MonitorWorkArea
+    ReadConfig(ini_file)
 
-        screen_width := monRight
-        screen_height := monBottom
+    If (!FileExist(ini_file))
+        WriteConfig(ini_file)
 
-        WriteConfig(conf_file)
-    }
-    Else
-    {
-        ReadConfig(conf_file)
-    }
 }
 ; ==============================================================================
 ;                                  Load Config
 ; ==============================================================================
-ReadConfig(conf_file)
+ReadConfig(ini_file)
 {
+    IniRead, alignment, %ini_file%, settings, alignment, %alignment%
 
-    Loop, Read, %conf_file%
-    {
-        param := StrSplit(A_LoopReadLine, delim)
+    SysGet, mon, MonitorWorkArea
+    ; IniRead, OutputVar, Filename, Section, Key [, Default]
+    IniRead, screen_width, %ini_file%, settings, screen_width, %monRight%
+    IniRead, screen_height, %ini_file%, settings, screen_height, %monBottom%
 
-        If (param[1] == "alignment")
-            alignment := param[2]
-        Else If (param[1] == "screen_width")
-            screen_width := param[2]
-        Else If (param[1] == "screen_height")
-            screen_height := param[2]
-    }
+    IniRead, dock_left, %ini_file%, settings, dock_left, #a
+    IniRead, dock_right, %ini_file%, settings, dock_right, #s
+    IniRead, dock_up, %ini_file%, settings, dock_up, #w
+    IniRead, dock_down, %ini_file%, settings, dock_down, #r
+
+    Hotkey, IfWinActive
+    Hotkey, %dock_left%, DockLeft
+    Hotkey, %dock_right%, DockRight
+    Hotkey, %dock_up%, DockUp
+    Hotkey, %dock_down%, DockDown
+    Hotkey, +%dock_left%, DockLeftReverse
+    Hotkey, +%dock_right%, DockRightReverse
 }
 ; ==============================================================================
 ;                                 Write Config
 ; ==============================================================================
-WriteConfig(conf_file)
+WriteConfig(ini_file)
 {
-    FileDelete, %conf_file%
-    FileAppend, screen_width%delim%%screen_width%`n, %conf_file%
-    FileAppend, screen_height%delim%%screen_height%`n, %conf_file%
-    FileAppend, alignment%delim%%alignment%`n, %conf_file%
+    ; IniWrite, Value, Filename, Section, Key
+    IniWrite, %alignment%, %ini_file%, settings, alignment
+    IniWrite, %screen_width%, %ini_file%, settings, screen_width
+    IniWrite, %screen_height%, %ini_file%, settings, screen_height
+    IniWrite, %dock_left%, %ini_file%, settings, dock_left
+    IniWrite, %dock_right%, %ini_file%, settings, dock_right
+    IniWrite, %dock_up%, %ini_file%, settings, dock_up
+    IniWrite, %dock_down%, %ini_file%, settings, dock_down
 }
 ; ==============================================================================
 ;                                      GUI
@@ -73,7 +79,9 @@ DockerGUI:
 
     Gui, Destroy
     InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
-    WriteConfig(conf_file)
+
+    ; IniWrite, Value, Filename, Section, Key
+    IniWrite, %alignment%, %ini_file%, settings, alignment
 Return
 ; ==============================================================================
 ;                                Remove ToolTip
@@ -171,7 +179,7 @@ AlignWidth(resize)
 ; ==============================================================================
 ;                                     Left
 ; ==============================================================================
-#a::
+DockLeft:
     WinGet, win_id, ID, A
     Update(win_id)
     ; Resize if the window is already docked to the left.
@@ -203,7 +211,7 @@ Return
 ; ==============================================================================
 ;                                 Left Reverse
 ; ==============================================================================
-$+#a::
+DockLeftReverse:
     WinGet, win_id, ID, A
     Update(win_id)
     If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
@@ -231,7 +239,7 @@ Return
 ; ==============================================================================
 ;                                     Right
 ; ==============================================================================
-#s::
+DockRight:
     WinGet, win_id, ID, A
     Update(win_id)
     If (pos_x == screen_width - window_width + left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
@@ -259,7 +267,7 @@ Return
 ; ==============================================================================
 ;                             Right Reverse
 ; ==============================================================================
-+#s::
+DockRightReverse:
     WinGet, win_id, ID, A
     Update(win_id)
     If (pos_x == screen_width - window_width + left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
@@ -288,7 +296,7 @@ Return
 ; ==============================================================================
 ;                                      Up
 ; ==============================================================================
-#w::
+DockUp:
     WinGet, win_id, ID, A
     Update(win_id)
 
@@ -300,7 +308,7 @@ Return
 ; ==============================================================================
 ;                                     Down
 ; ==============================================================================
-#r::
+DockDown:
     WinGet, win_id, ID, A
     Update(win_id)
 

@@ -173,7 +173,7 @@ AlignWidth(resize)
         new_width := min_width
     ; Resize
     Else
-        new_width := (win_width / alignment + resize) * alignment
+        new_width := Round(win_width / alignment + resize) * alignment
 
     Return new_width + left_offset * 2
 }

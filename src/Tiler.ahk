@@ -242,7 +242,7 @@ Return
 DockRight:
     WinGet, win_id, ID, A
     Update(win_id)
-    If (pos_x == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
+    If (pos_x + left_offset == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(-1)
     Else
     {
@@ -262,7 +262,7 @@ DockRight:
             pos_y := 0
         }
     }
-    Dock(screen_width - new_width, pos_y, new_width, window_height)
+    Dock(screen_width - new_width - left_offset, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
 ;                             Right Reverse
@@ -270,7 +270,7 @@ Return
 DockRightReverse:
     WinGet, win_id, ID, A
     Update(win_id)
-    If (pos_x == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
+    If (pos_x + left_offset == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(1)
     Else
     {
@@ -291,7 +291,7 @@ DockRightReverse:
         }
     }
 
-    Dock(screen_width - new_width, pos_y, new_width, window_height)
+    Dock(screen_width - new_width - left_offset, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
 ;                                      Up

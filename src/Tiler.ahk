@@ -427,7 +427,7 @@ MoveAlongGridReverse:
         Else
             pos_y := 0
     }
-    Dock(screen_width * ((Floor(index) - 1) / cells), pos_y, window_width, window_height)
+    Dock(screen_width * ((Floor(index) - 1) / cells) - left_offset, pos_y, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                    Move Along Width

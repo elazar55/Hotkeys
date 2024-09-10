@@ -142,9 +142,9 @@ Dock(x, y, width, height)
     ;@AHK++AlignAssignmentOff
 
     If (win_left == 0)
-        tooltip_x := x + window_width
+        tooltip_x := x + width
 
-    ToolTip, % Round(window_width) . "x" . Round(win_height) . "`nx: "
+    ToolTip, % width . "x" . Round(win_height) . "`nx: "
         . Round(win_left) . " y: " Round(y), tooltip_x, y
 
     SetTimer, RemoveTooltip, -1000

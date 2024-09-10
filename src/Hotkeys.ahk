@@ -52,38 +52,76 @@ Return
 !Space::Send _
 #d::Reload
 ; ==============================================================================
-;                           Exclude VS Code from Here
-; ==============================================================================
-#IfWinNotActive, ahk_exe Code.exe
-; ==============================================================================
 ;                                Byte Converter
 ; ==============================================================================
 ByteConverter:
-    width := 64
+    width := 96
+    x_offset := width + 2
+    y_offset := 3
+
     Gui, Destroy
     Gui, +AlwaysOnTop
 
-    Gui, Add, Edit, vbyte w%width% X10
-    Gui, Add, Text, w%width% XP+%width% YP+5, Byte
+    Gui, Add, Button, gByte X10, Go
+    Gui, Add, Edit, vb_byte w%width% XP+30
+    Gui, Add, Text, w%width% XP+%x_offset% YP+%y_offset%, Byte
 
-    Gui, Add, Edit, vKByte w%width% X10
-    Gui, Add, Text, w%width% XP+%width% YP+5, KB
+    Gui, Add, Button, gKByte X10, Go
+    Gui, Add, Edit, vk_byte w%width% XP+30
+    Gui, Add, Text, w%width% XP+%x_offset% YP+%y_offset%, KB
 
-    Gui, Add, Edit, vMByte w%width% X10
-    Gui, Add, Text, w%width% XP+%width% YP+5, MB
+    Gui, Add, Button, gMByte X10, Go
+    Gui, Add, Edit, vm_byte w%width% XP+30
+    Gui, Add, Text, w%width% XP+%x_offset% YP+%y_offset%, MB
 
-    Gui, Add, Edit, vGByte w%width% X10
-    Gui, Add, Text, w%width% XP+%width% YP+5, GB
+    Gui, Add, Button, gGByte X10, Go
+    Gui, Add, Edit, vg_byte w%width% XP+30
+    Gui, Add, Text, w%width% XP+%x_offset% YP+%y_offset%, GB
 
-    Gui, Add, Button, GByte X10, Go
+    Gui, Add, Button, X10 gClear, Clear
 
     Gui, Show
 Return
+
+TrimNumber(number)
+{
+    fract := (number) - Floor(number)
+    Return fract ? Round(number, 3) : Round(number)
+}
+
 Byte:
     Gui, Submit, NoHide
-    GuiControl, , KByte, % byte / 1024
-    GuiControl, , MByte, % byte / (1024 ** 2)
-    GuiControl, , GByte, % byte / (1024 ** 3)
+    GuiControl, , k_byte, % TrimNumber(b_byte / 1024 ** 1)
+    GuiControl, , m_byte, % TrimNumber(b_byte / 1024 ** 2)
+    GuiControl, , g_byte, % TrimNumber(b_byte / 1024 ** 3)
+Return
+
+KByte:
+    Gui, Submit, NoHide
+    GuiControl, , b_byte, % TrimNumber(k_byte * 1024 ** 1)
+    GuiControl, , m_byte, % TrimNumber(k_byte / 1024 ** 1)
+    GuiControl, , g_byte, % TrimNumber(k_byte / 1024 ** 2)
+Return
+
+MByte:
+    Gui, Submit, NoHide
+    GuiControl, , b_byte, % TrimNumber(m_byte * 1024 ** 2)
+    GuiControl, , k_byte, % TrimNumber(m_byte * 1024 ** 1)
+    GuiControl, , g_byte, % TrimNumber(m_byte / 1024 ** 1)
+Return
+
+GByte:
+    Gui, Submit, NoHide
+    GuiControl, , b_byte, % TrimNumber(g_byte * 1024 ** 3)
+    GuiControl, , k_byte, % TrimNumber(g_byte * 1024 ** 2)
+    GuiControl, , m_byte, % TrimNumber(g_byte * 1024 ** 1)
+
+Return
+Clear:
+    GuiControl, , b_byte,
+    GuiControl, , k_byte,
+    GuiControl, , m_byte,
+    GuiControl, , g_byte,
 Return
 ; ==============================================================================
 ;                                CopyToClipboard
@@ -339,6 +377,10 @@ Return
         Beep(1000, 25)
     }
 Return
+; ==============================================================================
+;                           Exclude VS Code from Here
+; ==============================================================================
+#IfWinNotActive, ahk_exe Code.exe
 ; ==============================================================================
 ;                                 Always on Top
 ; ==============================================================================

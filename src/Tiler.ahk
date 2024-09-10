@@ -101,19 +101,13 @@ Update(win_id)
     WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
     WinGet, title, ProcessName, ahk_id %win_id%
 
-    ; @AHK++AlignAssignmentOn
-    global left_offset := 7
-    global top_offset  := 7
-    global min_width   := 320 ; alignment * Round((screen_width / min_width_factor) / alignment)
-    ; @AHK++AlignAssignmentOff
-
     ; Program specifics
     If (RegExMatch(title, "(Code.exe)|(Playnite.*.exe)"))
     {
         ; @AHK++AlignAssignmentOn
-        left_offset      := 0
-        top_offset       := 0
-        global min_width := 400
+        global left_offset := 0
+        global top_offset  := 0
+        global min_width   := 400
         ; @AHK++AlignAssignmentOff
     }
     else If (RegExMatch(title, "Afterburner"))
@@ -124,6 +118,15 @@ Update(win_id)
     {
         global min_width := 502
     }
+    Else
+    {
+        ; @AHK++AlignAssignmentOn
+        global left_offset := 3
+        global top_offset  := 3
+        global min_width   := 320
+        ; @AHK++AlignAssignmentOff
+    }
+    global window_width := window_width - left_offset * 2
 }
 ; ==============================================================================
 ;                                 Dock Function
@@ -134,21 +137,19 @@ Dock(x, y, width, height)
     global left_offset
     global top_offset
     win_left   := x + left_offset
-    win_width  := width - left_offset * 2
     win_height := height - top_offset
     tooltip_x  := x + left_offset
-    ; win_right := x + window_width + left_offset
     ;@AHK++AlignAssignmentOff
 
     If (win_left == 0)
-        tooltip_x := x + win_width
+        tooltip_x := x + window_width
 
-    ToolTip, % Round(win_width) . "x" . Round(win_height) . "`nx: "
+    ToolTip, % Round(window_width) . "x" . Round(win_height) . "`nx: "
         . Round(win_left) . " y: " Round(y), tooltip_x, y
 
     SetTimer, RemoveTooltip, -1000
 
-    WinMove, A, , x, y, width, height, ,
+    WinMove, A, , x, y, width + left_offset * 2, height, ,
 }
 ; ==============================================================================
 ;                                  Align Width
@@ -159,23 +160,21 @@ AlignWidth(resize)
     global alignment
     global min_width
     global screen_width
-    global window_width
-    win_width := window_width - left_offset * 2
 
     ; Undersize left
-    If (win_width == min_width && resize < 0)
+    If (window_width == min_width && resize < 0)
         new_width := screen_width
     ; Undersize right
-    Else If (win_width - alignment < min_width && resize < 0)
+    Else If (window_width - alignment < min_width && resize < 0)
         new_width := min_width
     ; Oversize
-    Else If (win_width >= screen_width && resize > 0)
+    Else If (window_width >= screen_width && resize > 0)
         new_width := min_width
     ; Resize
     Else
-        new_width := Round(win_width / alignment + resize) * alignment
+        new_width := Round(window_width / alignment + resize) * alignment
 
-    Return new_width + left_offset * 2
+    Return new_width
 }
 ; ==============================================================================
 ;                                     Left
@@ -243,7 +242,7 @@ Return
 DockRight:
     WinGet, win_id, ID, A
     Update(win_id)
-    If (pos_x == screen_width - window_width + left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
+    If (pos_x == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(-1)
     Else
     {
@@ -263,7 +262,7 @@ DockRight:
             pos_y := 0
         }
     }
-    Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)
+    Dock(screen_width - new_width, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
 ;                             Right Reverse
@@ -271,7 +270,7 @@ Return
 DockRightReverse:
     WinGet, win_id, ID, A
     Update(win_id)
-    If (pos_x == screen_width - window_width + left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
+    If (pos_x == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(1)
     Else
     {
@@ -292,7 +291,7 @@ DockRightReverse:
         }
     }
 
-    Dock(screen_width - new_width + left_offset, pos_y, new_width, window_height)
+    Dock(screen_width - new_width, pos_y, new_width, window_height)
 Return
 ; ==============================================================================
 ;                                      Up
@@ -332,7 +331,7 @@ Return
 #f::
     WinGet, win_id, ID, A
     Update(win_id)
-    Dock(screen_width - window_width + left_offset, 0, window_width, window_height)
+    Dock(screen_width - window_width, 0, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Bottom-Left
@@ -348,7 +347,7 @@ Return
 #c::
     WinGet, win_id, ID, A
     Update(win_id)
-    Dock(screen_width - window_width + left_offset, screen_height - window_height + top_offset, window_width, window_height)
+    Dock(screen_width - window_width, screen_height - window_height + top_offset, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                 Minimum Size
@@ -382,7 +381,7 @@ MoveAlongGrid:
         pos_y := 0
     }
 
-    if (pos_x >= screen_width - window_width + left_offset)
+    if (pos_x >= screen_width - window_width)
     {
         index := -1
 
@@ -420,7 +419,7 @@ MoveAlongGridReverse:
     if (pos_x <= 0)
     {
         cell_width := screen_width / cells
-        last_cell := Floor((window_width - left_offset) / cell_width)
+        last_cell := Floor((window_width) / cell_width)
         index := cells - last_cell + 1
 
         If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
@@ -428,7 +427,7 @@ MoveAlongGridReverse:
         Else
             pos_y := 0
     }
-    Dock(screen_width * ((Floor(index) - 1) / cells) - left_offset, pos_y, window_width, window_height)
+    Dock(screen_width * ((Floor(index) - 1) / cells), pos_y, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                    Move Along Width
@@ -437,8 +436,8 @@ MoveAlongWidth:
     WinGet, win_id, ID, A
     Update(win_id)
     ;@AHK++AlignAssignmentOn
-    cells := screen_width / (window_width - left_offset * 2)
-    index := (pos_x + left_offset) / (window_width - left_offset * 2)
+    cells := screen_width / (window_width)
+    index := (pos_x + left_offset) / (window_width)
     ;@AHK++AlignAssignmentOff
 
     If (window_height - top_offset <= screen_height / 2)
@@ -453,7 +452,7 @@ MoveAlongWidth:
         pos_y := 0
     }
 
-    if (pos_x >= screen_width - window_width + left_offset)
+    if (pos_x >= screen_width - window_width)
     {
         index := -1
 
@@ -471,8 +470,8 @@ MoveAlongWidthReverse:
     WinGet, win_id, ID, A
     Update(win_id)
     ;@AHK++AlignAssignmentOn
-    cells := screen_width / (window_width - left_offset * 2)
-    index := (pos_x + left_offset) / (window_width - left_offset * 2)
+    cells := screen_width / (window_width)
+    index := (pos_x + left_offset) / (window_width)
     ;@AHK++AlignAssignmentOff
 
     If (window_height - top_offset <= screen_height / 2)
@@ -490,7 +489,7 @@ MoveAlongWidthReverse:
     if (index <= 0)
     {
         cell_width := screen_width / cells
-        last_cell := Floor((window_width - left_offset) / cell_width)
+        last_cell := Floor((window_width) / cell_width)
         index := cells - last_cell + 1
 
         If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)

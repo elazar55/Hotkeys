@@ -7,6 +7,8 @@ global screen_width  := 1920
 global screen_height := 1050
 global pos_x         :=
 global pos_y         :=
+global left_offset   :=
+global top_offset    :=
 global alignment     := 80
 global window_width  :=
 global window_height :=
@@ -43,6 +45,9 @@ ReadConfig(ini_file)
     IniRead, screen_width, %ini_file%, settings, screen_width, %monRight%
     IniRead, screen_height, %ini_file%, settings, screen_height, %monBottom%
 
+    IniRead, left_offset, %ini_file%, settings, left_offset, 3
+    IniRead, top_offset, %ini_file%, settings, top_offset, 3
+
     IniRead, dock_left, %ini_file%, settings, dock_left, #a
     IniRead, dock_right, %ini_file%, settings, dock_right, #s
     IniRead, dock_up, %ini_file%, settings, dock_up, #w
@@ -61,10 +66,14 @@ ReadConfig(ini_file)
 ; ==============================================================================
 WriteConfig(ini_file)
 {
-    ; IniWrite, Value, Filename, Section, Key
+    ; IniWrite, ${Value}, ${Filename}, ${Section}, ${Key}
     IniWrite, %alignment%, %ini_file%, settings, alignment
     IniWrite, %screen_width%, %ini_file%, settings, screen_width
     IniWrite, %screen_height%, %ini_file%, settings, screen_height
+
+    IniWrite, %left_offset%, %ini_file%, settings, left_offset
+    IniWrite, %top_offset%, %ini_file%, settings, top_offset
+
     IniWrite, %dock_left%, %ini_file%, settings, dock_left
     IniWrite, %dock_right%, %ini_file%, settings, dock_right
     IniWrite, %dock_up%, %ini_file%, settings, dock_up
@@ -80,7 +89,7 @@ DockerGUI:
     Gui, Destroy
     InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
 
-    ; IniWrite, Value, Filename, Section, Key
+    ; IniWrite, ${Value}, ${Filename}, ${Section}, ${Key}
     IniWrite, %alignment%, %ini_file%, settings, alignment
 Return
 ; ==============================================================================
@@ -120,11 +129,9 @@ Update(win_id)
     }
     Else
     {
-        ; @AHK++AlignAssignmentOn
-        global left_offset := 3
-        global top_offset  := 3
-        global min_width   := 320
-        ; @AHK++AlignAssignmentOff
+        IniRead, left_offset, %ini_file%, settings, left_offset, 3
+        IniRead, top_offset, %ini_file%, settings, top_offset, 3
+        global min_width := 320
     }
     global window_width := window_width - left_offset * 2
 }

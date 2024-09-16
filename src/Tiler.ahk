@@ -338,7 +338,7 @@ Return
 #f::
     WinGet, win_id, ID, A
     Update(win_id)
-    Dock(screen_width - window_width, 0, window_width, window_height)
+    Dock(screen_width - window_width - left_offset, 0, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Bottom-Left
@@ -354,7 +354,7 @@ Return
 #c::
     WinGet, win_id, ID, A
     Update(win_id)
-    Dock(screen_width - window_width, screen_height - window_height + top_offset, window_width, window_height)
+    Dock(screen_width - window_width - left_offset, screen_height - window_height + top_offset, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                 Minimum Size

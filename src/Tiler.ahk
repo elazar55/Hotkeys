@@ -199,15 +199,15 @@ DockLeft:
     {
         new_width := AlignWidth(0)
 
-        If (window_height - top_offset <= screen_height / 2)
-        {
-            window_height := (screen_height / 2 + top_offset)
-            If (pos_y >= screen_height * 0.25)
-                pos_y := (screen_height / 2)
-            Else
-                pos_y := 0
-        }
-        Else
+        ; If (window_height - top_offset <= screen_height / 2)
+        ; {
+        ;     window_height := (screen_height / 2 + top_offset)
+        ;     If (pos_y >= screen_height * 0.25)
+        ;         pos_y := (screen_height / 2)
+        ;     Else
+        ;         pos_y := 0
+        ; }
+        ; Else
         {
             window_height := screen_height + top_offset
             pos_y := 0
@@ -227,15 +227,15 @@ DockLeftReverse:
     {
         new_width := AlignWidth(0)
 
-        If (window_height - top_offset <= screen_height / 2)
-        {
-            window_height := (screen_height / 2 + top_offset)
-            If (pos_y >= screen_height * 0.25)
-                pos_y := (screen_height / 2)
-            Else
-                pos_y := 0
-        }
-        Else
+        ; If (window_height - top_offset <= screen_height / 2)
+        ; {
+        ;     window_height := (screen_height / 2 + top_offset)
+        ;     If (pos_y >= screen_height * 0.25)
+        ;         pos_y := (screen_height / 2)
+        ;     Else
+        ;         pos_y := 0
+        ; }
+        ; Else
         {
             window_height := screen_height + top_offset
             pos_y := 0
@@ -255,15 +255,15 @@ DockRight:
     {
         new_width := AlignWidth(0)
 
-        If (window_height - top_offset <= screen_height / 2)
-        {
-            window_height := (screen_height / 2 + top_offset)
-            If (pos_y >= screen_height * 0.25)
-                pos_y := (screen_height / 2)
-            Else
-                pos_y := 0
-        }
-        Else
+        ; If (window_height - top_offset <= screen_height / 2)
+        ; {
+        ;     window_height := (screen_height / 2 + top_offset)
+        ;     If (pos_y >= screen_height * 0.25)
+        ;         pos_y := (screen_height / 2)
+        ;     Else
+        ;         pos_y := 0
+        ; }
+        ; Else
         {
             window_height := screen_height + top_offset
             pos_y := 0
@@ -283,15 +283,15 @@ DockRightReverse:
     {
         new_width := AlignWidth(0)
 
-        If (window_height - top_offset <= screen_height / 2)
-        {
-            window_height := (screen_height / 2 + top_offset)
-            If (pos_y >= screen_height * 0.25)
-                pos_y := (screen_height / 2)
-            Else
-                pos_y := 0
-        }
-        Else
+        ; If (window_height - top_offset <= screen_height / 2)
+        ; {
+        ;     window_height := (screen_height / 2 + top_offset)
+        ;     If (pos_y >= screen_height * 0.25)
+        ;         pos_y := (screen_height / 2)
+        ;     Else
+        ;         pos_y := 0
+        ; }
+        ; Else
         {
             window_height := screen_height + top_offset
             pos_y := 0

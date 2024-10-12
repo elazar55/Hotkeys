@@ -110,6 +110,10 @@ Update(win_id)
     WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
     WinGet, title, ProcessName, ahk_id %win_id%
 
+    IniRead, left_offset, %ini_file%, settings, left_offset, 3
+    IniRead, top_offset, %ini_file%, settings, top_offset, 3
+    global min_width := 320
+
     ; Program specifics
     If (RegExMatch(title, "(Code.exe)|(Playnite.*.exe)"))
     {
@@ -127,12 +131,7 @@ Update(win_id)
     {
         global min_width := 502
     }
-    Else
-    {
-        IniRead, left_offset, %ini_file%, settings, left_offset, 3
-        IniRead, top_offset, %ini_file%, settings, top_offset, 3
-        global min_width := 320
-    }
+
     global window_width := window_width - left_offset * 2
 }
 ; ==============================================================================
@@ -509,38 +508,51 @@ Return
 ; ==============================================================================
 ;                              Jump to Next Window
 ; ==============================================================================
-; JumpRight:
-;     WinGet, win_id, ID, A
-;     Update(win_id)
-;     SetTitleMatchMode Regex
-;     WinGet, win_handles, List, .+, , Start Menu|Program Manager|Chrome|Code|Hotkeys|Window Spy|RetroArch
+Jump:
+    ; #F1::
+    WinGet, win_id, ID, A
+    Update(win_id)
+    SetTitleMatchMode Regex
+    WinGet, win_handles, List, .+, , Start Menu|Program Manager|Window Spy
 
-;     positions := []
-;     Loop, %win_handles%
-;     {
-;         Update(win_handles%A_Index%)
+    positions := []
+    Loop, %win_handles%
+    {
+        id := win_handles%A_Index%
+        WinGet, name, ProcessName, ahk_id %id%
+        WinGetPos, x, y, w, h, ahk_id %id%
 
-;         ;@AHK++AlignAssignmentOn
-;         win_left  := pos_x + left_offset
-;         win_right := pos_x + window_width - left_offset
-;         win_top   := pos_y
-;         win_bot   := pos_y + window_height - left_offset
-;         ;@AHK++AlignAssignmentOff
+        Update(id)
+        positions[id] := x + left_offset
+        MsgBox, % x
+        ; MsgBox, % x + left_offset . " -> " . name
+    }
 
-;         positions.Push(win_left)
-;         positions.Push(win_right)
-;         positions.Push(win_top)
-;         positions.Push(win_bot)
-;     }
-;     Loop, % positions.Length() / 4
-;     {
-;         MsgBox, % positions[((A_Index - 1) * 4 + 0) + 1]
-;             . "`n" . positions[((A_Index - 1) * 4 + 1) + 1]
-;             . "`n" . positions[((A_Index - 1) * 4 + 2) + 1]
-;             . "`n" . positions[((A_Index - 1) * 4 + 3) + 1]
-;     }
-;     SetTitleMatchMode 1
-; Return
+    this_x := 0
+    moved := false
+    For key, value in positions
+    {
+        MsgBox, % value . " -> " . Format("{:#x}", key)
+
+        If (Format("{:#x}", key) == win_id)
+        {
+            this_x := value
+        }
+        If (value > this_x)
+        {
+            Update(win_id)
+            Dock(value, pos_y, window_width, window_height)
+            moved := true
+            break
+        }
+    }
+    ; If (!moved)
+    ; {
+    ;     Dock(0, pos_y, window_width, window_height)
+    ; }
+
+    SetTitleMatchMode 1
+Return
 ; ==============================================================================
 
 ; ==============================================================================

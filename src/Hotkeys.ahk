@@ -176,190 +176,60 @@ TextTools:
     width := 240
 
     Gui, Add, Edit, W%width% Vinput,
-    Gui, Add, Edit, W%width% Voutput
-    GuiControl,, input, %Clipboard%
-
-    Gui, Add, Button, W%width% GSpaceToSentence, Space to Sentence
-    Gui, Add, Button, W%width% GSpaceToTitle, Space to Title
-    Gui, Add, Button, W%width% GSpaceToSnake, Space to Snake
-    Gui, Add, Button, W%width% GSpaceToKebab, Space to Kebab
-    Gui, Add, Button, W%width% GSnakeToCamnel, Snake to Camel
-    Gui, Add, Button, W%width% GSnakeToTitle, Snake to Title
-    Gui, Add, Button, W%width% GSnakeToSentence, Snake to Sentence
-    Gui, Add, Button, W%width% GCamelToSnake, Camel to Snake
-    Gui, Add, Button, W%width% GDotToTitle, Dot to Title
-    Gui, Add, Button, W%width% GUppercase, Upper Case
-    Gui, +AlwaysOnTop
+    Gui, Add, DDL, W60 XP+%width% Vcasing Choose1, Space|Snake|Dot|Kebab
+    Gui, Add, Button, XP+60 gGo, Go
+    Gui, Add, Edit, X10 W%width% Voutput
+    Gui, Add, DDL, W60 XP+%width% Vcasing_out Choose1, Space|Snake|Dot|Kebab|Pascal
+    GuiControl,, input, % Trim(Clipboard)
     Gui, Show
 Return
-; ==============================================================================
-;                            Space to Sentence Case
-; ==============================================================================
-SpaceToSentence:
+
+Go:
     Gui, Submit, NoHide
+    output := ""
 
-    StringLower, input, input
-    input := RegExReplace(input, "(?<=^|\.|\. |】)(\w)", "$U0")
-    input := RegExReplace(input, "\bi\b", "$U0")
+    If (casing == "Space")
+    {
+        words := StrSplit(input, " ")
+    }
+    Else If (casing == "Snake")
+    {
+        words := StrSplit(input, "_")
+    }
+    Else If (casing == "Dot")
+    {
+        words := StrSplit(input, ".")
+    }
+    Else If (casing == "Kebab")
+    {
+        words := StrSplit(input, "-")
+    }
 
-    ; Append full stop
-    if (SubStr(input, 0, 1) != "." && SubStr(input, 0, 1) != "!")
-        input := input . "."
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
-Return
-; ==============================================================================
-;                              Space to Title Case
-; ==============================================================================
-SpaceToTitle:
-    Gui, Submit, NoHide
-
-    StringLower, input, % Trim(input)
-
-    ;@AHK++AlignAssignmentOn
-    title_case    := "(?<!')\b\w"
-    prepositions  := "i)(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs|With)\b"
-    abbreviations := "i)\bMIDI|USB|PC\b"
-    ;@AHK++AlignAssignmentOff
-
-    input := RegExReplace(Trim(input), title_case, "$U0")
-    input := RegExReplace(input, prepositions, "$L0")
-    input := RegExReplace(input, abbreviations, "$U0")
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
-Return
-; ==============================================================================
-;                              Space to Snake Case
-; ==============================================================================
-SpaceToSnake:
-    Gui, Submit, NoHide
-
-    input := StrReplace(Trim(input), " ", "_")
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
-Return
-; ==============================================================================
-;                                  Upper Case
-; ==============================================================================
-Uppercase:
-    Gui, Submit, NoHide
-
-    StringUpper, input, % Trim(input)
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
-Return
-; ==============================================================================
-;                              Space to kebab-case
-; ==============================================================================
-SpaceToKebab:
-    Gui, Submit, NoHide
-
-    input := StrReplace(Trim(input), " ", "-")
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
-Return
-; ==============================================================================
-;                           Camel Case to Snake Case
-; ==============================================================================
-CamelToSnake:
-    Gui, Submit, NoHide
-
-    input := RegExReplace(input, "(?<!^)[A-Z_](?![A-Z_])", "_$L0")
-    StringLower, input, input
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
-Return
-; ==============================================================================
-;                           Snake Case to Camel Case
-; ==============================================================================
-SnakeToCamnel:
-    Gui, Submit, NoHide
-
-    input := RegExReplace(input, "(?<=^|\.|\. |】)(\w)", "$U0")
-    input := RegExReplace(input, "\bi\b", "$U0")
-    input := RegExReplace(input, "_(\w)", "$U1")
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
-Return
-; ==============================================================================
-;                           Snake Case to Title Case
-; ==============================================================================
-SnakeToTitle:
-    Gui, Submit, NoHide
-
-    input := StrReplace(input, "_", " ")
-
-    StringLower, input, % Trim(input)
-
-    ;@AHK++AlignAssignmentOn
-    title_case    := "(?<!')\b\w"
-    prepositions  := "i)(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs|With)\b"
-    abbreviations := "i)\bMIDI|USB|PC\b"
-    ;@AHK++AlignAssignmentOff
-
-    input := RegExReplace(input, title_case, "$U0")
-    input := RegExReplace(input, prepositions, "$L0")
-    input := RegExReplace(input, abbreviations, "$U0")
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
-Return
-; ==============================================================================
-;                           Snake Case to Sentence Case
-; ==============================================================================
-SnakeToSentence:
-    Gui, Submit, NoHide
-
-    input := StrReplace(input, "_", " ")
-
-    StringLower, input, % Trim(input)
-    input := RegExReplace(input, "(?<=^|\.|\. |】)(\w)", "$U0")
-    input := RegExReplace(input, "\bi\b", "$U0")
-
-    ; Append full stop
-    if (SubStr(input, 0, 1) != "." && SubStr(input, 0, 1) != "!")
-        input := input . "."
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
-Return
-; ==============================================================================
-;                           Dot Case to Title Case
-; ==============================================================================
-DotToTitle:
-    Gui, Submit, NoHide
-
-    ;@AHK++AlignAssignmentOn
-    title_case    := "(?<!')\b\w"
-    prepositions  := "i)(?<!(^)|(: )|(\. ))\b(The|Is|To|And|On|In|A|An|As|Or|But|For|Of|Vs|With)\b"
-    abbreviations := "i)\bMIDI|USB|PC\b"
-    ;@AHK++AlignAssignmentOff
-
-    input := RegExReplace(input, "\b\.\b", " ")
-    StringLower, input, % Trim(input)
-    input := RegExReplace(input, title_case, "$U0")
-    input := RegExReplace(input, prepositions, "$L0")
-    input := RegExReplace(input, abbreviations, "$U0")
-
-    ; Update GUI and Clipboard with result
-    GuiControl,, output, %input%
-    Clipboard := input
+    For key, value in words
+    {
+        If (casing_out == "Space")
+        {
+            output := output . value . " "
+        }
+        Else If (casing_out == "Snake")
+        {
+            output := output . value . "_"
+        }
+        Else If (casing_out == "Dot")
+        {
+            output := output . value . "."
+        }
+        Else If (casing_out == "Kebab")
+        {
+            output := output . value . "-"
+        }
+        Else If (casing_out == "Pascal")
+        {
+            StringUpper, word, value, T
+            output := output . word
+        }
+    }
+    GuiControl,, output, %output%
 Return
 ; ==============================================================================
 ;                                  Cursor Keys
@@ -398,24 +268,24 @@ Return
 ; ==============================================================================
 ;                           Surround with parentheses
 ; ==============================================================================
-#IfWinActive, ahk_exe chrome.exe
-+^9::
-    CopyToClipboard()
+; #IfWinActive, ahk_exe chrome.exe
+; +9::
+;     CopyToClipboard()
 
-    Clipboard := "(" . Clipboard . ")"
-    Send, ^v
-    Beep(1200, 20)
+;     Clipboard := "(" . Clipboard . ")"
+;     Send, ^v
+;     Beep(1200, 20)
 Return
 ; ==============================================================================
 ;                             Surround with quotes
 ; ==============================================================================
-#IfWinActive, ahk_exe chrome.exe
-+^'::
-    CopyToClipboard()
+; #IfWinActive, ahk_exe chrome.exe
+; +'::
+;     CopyToClipboard()
 
-    Clipboard := """" . Clipboard . """"
-    Send, ^v
-    Beep(1200, 20)
+;     Clipboard := """" . Clipboard . """"
+;     Send, ^v
+;     Beep(1200, 20)
 Return
 ; ==============================================================================
 ;                          Pearls of Atlantis The Cove

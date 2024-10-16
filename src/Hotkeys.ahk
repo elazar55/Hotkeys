@@ -179,7 +179,7 @@ TextTools:
     Gui, Add, DDL, W60 XP+%width% Vcasing Choose1, Space|Snake|Dot|Kebab
     Gui, Add, Button, XP+60 gGo, Go
     Gui, Add, Edit, X10 W%width% Voutput
-    Gui, Add, DDL, W60 XP+%width% Vcasing_out Choose1, Space|Snake|Dot|Kebab|Pascal
+    Gui, Add, DDL, W60 XP+%width% Vcasing_out Choose1, Sentence|Title|Snake|Dot|Kebab|Pascal|Camel
     GuiControl,, input, % Trim(Clipboard)
     Gui, Show
 Return
@@ -187,28 +187,35 @@ Return
 Go:
     Gui, Submit, NoHide
     output := ""
-
-    If (casing == "Space")
+    ; ==========================================================================
+    ;                                   Input
+    ; ==========================================================================
+    switch casing
     {
-        words := StrSplit(input, " ")
+        ;@AHK++AlignAssignmentOn
+        case "Space": words := StrSplit(input, " ")
+        case "Snake": words := StrSplit(input, "_")
+        case "Kebab": words := StrSplit(input, "-")
+        case "Dot": words   := StrSplit(input, ".")
+        ;@AHK++AlignAssignmentOff
     }
-    Else If (casing == "Snake")
-    {
-        words := StrSplit(input, "_")
-    }
-    Else If (casing == "Dot")
-    {
-        words := StrSplit(input, ".")
-    }
-    Else If (casing == "Kebab")
-    {
-        words := StrSplit(input, "-")
-    }
-
+    ; ==========================================================================
+    ;                                  Output
+    ; ==========================================================================
     For key, value in words
     {
-        If (casing_out == "Space")
+        If (casing_out == "Sentence")
         {
+            If (A_Index == 1)
+                StringLower, value, value, T
+            Else
+                StringLower, value, value
+
+            output := output . value . " "
+        }
+        Else If (casing_out == "Title")
+        {
+            StringLower, value, value, T
             output := output . value . " "
         }
         Else If (casing_out == "Snake")
@@ -225,8 +232,16 @@ Go:
         }
         Else If (casing_out == "Pascal")
         {
-            StringUpper, word, value, T
-            output := output . word
+            StringUpper, value, value, T
+            output := output . value
+        }
+        Else If (casing_out == "Camel")
+        {
+            If (A_Index == 1)
+                StringLower, value, value
+            Else
+                StringUpper, value, value, T
+            output := output . value
         }
     }
     GuiControl,, output, %output%
@@ -254,48 +269,48 @@ Return
 ;                           Exclude VS Code from Here
 ; ==============================================================================
 #IfWinNotActive, ahk_exe Code.exe
-; ==============================================================================
-;                                 Always on Top
-; ==============================================================================
-#v::
-    WinSet, AlwaysOnTop, Toggle, A, , ,
-    WinGet, style, ExStyle, A, ,
-    If (style & 0x8)
-        Beep(1200, 25)
-    Else
-        Beep(600, 25)
-Return
-; ==============================================================================
-;                           Surround with parentheses
-; ==============================================================================
-; #IfWinActive, ahk_exe chrome.exe
-; +9::
-;     CopyToClipboard()
+    ; ==============================================================================
+    ;                                 Always on Top
+    ; ==============================================================================
+    #v::
+        WinSet, AlwaysOnTop, Toggle, A, , ,
+        WinGet, style, ExStyle, A, ,
+        If (style & 0x8)
+            Beep(1200, 25)
+        Else
+            Beep(600, 25)
+    Return
+    ; ==============================================================================
+    ;                           Surround with parentheses
+    ; ==============================================================================
+    ; #IfWinActive, ahk_exe chrome.exe
+    ; +9::
+    ;     CopyToClipboard()
 
-;     Clipboard := "(" . Clipboard . ")"
-;     Send, ^v
-;     Beep(1200, 20)
-Return
-; ==============================================================================
-;                             Surround with quotes
-; ==============================================================================
-; #IfWinActive, ahk_exe chrome.exe
-; +'::
-;     CopyToClipboard()
+    ;     Clipboard := "(" . Clipboard . ")"
+    ;     Send, ^v
+    ;     Beep(1200, 20)
+    Return
+    ; ==============================================================================
+    ;                             Surround with quotes
+    ; ==============================================================================
+    ; #IfWinActive, ahk_exe chrome.exe
+    ; +'::
+    ;     CopyToClipboard()
 
-;     Clipboard := """" . Clipboard . """"
-;     Send, ^v
-;     Beep(1200, 20)
-Return
+    ;     Clipboard := """" . Clipboard . """"
+    ;     Send, ^v
+    ;     Beep(1200, 20)
+    Return
 ; ==============================================================================
 ;                          Pearls of Atlantis The Cove
 ; ==============================================================================
 #IfWinActive, ahk_exe PearlsOfAtlantisTheCove.exe
-a::MouseMove, -1, 0, 0, R
-+a::MouseMove, -10, 0, 0, R
-s::MouseMove, 1, 0, 0, R
-+s::MouseMove, 10, 0, 0, R
-Space::MouseClick
+    a::MouseMove, -1, 0, 0, R
+    +a::MouseMove, -10, 0, 0, R
+    s::MouseMove, 1, 0, 0, R
+    +s::MouseMove, 10, 0, 0, R
+    Space::MouseClick
 ; ==============================================================================
 ;                                   Golf Test
 ; ==============================================================================

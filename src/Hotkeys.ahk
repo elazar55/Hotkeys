@@ -179,7 +179,7 @@ TextTools:
     Gui, Add, DDL, W60 XP+%width% Vcasing Choose1, Space|Snake|Dot|Kebab
     Gui, Add, Button, XP+60 gGo, Go
     Gui, Add, Edit, X10 W%width% Voutput
-    Gui, Add, DDL, W60 XP+%width% Vcasing_out Choose1, Sentence|Title|Snake|Dot|Kebab|Pascal|Camel
+    Gui, Add, DDL, W60 XP+%width% Vcasing_out Choose1, Space|Sentence|Title|Snake|Dot|Kebab|Pascal|Camel
     GuiControl,, input, % Trim(Clipboard)
     Gui, Show
 Return
@@ -196,7 +196,7 @@ Go:
         case "Space": words := StrSplit(input, " ")
         case "Snake": words := StrSplit(input, "_")
         case "Kebab": words := StrSplit(input, "-")
-        case "Dot": words   := StrSplit(input, ".")
+        case "Dot" : words  := StrSplit(input, ".")
         ;@AHK++AlignAssignmentOff
     }
     ; ==========================================================================
@@ -204,7 +204,12 @@ Go:
     ; ==========================================================================
     For key, value in words
     {
-        If (casing_out == "Sentence")
+
+        If (casing_out == "Space")
+        {
+            output := output . value . " "
+        }
+        Else If (casing_out == "Sentence")
         {
             If (A_Index == 1)
                 StringLower, value, value, T
@@ -220,7 +225,12 @@ Go:
         }
         Else If (casing_out == "Snake")
         {
-            output := output . value . "_"
+            If (A_Index == 1)
+            {
+                output := output . value
+                Continue
+            }
+            output := output . "_" . value
         }
         Else If (casing_out == "Dot")
         {
@@ -228,7 +238,12 @@ Go:
         }
         Else If (casing_out == "Kebab")
         {
-            output := output . value . "-"
+            If (A_Index == 1)
+            {
+                output := output . value
+                Continue
+            }
+            output := output . "-" . value
         }
         Else If (casing_out == "Pascal")
         {

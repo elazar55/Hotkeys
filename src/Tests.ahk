@@ -30,23 +30,23 @@ Return
 ; ==============================================================================
 barcodeMode := false
 #If, %barcodeMode%
-f::e
-p::r
-g::t
-j::y
-l::u
-u::i
-y::o
-`;::p
-r::s
-s::d
-t::f
-d::g
-n::j
-e::k
-i::l
-o::`;
-k::n
+    f::e
+    p::r
+    g::t
+    j::y
+    l::u
+    u::i
+    y::o
+    `;::p
+    r::s
+    s::d
+    t::f
+    d::g
+    n::j
+    e::k
+    i::l
+    o::`;
+    k::n
 #If
 ; ==============================================================================
 ;                                Write Clone Games
@@ -275,4 +275,15 @@ GridWindows:
         WinMove, ahk_id %id%,, x_pos, y_pos, window_width, window_height
     }
     SetTitleMatchMode 1
+Return
+; ==============================================================================
+;                                 Always on Top
+; ==============================================================================
+AlwaysOnTop:
+    WinSet, AlwaysOnTop, Toggle, A, , ,
+    WinGet, style, ExStyle, A, ,
+    If (style & 0x8)
+        Beep(1200, 25)
+    Else
+        Beep(600, 25)
 Return

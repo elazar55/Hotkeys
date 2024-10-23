@@ -41,12 +41,6 @@ Return
     Gui, Destroy
 Return
 ; ==============================================================================
-;                                  GUI Submit
-; ==============================================================================
-GUISubmit:
-    Gui, Submit
-Return
-; ==============================================================================
 ;                                    Hotkeys
 ; ==============================================================================
 !Space::Send _
@@ -127,23 +121,6 @@ Return
 ;                                Time Converter
 ; ==============================================================================
 ; ==============================================================================
-;                                CopyToClipboard
-; ==============================================================================
-CopyToClipboard()
-{
-    Clipboard :=
-    Send, ^c
-    ClipWait, 1
-
-    If (Clipboard = "")
-    {
-        Beep(800, 20)
-        Exit
-    }
-
-    Clipboard := Trim(Clipboard, " ")
-}
-; ==============================================================================
 ;                                   Set Price
 ; ==============================================================================
 #p::
@@ -204,7 +181,6 @@ Go:
     ; ==========================================================================
     For key, value in words
     {
-
         If (casing_out == "Space")
         {
             output := output . value . " "
@@ -256,6 +232,7 @@ Go:
                 StringLower, value, value
             Else
                 StringUpper, value, value, T
+
             output := output . value
         }
     }
@@ -281,60 +258,24 @@ Return
     }
 Return
 ; ==============================================================================
-;                           Exclude VS Code from Here
+;                           Surround with parentheses
 ; ==============================================================================
 #IfWinNotActive, ahk_exe Code.exe
-    ; ==============================================================================
-    ;                                 Always on Top
-    ; ==============================================================================
-    AlwaysOnTop:
-        WinSet, AlwaysOnTop, Toggle, A, , ,
-        WinGet, style, ExStyle, A, ,
-        If (style & 0x8)
-            Beep(1200, 25)
-        Else
-            Beep(600, 25)
-    Return
-    ; ==============================================================================
-    ;                           Surround with parentheses
-    ; ==============================================================================
-    ; #IfWinActive, ahk_exe chrome.exe
-    ; +9::
-    ;     CopyToClipboard()
 
-    ;     Clipboard := "(" . Clipboard . ")"
-    ;     Send, ^v
-    ;     Beep(1200, 20)
-    Return
-    ; ==============================================================================
-    ;                             Surround with quotes
-    ; ==============================================================================
-    ; #IfWinActive, ahk_exe chrome.exe
-    ; +'::
-    ;     CopyToClipboard()
+SurroundParentheses:
+    CopyToClipboard()
 
-    ;     Clipboard := """" . Clipboard . """"
-    ;     Send, ^v
-    ;     Beep(1200, 20)
-    Return
+    Clipboard := "(" . Clipboard . ")"
+    Send, ^v
+    Beep(1200, 20)
+Return
 ; ==============================================================================
-;                          Pearls of Atlantis The Cove
+;                             Surround with quotes
 ; ==============================================================================
-#IfWinActive, ahk_exe PearlsOfAtlantisTheCove.exe
-    a::MouseMove, -1, 0, 0, R
-    +a::MouseMove, -10, 0, 0, R
-    s::MouseMove, 1, 0, 0, R
-    +s::MouseMove, 10, 0, 0, R
-    Space::MouseClick
-; ==============================================================================
-;                                   Golf Test
-; ==============================================================================
-; #IfWinActive
-; `::
-;     SetKeyDelay, -1, 60
-;     Send, {Blind}{Space}
-;     Sleep, 430
-;     Send, {Blind}{Space}
-;     Sleep, 190
-;     Send, {Blind}{Space}
-; Return
+SurroundQuotes:
+    CopyToClipboard()
+
+    Clipboard := """" . Clipboard . """"
+    Send, ^v
+    Beep(1200, 20)
+Return

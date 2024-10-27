@@ -45,6 +45,7 @@ Return
 ; ==============================================================================
 !Space::Send _
 #d::Reload
+#+z::^NumpadAdd
 ; ==============================================================================
 ;                                Byte Converter
 ; ==============================================================================
@@ -156,7 +157,7 @@ TextTools:
     Gui, Add, DDL, W60 XP+%width% Vcasing Choose1, Space|Snake|Dot|Kebab
     Gui, Add, Button, XP+60 gGo, Go
     Gui, Add, Edit, X10 W%width% Voutput
-    Gui, Add, DDL, W60 XP+%width% Vcasing_out Choose1, Space|Sentence|Title|Snake|Dot|Kebab|Pascal|Camel
+    Gui, Add, DDL, W60 XP+%width% Vcasing_out Choose1, Space|Sentence|Title|Snake|Dot|Kebab|Pascal|Camel|Uppercase|Lowercase
     GuiControl,, input, % Trim(Clipboard)
     Gui, Show
 Return
@@ -235,6 +236,16 @@ Go:
 
             output := output . value
         }
+        Else If (casing_out == "Uppercase")
+        {
+            StringUpper, value, value
+            output := output . value . " "
+        }
+        Else If (casing_out == "Lowercase")
+        {
+            StringLower, value, value
+            output := output . value . " "
+        }
     }
     GuiControl,, output, %output%
 Return
@@ -263,19 +274,13 @@ Return
 #IfWinNotActive, ahk_exe Code.exe
 
 SurroundParentheses:
-    CopyToClipboard()
-
-    Clipboard := "(" . Clipboard . ")"
++9::
+    old_clip := Clipboard
+    Clipboard := ""
+    Send, ^c
+    ClipWait, 0.1
+    Clipboard := "(" . Trim(Clipboard, " ") . ")"
     Send, ^v
     Beep(1200, 20)
-Return
-; ==============================================================================
-;                             Surround with quotes
-; ==============================================================================
-SurroundQuotes:
-    CopyToClipboard()
-
-    Clipboard := """" . Clipboard . """"
-    Send, ^v
-    Beep(1200, 20)
+    Clipboard := old_clip
 Return

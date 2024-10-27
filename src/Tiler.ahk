@@ -509,7 +509,6 @@ Return
 ;                              Jump to Next Window
 ; ==============================================================================
 Jump:
-    ; #F1::
     WinGet, win_id, ID, A
     Update(win_id)
     SetTitleMatchMode Regex

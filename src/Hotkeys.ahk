@@ -155,19 +155,20 @@ TextTools:
 
     Gui, Add, Edit, W%width% Vinput,
     Gui, Add, DDL, W60 XP+%width% Vcasing Choose1, Space|Snake|Dot|Kebab
-    Gui, Add, Button, XP+60 gGo, Go
+    Gui, Add, Button, XP+60 gParseText, ParseText
     Gui, Add, Edit, X10 W%width% Voutput
     Gui, Add, DDL, W60 XP+%width% Vcasing_out Choose1, Space|Sentence|Title|Snake|Dot|Kebab|Pascal|Camel|Uppercase|Lowercase
     GuiControl,, input, % Trim(Clipboard)
     Gui, Show
 Return
-
-Go:
+; ==============================================================================
+;                                  Parse Text
+; ==============================================================================
+ParseText:
     Gui, Submit, NoHide
     output := ""
-    ; ==========================================================================
-    ;                                   Input
-    ; ==========================================================================
+
+    ; ================================= Input ==================================
     switch casing
     {
         ;@AHK++AlignAssignmentOn
@@ -177,9 +178,8 @@ Go:
         case "Dot" : words  := StrSplit(input, ".")
         ;@AHK++AlignAssignmentOff
     }
-    ; ==========================================================================
-    ;                                  Output
-    ; ==========================================================================
+
+    ; ================================ Output ==================================
     For key, value in words
     {
         If (casing_out == "Space")
@@ -247,7 +247,8 @@ Go:
             output := output . value . " "
         }
     }
-    GuiControl,, output, %output%
+    GuiControl,, output, % Trim(output)
+    Clipboard := Trim(output)
 Return
 ; ==============================================================================
 ;                                  Cursor Keys
@@ -271,16 +272,36 @@ Return
 ; ==============================================================================
 ;                           Surround with parentheses
 ; ==============================================================================
-#IfWinNotActive, ahk_exe Code.exe
-
-SurroundParentheses:
-+9::
-    old_clip := Clipboard
-    Clipboard := ""
-    Send, ^c
-    ClipWait, 0.1
-    Clipboard := "(" . Trim(Clipboard, " ") . ")"
-    Send, ^v
-    Beep(1200, 20)
-    Clipboard := old_clip
-Return
+; #IfWinNotActive, ahk_exe Code.exe
+; +9::
+;     old_clip := Clipboard
+;     Clipboard :=
+;     Send, ^c
+;     ClipWait, 0.01
+;     Clipboard := "(" . Trim(Clipboard, " ") . ")"
+;     Send, ^v
+;     If (Clipboard == "()")
+;     {
+;         Send, {Left}
+;     }
+;     Beep(1200, 20)
+;     Clipboard := old_clip
+; Return
+; ==============================================================================
+;                           Surround with quotes
+; ==============================================================================
+; #IfWinNotActive, ahk_exe Code.exe
+;     ; +'::
+;     old_clip := Clipboard
+;     Clipboard := ""
+;     Send, ^c
+;     ClipWait, 0.02
+;     Clipboard := """" . Trim(Clipboard, " ") . """"
+;     Send, ^v
+;     If (Clipboard == """""")
+;     {
+;         Send, {Left}
+;     }
+;     Beep(1200, 20)
+;     Clipboard := old_clip
+; Return

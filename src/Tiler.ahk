@@ -1,4 +1,11 @@
 ; ==============================================================================
+;                                     To Do
+; ==============================================================================
+/*
+* Dock by mouse edge screen.
+*/
+
+; ==============================================================================
 ;                             Auto Exexcute Section
 ; ==============================================================================
 #IfWinActive
@@ -31,7 +38,6 @@ Init()
 
     If (!FileExist(ini_file))
         WriteConfig(ini_file)
-
 }
 ; ==============================================================================
 ;                                  Load Config
@@ -85,11 +91,25 @@ WriteConfig(ini_file)
 DockerGUI:
     WinGet, win_id, ID, A
     Update(win_id)
-
     Gui, Destroy
-    InputBox, alignment, Alignment, Alignment, , , , , , , , %alignment%
 
-    ; IniWrite, ${Value}, ${Filename}, ${Section}, ${Key}
+    factors := 0
+    Loop
+    {
+        If (Mod(screen_width, A_Index) == 0)
+        {
+            factors := factors . "|" . A_Index . "|" . Round(screen_width / A_Index)
+        }
+    } Until A_Index >= Sqrt(screen_width)
+
+    Sort, factors, D| N
+    Gui, Add, DDL, W64 Valignment Choose1, %factors%
+    Gui, Add, Button, XP+64 YP GSubmitAlignment, Submit
+    Gui, Show
+Return
+
+SubmitAlignment:
+    Gui, Submit
     IniWrite, %alignment%, %ini_file%, settings, alignment
 Return
 ; ==============================================================================

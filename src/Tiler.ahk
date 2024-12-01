@@ -386,47 +386,13 @@ Return
 ; ==============================================================================
 ;                                Move Along Grid
 ; ==============================================================================
-#x::
-MoveAlongGrid:
+MoveAlongGrid(dir)
+{
     WinGet, win_id, ID, A
     Update(win_id)
+
     ;@AHK++AlignAssignmentOn
-    cells := screen_width / alignment
-    index := (pos_x + left_offset) / (screen_width / cells)
-    ;@AHK++AlignAssignmentOff
-
-    If (window_height - top_offset <= screen_height / 2)
-    {
-        If (pos_y < screen_height * 0.25)
-            pos_y := 0
-        Else
-            pos_y := (screen_height / 2)
-    }
-    Else
-    {
-        pos_y := 0
-    }
-
-    if (pos_x >= screen_width - window_width)
-    {
-        index := -1
-
-        If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
-            pos_y := screen_height / 2
-        Else
-            pos_y := 0
-    }
-    Dock(screen_width * ((Floor(index) + 1) / cells) - left_offset, pos_y, window_width, window_height)
-Return
-; ==============================================================================
-;                            Move Along Grid Reverse
-; ==============================================================================
-+#x::
-MoveAlongGridReverse:
-    WinGet, win_id, ID, A
-    Update(win_id)
-    ;@AHK++AlignAssignmentOn
-    cells := screen_width / alignment
+    cells := screen_width / window_width
     index := (pos_x + left_offset) / (screen_width / cells)
     ;@AHK++AlignAssignmentOff
 
@@ -442,43 +408,8 @@ MoveAlongGridReverse:
         pos_y := 0
     }
 
-    if (pos_x <= 0)
-    {
-        cell_width := screen_width / cells
-        last_cell := Floor((window_width) / cell_width)
-        index := cells - last_cell + 1
-
-        If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
-            pos_y := screen_height / 2
-        Else
-            pos_y := 0
-    }
-    Dock(screen_width * ((Floor(index) - 1) / cells) - left_offset, pos_y, window_width, window_height)
-Return
-; ==============================================================================
-;                                    Move Along Width
-; ==============================================================================
-MoveAlongWidth:
-    WinGet, win_id, ID, A
-    Update(win_id)
-    ;@AHK++AlignAssignmentOn
-    cells := screen_width / (window_width)
-    index := (pos_x + left_offset) / (window_width)
-    ;@AHK++AlignAssignmentOff
-
-    If (window_height - top_offset <= screen_height / 2)
-    {
-        If (pos_y < screen_height / 2)
-            pos_y := 0
-        Else
-            pos_y := screen_height / 2
-    }
-    Else
-    {
-        pos_y := 0
-    }
-
-    if (pos_x >= screen_width - window_width)
+    ; MsgBox, % pos_x + left_offset
+    if (pos_x + left_offset >= screen_width - window_width && dir == 1)
     {
         index := -1
 
@@ -487,46 +418,21 @@ MoveAlongWidth:
         Else
             pos_y := 0
     }
-    Dock(screen_width * ((Floor(index) + 1) / cells) - left_offset, pos_y, window_width, window_height)
-Return
-; ==============================================================================
-;                            Move Along Width Reverse
-; ==============================================================================
-MoveAlongWidthReverse:
-    WinGet, win_id, ID, A
-    Update(win_id)
-    ;@AHK++AlignAssignmentOn
-    cells := screen_width / (window_width)
-    index := (pos_x + left_offset) / (window_width)
-    ;@AHK++AlignAssignmentOff
-
-    If (window_height - top_offset <= screen_height / 2)
+    else if (pos_x + left_offset <= 0 && dir == -1)
     {
-        If (pos_y < screen_height / 2)
-            pos_y := 0
-        Else
-            pos_y := screen_height / 2
-    }
-    Else
-    {
-        pos_y := 0
-    }
-
-    if (index <= 0)
-    {
-        cell_width := screen_width / cells
-        last_cell := Floor((window_width) / cell_width)
-        index := cells - last_cell + 1
+        index := cells
 
         If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
             pos_y := screen_height / 2
         Else
             pos_y := 0
     }
-    Dock(screen_width * ((Floor(index) - 1) / cells) - left_offset, pos_y, window_width, window_height)
-Return
+    Dock(screen_width * ((Floor(index) + dir) / cells) - left_offset, pos_y, window_width, window_height)
+}
+#x::MoveAlongGrid(1)
++#x::MoveAlongGrid(-1)
 ; ==============================================================================
-;                              Jump to Next Window
+;                              Snap window to Next Window
 ; ==============================================================================
 Jump:
     WinGet, win_id, ID, A

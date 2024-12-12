@@ -1,4 +1,4 @@
-﻿; ==============================================================================
+; ==============================================================================
 ;                             Auto Exexcute Section
 ; ==============================================================================
 ; Script attributes
@@ -26,9 +26,7 @@ SendMode, Event
     width := 320
     Gui, Destroy
     Gui, +AlwaysOnTop
-    Gui, Add, Button, W%width% GScrape, Scrape
-    Gui, Add, Button, W%width% GOpenOrder, Open order.html
-    Gui, Add, Button, W%width% GOpenLatest, Open latest output
+    Gui, Add, Button, W%width% GScraperGUI, Scraper
     Gui, Add, Button, W%width% GDockerGUI, Docker
     Gui, Add, Button, W%width% GTextTools, Text Tools
     Gui, Add, Button, W%width% GByteConverter, Byte Converter
@@ -125,7 +123,10 @@ Return
 ;                                   Set Price
 ; ==============================================================================
 #p::
-    CopyToClipboard()
+    old_clip := Clipboard
+    Clipboard :=
+    Send, ^c
+    ClipWait, 0.01
 
     if Clipboard is not float
     {
@@ -151,6 +152,8 @@ Return
 TextTools:
     Gui, Destroy
 
+    width := StrLen(Trim(Clipboard)) * 6
+    if (width < 240 )
     width := 240
 
     Gui, Add, Edit, W%width% Vinput,

@@ -1,5 +1,16 @@
 ﻿global data_buffer := ""
 ; ==============================================================================
+;                                      GUI
+; ==============================================================================
+ScraperGUI:
+    width := 320
+    Gui, Destroy
+    Gui, Add, Button, W%width% GScrape, Scrape
+    Gui, Add, Button, W%width% GOpenOrder, Open order.html
+    Gui, Add, Button, W%width% GOpenLatest, Open latest output
+    Gui, Show
+Return
+; ==============================================================================
 ;                                Write Out Data
 ; ==============================================================================
 WriteOutData(image, title, price, weight, sku, asin, output_file, rrp)

@@ -392,7 +392,7 @@ MoveAlongGrid(dir)
     Update(win_id)
 
     ;@AHK++AlignAssignmentOn
-    cells := screen_width / window_width
+    cells := screen_width / (alignment)
     index := (pos_x + left_offset) / (screen_width / cells)
     ;@AHK++AlignAssignmentOff
 

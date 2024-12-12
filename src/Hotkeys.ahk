@@ -15,10 +15,19 @@ SendMode, Event
 ; #Include, GameRemaps.ahk
 ; #Include, PicrossTouch.ahk
 #Include, Tiler.ahk
+#Include, Amazon.ahk
 #Include, Scraper.ahk
-#Include, Helpers.ahk
-#Include, GameFAQsData.ahk
 ; #Include, Jobalots.ahk
+; ==============================================================================
+;                                Beep Subroutine
+; ==============================================================================
+Beep(frequency, volume)
+{
+    SoundGet, master_volume
+    SoundSet, volume
+    SoundBeep, %frequency%
+    SoundSet, %master_volume%
+}
 ; ==============================================================================
 ;                                      GUI
 ; ==============================================================================

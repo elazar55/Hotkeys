@@ -52,7 +52,7 @@ Scrape:
     urls       := []
     titles     := []
     prices     := []
-    order_html := "order.html"
+    order_html := "orders_order.html"
     images     := []
     skus       := []
     weights    := []
@@ -193,7 +193,7 @@ ScrapeOrderLinks(order_html, urls, titles, prices, skus, ByRef jleu)
 ; ==============================================================================
 ScrapeProduct(address, images, skus, weights, asins, extra_data, jleu)
 {
-    source_file := "item.html"
+    source_file := "orders_item.html"
     UrlDownloadToFile, %address%, %source_file%
 
     If (ErrorLevel)
@@ -272,7 +272,7 @@ DownloadImagesFromString(source_string, subfolder_name, sku)
 ;                                Open order.html
 ; ==============================================================================
 OpenOrder:
-    Run, notepad.exe order.html, , ,
+    Run, notepad.exe orders_order.html, , ,
 Return
 ; ==============================================================================
 ;                                Open Latest
@@ -284,6 +284,7 @@ OpenLatest:
     Loop, Files, ../Orders/*, D
     {
         latest := A_LoopFileName
+        MsgBox, %latest%
     }
     Run, %editor% ../Orders/%latest%/output.csv
 Return

@@ -16,7 +16,7 @@ SendMode, Event
 ; #Include, PicrossTouch.ahk
 #Include, Tiler.ahk
 #Include, Amazon.ahk
-#Include, Scraper.ahk
+#Include, Orders.ahk
 ; #Include, Jobalots.ahk
 ; ==============================================================================
 ;                                Beep Subroutine
@@ -163,7 +163,7 @@ TextTools:
 
     width := StrLen(Trim(Clipboard)) * 6
     if (width < 240 )
-    width := 240
+        width := 240
 
     Gui, Add, Edit, W%width% Vinput,
     Gui, Add, DDL, W60 XP+%width% Vcasing Choose1, Space|Snake|Dot|Kebab

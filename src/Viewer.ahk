@@ -4,8 +4,8 @@
 #F1::
     SetBatchLines, -1
     ;@AHK++AlignAssignmentOn
-    file      := "auctions.html"
-    output    := "output.html"
+    file      := "viewer_auctions.html"
+    output    := "viewer_output.html"
     img_width := 384
     border    := "1px solid black"
     font_size := "12px"
@@ -81,13 +81,13 @@
 
         If (InStr(title, "Mixed"))
         {
-            UrlDownloadToFile, % "https://eu.jobalots.com/products/" . sku, lot.html
+            UrlDownloadToFile, % "https://eu.jobalots.com/products/" . sku, viewer_lot.html
             If (ErrorLevel)
             {
                 MsgBox, UrlDownloadToFile Error: %ErrorLevel%
                 Exit
             }
-            FileRead, lot_string, lot.html
+            FileRead, lot_string, viewer_lot.html
 
             lot_pos := 1
             while (lot_pos := RegExMatch(lot_string, "`n)(?<=<td><img src="").+(?=""></td>)", lot_match, lot_pos + StrLen(lot_match)))

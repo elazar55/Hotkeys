@@ -402,19 +402,23 @@ Jump:
     SetTitleMatchMode Regex
     WinGet, win_handles, List, .+, , Start Menu|Program Manager|Window Spy
 
-    x_list := []
+    x_list :=
     Loop, %win_handles%
     {
         id := win_handles%A_Index%
         WinGet, name, ProcessName, ahk_id %id%
         Update(id)
-        x_list.Push(pos_x + left_offset, pos_x + window_width + left_offset)
+        x_list .= pos_x + left_offset . "," . pos_x + window_width + left_offset . ","
     }
+    x_list := Trim(x_list, ",")
+    Sort, x_list, N U D,
+    MsgBox, %x_list%
+    x_list := StrSplit(x_list, ",")
+
     For k, v in x_list
     {
         MsgBox, %v%
     }
-    ; TODO: Sort array
     SetTitleMatchMode 1
 Return
 ; ==============================================================================

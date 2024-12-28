@@ -396,47 +396,25 @@ MoveAlongGrid(dir)
 ;                              Snap window to Next Window
 ; ==============================================================================
 Jump:
+#F1::
     WinGet, win_id, ID, A
     Update(win_id)
     SetTitleMatchMode Regex
     WinGet, win_handles, List, .+, , Start Menu|Program Manager|Window Spy
 
-    positions := []
+    x_list := []
     Loop, %win_handles%
     {
         id := win_handles%A_Index%
         WinGet, name, ProcessName, ahk_id %id%
-        WinGetPos, x, y, w, h, ahk_id %id%
-
         Update(id)
-        positions[id] := x + left_offset
-        MsgBox, % x
-        ; MsgBox, % x + left_offset . " -> " . name
+        x_list.Push(pos_x + left_offset, pos_x + window_width + left_offset)
     }
-
-    this_x := 0
-    moved := false
-    For key, value in positions
+    For k, v in x_list
     {
-        MsgBox, % value . " -> " . Format("{:#x}", key)
-
-        If (Format("{:#x}", key) == win_id)
-        {
-            this_x := value
-        }
-        If (value > this_x)
-        {
-            Update(win_id)
-            Dock(value, pos_y, window_width, window_height)
-            moved := true
-            break
-        }
+        MsgBox, %v%
     }
-    ; If (!moved)
-    ; {
-    ;     Dock(0, pos_y, window_width, window_height)
-    ; }
-
+    ; TODO: Sort array
     SetTitleMatchMode 1
 Return
 ; ==============================================================================

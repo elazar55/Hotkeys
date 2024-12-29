@@ -399,26 +399,49 @@ Jump:
 #F1::
     WinGet, win_id, ID, A
     Update(win_id)
+
+    _x := pos_x
+    _y := pos_y
+    _id := win_id
+    _w := window_width
+    _h := window_height
+    _left_off := left_offset
+    _top_off := top_offset
+
     SetTitleMatchMode Regex
-    WinGet, win_handles, List, .+, , Start Menu|Program Manager|Window Spy
+    WinGet, win_handles, List, .+
+    ; WinGet, win_handles, List, .+, , Start Menu|Program Manager|Window Spy, ahk_exe AutoHotkey.exe
 
     x_list :=
     Loop, %win_handles%
     {
         id := win_handles%A_Index%
-        WinGet, name, ProcessName, ahk_id %id%
+
         Update(id)
+        If (id == _id || pos_x + window_width + left_offset >= screen_width)
+            Continue
+
         x_list .= pos_x + left_offset . "," . pos_x + window_width + left_offset . ","
+
+        WinGet, name, ProcessName, ahk_id %id%
+        ; MsgBox, % name . " -> " . pos_x + left_offset . "," . pos_x + window_width + left_offset
     }
     x_list := Trim(x_list, ",")
     Sort, x_list, N U D,
-    MsgBox, %x_list%
+    ; MsgBox, %x_list%
     x_list := StrSplit(x_list, ",")
 
     For k, v in x_list
     {
-        MsgBox, %v%
+        comp := v - (_x + _left_off)
+        If (comp > 0)
+        {
+            Dock(x_list[k] - _left_off, _y, _w, _h)
+            SetTitleMatchMode 1
+            Return
+        }
     }
+    Dock(0 - _left_off, _y, _w, _h)
     SetTitleMatchMode 1
 Return
 ; ==============================================================================

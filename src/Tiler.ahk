@@ -409,24 +409,23 @@ Jump:
     _top_off := top_offset
 
     SetTitleMatchMode Regex
-    WinGet, win_handles, List, .+, , Start Menu|Program Manager|Window Spy,
+    WinGet, win_handles, List, .+, , \d+x\d+|Start Menu|Program Manager|Window Spy,
 
     x_list :=
     Loop, %win_handles%
     {
         id := win_handles%A_Index%
-        Update(id)
 
-        WinGet, name, ProcessName, ahk_id %id%
-
-        If (id == _id || pos_x + window_width + left_offset >= screen_width || InStr(name, "AutoHotkey.exe"))
+        If (id == _id)
             Continue
 
-        ; MsgBox, % name . " -> " . pos_x + left_offset . "," . pos_x + window_width + left_offset
+        ; WinGet, proc_name, ProcessName, ahk_id %id%
+        ; WinGetTitle, title, ahk_id %id%
+        ; MsgBox, % title . " -> " . pos_x + left_offset . "," . pos_x + window_width + left_offset
 
+        Update(id)
         x_list .= pos_x + left_offset . "," . pos_x + window_width + left_offset . ","
     }
-
     x_list := Trim(x_list, ",")
     Sort, x_list, N U D,
     ; MsgBox, %x_list%
@@ -437,6 +436,9 @@ Jump:
         comp := v - (_x + _left_off)
         If (comp > 0)
         {
+            If (x_list[k] >= screen_width)
+                Break
+
             Dock(x_list[k] - _left_off, _y, _w, _h)
             SetTitleMatchMode 1
             Return

@@ -433,8 +433,7 @@ Jump:
 
     For k, v in x_list
     {
-        comp := v - (_x + _left_off)
-        If (comp > 0)
+        If (v - (_x + _left_off) > 0)
         {
             If (x_list[k] >= screen_width)
                 Break

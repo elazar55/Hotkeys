@@ -435,10 +435,10 @@ Jump:
     {
         If (v - (_x + _left_off) > 0)
         {
-            If (x_list[k] >= screen_width)
+            If (v >= screen_width)
                 Break
 
-            Dock(x_list[k] - _left_off, _y, _w, _h)
+            Dock(v - _left_off, _y, _w, _h)
             SetTitleMatchMode 1
             Return
         }

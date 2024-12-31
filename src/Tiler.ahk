@@ -124,9 +124,9 @@ return
 ; ==============================================================================
 Update(win_id)
 {
-    WinGet, is_maximized, MinMax, ahk_id %win_id%
-    if (is_maximized)
-        WinRestore, A
+    ; WinGet, is_maximized, MinMax, ahk_id %win_id%
+    ; if (is_maximized)
+    ;     WinRestore, A
 
     WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
     WinGet, title, ProcessName, ahk_id %win_id%
@@ -415,8 +415,11 @@ Jump:
     Loop, %win_handles%
     {
         id := win_handles%A_Index%
-
         If (id == _id)
+            Continue
+
+        WinGet, minmax, MinMax, ahk_id %id%
+        If (minmax == -1)
             Continue
 
         ; WinGet, proc_name, ProcessName, ahk_id %id%

@@ -419,7 +419,7 @@ Jump:
             Continue
 
         WinGet, minmax, MinMax, ahk_id %id%
-        If (minmax == -1)
+        If (minmax != 0)
             Continue
 
         ; WinGet, proc_name, ProcessName, ahk_id %id%
@@ -436,11 +436,11 @@ Jump:
 
     For k, v in x_list
     {
+        If (v >= screen_width)
+            Break
+
         If (v - (_x + _left_off) > 0)
         {
-            If (v >= screen_width)
-                Break
-
             Dock(v - _left_off, _y, _w, _h)
             SetTitleMatchMode 1
             Return

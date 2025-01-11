@@ -158,7 +158,7 @@ Update(win_id)
 ; ==============================================================================
 ;                                 Dock Function
 ; ==============================================================================
-Dock(x, y, width, height)
+Dock(x, y, width, height, id := "A")
 {
     ;@AHK++AlignAssignmentOn
     global left_offset
@@ -176,7 +176,7 @@ Dock(x, y, width, height)
 
     SetTimer, RemoveTooltip, -1000
 
-    WinMove, A, , x, y, width + left_offset * 2, height, ,
+    WinMove, %id%, , x, y, width + left_offset * 2, height, ,
 }
 ; ==============================================================================
 ;                                  Align Width
@@ -464,3 +464,76 @@ Return
 ;     }
 ;     ToolTip
 ; Return
+; ==============================================================================
+;                                 Tile Windows
+; ==============================================================================
+TileWindows:
+#t::
+    Gui, Destroy
+    SetTitleMatchMode Regex
+    WinGet, window_count, List, ahk_class CabinetWClass, , Start Menu|Program Manager|Chrome|Thorium|Code|Hotkeys|Window Spy|RetroArch
+
+    ; @AHK++AlignAssignmentOn
+    rows       := Min(Ceil(window_count / 2), 1)
+    columns    := Ceil(window_count / rows)
+    slots      := rows * columns
+    carry      := slots - window_count
+    win_width  := (screen_width / columns) + (left_offset * 2)
+    win_height := (screen_height / rows) + (top_offset)
+    ; @AHK++AlignAssignmentOff
+
+    Loop, %window_count%
+    {
+        ; @AHK++AlignAssignmentOn
+        id      := window_count%A_Index%
+        x_index := Floor((A_Index - 1) / rows)
+        y_index := Mod(A_Index - 1, rows)
+        x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
+        y_pos   := (win_height - top_offset) * y_index
+        ; @AHK++AlignAssignmentOff
+        Update(id)
+
+        If (carry && A_Index = window_count)
+            win_height := ((screen_height / rows) * (carry + 1)) + (top_offset)
+
+        WinActivate, ahk_id %id%
+        ; WinMove, ahk_id %id%,, x_pos, y_pos, win_width, win_height
+        Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)
+        ; MsgBox, X: %x_index%`nY: %y_index%
+    }
+
+    SetTitleMatchMode 1
+Return
+; ==============================================================================
+;                                 Grid Windows
+; ==============================================================================
+GridWindows:
+#g::
+    Gui, Destroy
+    SetTitleMatchMode Regex
+    WinGet, window_count, List, ahk_class CabinetWClass, , Start Menu|Program Manager|Chrome|Code|Hotkeys|Window Spy|RetroArch
+
+    ; @AHK++AlignAssignmentOn
+    rows       := 1
+    columns    := 10/3
+    win_width  := (screen_width / columns) + (left_offset * 2)
+    win_height := (screen_height / rows) + (top_offset)
+    ; @AHK++AlignAssignmentOff
+
+    Loop, %window_count%
+    {
+        Update(id)
+        ; @AHK++AlignAssignmentOn
+        id      := window_count%A_Index%
+        x_index := Floor((A_Index - 1) / rows)
+        y_index := Mod(A_Index - 1, rows)
+        x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
+        y_pos   := (win_height - top_offset) * y_index
+        ; @AHK++AlignAssignmentOff
+
+        WinActivate, ahk_id %id%
+        ; WinMove, ahk_id %id%,, x_pos, y_pos, win_width, win_height
+        Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)
+    }
+    SetTitleMatchMode 1
+Return

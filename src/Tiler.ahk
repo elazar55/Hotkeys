@@ -24,6 +24,8 @@ global dock_left     :=
 global dock_right    :=
 global dock_up       :=
 global dock_down     :=
+global rows          :=
+global cols          :=
 ; @AHK++AlignAssignmentOff
 CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
@@ -34,6 +36,7 @@ Return
 ; ==============================================================================
 Init()
 {
+    ; TODO: Check if entry exists instead of file
     ReadConfig(ini_file)
 
     If (!FileExist(ini_file))
@@ -58,6 +61,14 @@ ReadConfig(ini_file)
     IniRead, dock_right, %ini_file%, settings, dock_right, #s
     IniRead, dock_up, %ini_file%, settings, dock_up, #w
     IniRead, dock_down, %ini_file%, settings, dock_down, #r
+
+    IniRead, rows, %ini_file%, settings, rows
+    If (rows == "ERROR")
+        IniWrite, 2, %ini_file%, settings, rows
+
+    IniRead, cols, %ini_file%, settings, cols
+    If (cols == "ERROR")
+        IniWrite, 2, %ini_file%, settings, cols
 
     Hotkey, IfWinActive
     Hotkey, %dock_left%, DockLeft
@@ -84,6 +95,9 @@ WriteConfig(ini_file)
     IniWrite, %dock_right%, %ini_file%, settings, dock_right
     IniWrite, %dock_up%, %ini_file%, settings, dock_up
     IniWrite, %dock_down%, %ini_file%, settings, dock_down
+
+    IniWrite, %rows%, %ini_file%, settings, rows
+    IniWrite, %cols%, %ini_file%, settings, cols
 }
 ; ==============================================================================
 ;                                      GUI
@@ -98,15 +112,26 @@ DockerGUI:
     {
         If (Mod(screen_width, A_Index) == 0)
         {
-            factors := factors . "|" . A_Index . "|" . Round(screen_width / A_Index)
+            factors .= "|" . A_Index . "|" . Round(screen_width / A_Index)
         }
     } Until A_Index >= Sqrt(screen_width)
 
     Sort, factors, D| N
     factors = %alignment%|%factors%
+
     Gui, Add, DDL, W64 Valignment Choose1, %factors%
-    Gui, Add, Button, XP+64 YP GSubmitAlignment, Submit
+    Gui, Add, Edit, W64 Vrows X8, %rows%
+    Gui, Add, Edit, W64 Vcols X8, %cols%
+    Gui, Add, Button, X8 GSubmitAll, Submit
+
     Gui, Show
+Return
+
+SubmitAll:
+    Gui, Submit
+    IniWrite, %rows%, %ini_file%, settings, rows
+    IniWrite, %cols%, %ini_file%, settings, cols
+    IniWrite, %alignment%, %ini_file%, settings, alignment
 Return
 
 SubmitAlignment:
@@ -474,7 +499,7 @@ TileWindows:
     WinGet, window_count, List, ahk_class CabinetWClass, , Start Menu|Program Manager|Chrome|Thorium|Code|Hotkeys|Window Spy|RetroArch
 
     ; @AHK++AlignAssignmentOn
-    rows       := Min(Ceil(window_count / 2), 1)
+    rows       := Min(Ceil(window_count / 2), rows)
     columns    := Ceil(window_count / rows)
     slots      := rows * columns
     carry      := slots - window_count
@@ -513,10 +538,8 @@ GridWindows:
     SetTitleMatchMode Regex
     WinGet, window_count, List, ahk_class CabinetWClass, , Start Menu|Program Manager|Chrome|Code|Hotkeys|Window Spy|RetroArch
 
-    ; @AHK++AlignAssignmentOn
-    rows       := 1
-    columns    := 10/3
-    win_width  := (screen_width / columns) + (left_offset * 2)
+    ; @AHK++AlignAssignmentOna
+    win_width  := (screen_width / cols) + (left_offset * 2)
     win_height := (screen_height / rows) + (top_offset)
     ; @AHK++AlignAssignmentOff
 

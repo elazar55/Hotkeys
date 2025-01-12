@@ -4,13 +4,13 @@
 AmazonGUI:
     width := 320
     Gui, Destroy
-    Gui, add, Edit, R9 W%width% Vasin, B01BKKKVPW
+    Gui, add, Edit, R9 W%width% Vasin, B01BKKKVPW`nB0BPB7NCPZ
     Gui, Add, Button, Default W32 XP+%width% GAmazonScrape, Scrape
     Gui, Show
 Return
 
 ; ==============================================================================
-;                           Start Here - AmazonScrape
+;                                 AmazonScrape
 ; ==============================================================================
 AmazonScrape:
     Gui, Submit

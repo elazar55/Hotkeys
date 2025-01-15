@@ -14,18 +14,18 @@ global screen_width  := 1920
 global screen_height := 1050
 global pos_x         :=
 global pos_y         :=
-global left_offset   :=
-global top_offset    :=
+global left_offset   := 3
+global top_offset    := 3
 global alignment     := 80
 global window_width  :=
 global window_height :=
 global ini_file      := "tiler.ini"
-global dock_left     :=
-global dock_right    :=
-global dock_up       :=
-global dock_down     :=
-global rows          :=
-global cols          :=
+global dock_left     := "#a"
+global dock_right    := "#s"
+global dock_up       := "#w"
+global dock_down     := "#r"
+global rows          := 2
+global cols          := 3
 ; @AHK++AlignAssignmentOff
 CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
@@ -36,11 +36,10 @@ Return
 ; ==============================================================================
 Init()
 {
-    ; TODO: Check if entry exists instead of file
-    ReadConfig(ini_file)
-
     If (!FileExist(ini_file))
-        WriteConfig(ini_file)
+        WriteNewConfig(ini_file)
+
+    ReadConfig(ini_file)
 }
 ; ==============================================================================
 ;                                  Load Config
@@ -63,12 +62,7 @@ ReadConfig(ini_file)
     IniRead, dock_down, %ini_file%, settings, dock_down, #r
 
     IniRead, rows, %ini_file%, settings, rows
-    If (rows == "ERROR")
-        IniWrite, 2, %ini_file%, settings, rows
-
     IniRead, cols, %ini_file%, settings, cols
-    If (cols == "ERROR")
-        IniWrite, 2, %ini_file%, settings, cols
 
     Hotkey, IfWinActive
     Hotkey, %dock_left%, DockLeft
@@ -81,7 +75,7 @@ ReadConfig(ini_file)
 ; ==============================================================================
 ;                                 Write Config
 ; ==============================================================================
-WriteConfig(ini_file)
+WriteNewConfig(ini_file)
 {
     ; IniWrite, ${Value}, ${Filename}, ${Section}, ${Key}
     IniWrite, %alignment%, %ini_file%, settings, alignment
@@ -120,9 +114,12 @@ DockerGUI:
     factors = %alignment%|%factors%
 
     Gui, Add, DDL, W64 Valignment Choose1, %factors%
+    Gui, Add, Text, XP+68 YP+4, Alignment
     Gui, Add, Edit, W64 Vrows X8, %rows%
+    Gui, Add, Text, XP+68 YP+4, Rows
     Gui, Add, Edit, W64 Vcols X8, %cols%
-    Gui, Add, Button, X8 GSubmitAll, Submit
+    Gui, Add, Text, XP+68 YP+4, Columns
+    Gui, Add, Button, W64 X8 GSubmitAll, Submit
 
     Gui, Show
 Return

@@ -418,17 +418,19 @@ MoveAlongGrid(dir)
 ;                              Snap window to Next Window
 ; ==============================================================================
 Jump:
-#F1::
+#j::
     WinGet, win_id, ID, A
     Update(win_id)
 
-    _x := pos_x
-    _y := pos_y
-    _id := win_id
-    _w := window_width
-    _h := window_height
+    ; @AHK++AlignAssignmentOn
+    _x        := pos_x
+    _y        := pos_y
+    _id       := win_id
+    _w        := window_width
+    _h        := window_height
     _left_off := left_offset
-    _top_off := top_offset
+    _top_off  := top_offset
+    ; @AHK++AlignAssignmentOff
 
     SetTitleMatchMode Regex
     WinGet, win_handles, List, .+, , \d+x\d+|Start Menu|Program Manager|Window Spy,
@@ -444,16 +446,11 @@ Jump:
         If (minmax != 0)
             Continue
 
-        ; WinGet, proc_name, ProcessName, ahk_id %id%
-        ; WinGetTitle, title, ahk_id %id%
-        ; MsgBox, % title . " -> " . pos_x + left_offset . "," . pos_x + window_width + left_offset
-
         Update(id)
         x_list .= pos_x + left_offset . "," . pos_x + window_width + left_offset . ","
     }
     x_list := Trim(x_list, ",")
     Sort, x_list, N U D,
-    ; MsgBox, %x_list%
     x_list := StrSplit(x_list, ",")
 
     For k, v in x_list
@@ -472,59 +469,46 @@ Jump:
     SetTitleMatchMode 1
 Return
 ; ==============================================================================
-
-; ==============================================================================
-; ~LButton::
-;     Update()
-;     while (GetKeyState("LButton", "p"))
-;     {
-;         MouseGetPos, pos_x, pos_y, , ,
-;         pos_x := (Round((pos_x) / alignment)) * alignment
-;         pos_y := (Round((pos_y) / alignment)) * alignment
-;         ToolTip, %pos_x% : %pos_y%, , ,
-;         ; WinMove, A, , pos_x - window_width / 2, pos_y - window_height / 2, , , ,
-;     }
-;     ToolTip
-; Return
-; ==============================================================================
 ;                                 Tile Windows
 ; ==============================================================================
 TileWindows:
 #t::
     Gui, Destroy
+
     SetTitleMatchMode Regex
-    WinGet, window_count, List, ahk_class CabinetWClass, , Start Menu|Program Manager|Chrome|Thorium|Code|Hotkeys|Window Spy|RetroArch
+    GroupAdd, stackable, ahk_class CabinetWClass, , , ,
+    GroupAdd, stackable, ahk_class VirtualConsoleClass, , , ,
+    GroupAdd, stackable, ahk_class FM, , , ,
+    WinGet, win_count, List, ahk_group stackable, ,
+    SetTitleMatchMode 1
 
     ; @AHK++AlignAssignmentOn
-    rows       := Min(Ceil(window_count / 2), rows)
-    columns    := Ceil(window_count / rows)
+    rows       := Min(Ceil(win_count / 2), rows)
+    columns    := Ceil(win_count / rows)
     slots      := rows * columns
-    carry      := slots - window_count
+    carry      := slots - win_count
     win_width  := (screen_width / columns) + (left_offset * 2)
     win_height := (screen_height / rows) + (top_offset)
     ; @AHK++AlignAssignmentOff
 
-    Loop, %window_count%
+    Loop, %win_count%
     {
         ; @AHK++AlignAssignmentOn
-        id      := window_count%A_Index%
+        id      := win_count%A_Index%
+        Update(id)
         x_index := Floor((A_Index - 1) / rows)
         y_index := Mod(A_Index - 1, rows)
         x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
         y_pos   := (win_height - top_offset) * y_index
         ; @AHK++AlignAssignmentOff
-        Update(id)
 
-        If (carry && A_Index = window_count)
+        If (carry && A_Index = win_count)
             win_height := ((screen_height / rows) * (carry + 1)) + (top_offset)
 
         WinActivate, ahk_id %id%
-        ; WinMove, ahk_id %id%,, x_pos, y_pos, win_width, win_height
         Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)
-        ; MsgBox, X: %x_index%`nY: %y_index%
     }
 
-    SetTitleMatchMode 1
 Return
 ; ==============================================================================
 ;                                 Grid Windows
@@ -532,19 +516,24 @@ Return
 GridWindows:
 #g::
     Gui, Destroy
+
     SetTitleMatchMode Regex
-    WinGet, window_count, List, ahk_class CabinetWClass, , Start Menu|Program Manager|Chrome|Code|Hotkeys|Window Spy|RetroArch
+    GroupAdd, stackable, ahk_class CabinetWClass, , , ,
+    GroupAdd, stackable, ahk_class VirtualConsoleClass, , , ,
+    GroupAdd, stackable, ahk_class FM, , , ,
+    WinGet, win_count, List, ahk_group stackable, ,
+    SetTitleMatchMode 1
 
     ; @AHK++AlignAssignmentOna
     win_width  := (screen_width / cols) + (left_offset * 2)
     win_height := (screen_height / rows) + (top_offset)
     ; @AHK++AlignAssignmentOff
 
-    Loop, %window_count%
+    Loop, %win_count%
     {
-        Update(id)
         ; @AHK++AlignAssignmentOn
-        id      := window_count%A_Index%
+        id      := win_count%A_Index%
+        Update(id)
         x_index := Floor((A_Index - 1) / rows)
         y_index := Mod(A_Index - 1, rows)
         x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
@@ -552,8 +541,6 @@ GridWindows:
         ; @AHK++AlignAssignmentOff
 
         WinActivate, ahk_id %id%
-        ; WinMove, ahk_id %id%,, x_pos, y_pos, win_width, win_height
         Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)
     }
-    SetTitleMatchMode 1
 Return

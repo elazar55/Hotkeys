@@ -36,6 +36,13 @@ Return
 ; ==============================================================================
 Init()
 {
+    SetTitleMatchMode Regex
+    GroupAdd, stackable, ahk_class CabinetWClass, , , ,
+    GroupAdd, stackable, ahk_class VirtualConsoleClass, , , ,
+    GroupAdd, stackable, ahk_class FM, , , ,
+    WinGet, win_count, List, ahk_group stackable, ,
+    SetTitleMatchMode 1
+
     If (!FileExist(ini_file))
         WriteNewConfig(ini_file)
 
@@ -146,10 +153,6 @@ return
 ; ==============================================================================
 Update(win_id)
 {
-    ; WinGet, is_maximized, MinMax, ahk_id %win_id%
-    ; if (is_maximized)
-    ;     WinRestore, A
-
     WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
     WinGet, title, ProcessName, ahk_id %win_id%
 
@@ -182,6 +185,10 @@ Update(win_id)
 ; ==============================================================================
 Dock(x, y, width, height, id := "A")
 {
+    WinGet, is_maximized, MinMax, %id%
+    if (is_maximized)
+        WinRestore, %id%
+
     ;@AHK++AlignAssignmentOn
     global left_offset
     global top_offset
@@ -475,13 +482,6 @@ TileWindows:
 #t::
     Gui, Destroy
 
-    SetTitleMatchMode Regex
-    GroupAdd, stackable, ahk_class CabinetWClass, , , ,
-    GroupAdd, stackable, ahk_class VirtualConsoleClass, , , ,
-    GroupAdd, stackable, ahk_class FM, , , ,
-    WinGet, win_count, List, ahk_group stackable, ,
-    SetTitleMatchMode 1
-
     ; @AHK++AlignAssignmentOn
     rows       := Min(Ceil(win_count / 2), rows)
     columns    := Ceil(win_count / rows)
@@ -516,13 +516,6 @@ Return
 GridWindows:
 #g::
     Gui, Destroy
-
-    SetTitleMatchMode Regex
-    GroupAdd, stackable, ahk_class CabinetWClass, , , ,
-    GroupAdd, stackable, ahk_class VirtualConsoleClass, , , ,
-    GroupAdd, stackable, ahk_class FM, , , ,
-    WinGet, win_count, List, ahk_group stackable, ,
-    SetTitleMatchMode 1
 
     ; @AHK++AlignAssignmentOna
     win_width  := (screen_width / cols) + (left_offset * 2)

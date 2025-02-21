@@ -173,7 +173,7 @@ Update(win_id)
     {
         global min_width := 240
     }
-    else If (RegExMatch(title, "chrome"))
+    else If (RegExMatch(title, "chrome") || RegExMatch(title, "thorium"))
     {
         global min_width := 502
     }

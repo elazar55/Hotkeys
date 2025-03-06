@@ -7,8 +7,8 @@ AmazonGUI:
     Gui, Destroy
     Gui, add, Edit, X10 W%width% Vasin, B0CLQWN1CV
     Gui, add, Button, XP+%width% Default GAmazonScrape, Go
-    Gui, add, Edit, X10 W%width% Vtitle
-    Gui, add, Button, XP+%width% %width%, Title
+    Gui, add, Edit, X10 W%width% Vtitle, Title
+    Gui, add, Edit, X10 W%width% Vdescription, Description
     Gui, Show
 Return
 ; ==============================================================================
@@ -17,7 +17,9 @@ Return
 AmazonScrape:
     Gui, Submit, NoHide
     source := DownloadSource(asin)
+
     GuiControl, , title, % GetTitle(source)
+    GuiControl, , description, % GetDescription(source)
 Return
 ; ==============================================================================
 ;                                DownloadSource
@@ -41,4 +43,22 @@ GetTitle(ByRef source)
 {
     RegExMatch(source, "(?<=a-size-large product-title-word-break"">).+?(?=<\/span>)", match)
     Return Trim(match)
+}
+; ==============================================================================
+;                                GetDescription
+; ==============================================================================
+GetDescription(ByRef source)
+{
+    desc := ""
+
+    pos := RegExMatch(source, "<table class=""a-normal a-spacing-micro"">.+?</table>", desc)
+    pos := RegExMatch(source, "<ul class=""a-unordered-list a-vertical a-spacing-mini"">.+?</ul>", match, pos + StrLen(desc))
+    desc .= match
+
+    desc := StrReplace(desc, "<noscript>", "")
+    desc := StrReplace(desc, "</noscript>", "")
+    desc := StrReplace(desc, "`n", "")
+    desc := StrReplace(desc, "`r", "")
+
+    Return desc
 }

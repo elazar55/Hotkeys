@@ -40,7 +40,6 @@ Init()
     GroupAdd, stackable, ahk_class CabinetWClass, , , ,
     GroupAdd, stackable, ahk_class VirtualConsoleClass, , , ,
     GroupAdd, stackable, ahk_class FM, , , ,
-    WinGet, win_count, List, ahk_group stackable, ,
     SetTitleMatchMode 1
 
     If (!FileExist(ini_file))
@@ -60,8 +59,8 @@ ReadConfig(ini_file)
     IniRead, screen_width, %ini_file%, settings, screen_width, %monRight%
     IniRead, screen_height, %ini_file%, settings, screen_height, %monBottom%
 
-    IniRead, left_offset, %ini_file%, settings, left_offset, 3
-    IniRead, top_offset, %ini_file%, settings, top_offset, 3
+    IniRead, left_offset, %ini_file%, settings, left_offset, %left_offset%
+    IniRead, top_offset, %ini_file%, settings, top_offset, %top_offset%
 
     IniRead, dock_left, %ini_file%, settings, dock_left, #a
     IniRead, dock_right, %ini_file%, settings, dock_right, #s
@@ -398,7 +397,6 @@ MoveAlongGrid(dir)
         pos_y := 0
     }
 
-    ; MsgBox, % pos_x + left_offset
     if (pos_x + left_offset >= screen_width - window_width && dir == 1)
     {
         index := -1
@@ -480,7 +478,7 @@ Return
 ; ==============================================================================
 TileWindows:
 #t::
-    Gui, Destroy
+    WinGet, win_count, List, ahk_group stackable, ,
 
     ; @AHK++AlignAssignmentOn
     rows       := Min(Ceil(win_count / 2), rows)
@@ -490,12 +488,11 @@ TileWindows:
     win_width  := (screen_width / columns) + (left_offset * 2)
     win_height := (screen_height / rows) + (top_offset)
     ; @AHK++AlignAssignmentOff
-
     Loop, %win_count%
     {
+        Update(id)
         ; @AHK++AlignAssignmentOn
         id      := win_count%A_Index%
-        Update(id)
         x_index := Floor((A_Index - 1) / rows)
         y_index := Mod(A_Index - 1, rows)
         x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
@@ -506,7 +503,7 @@ TileWindows:
             win_height := ((screen_height / rows) * (carry + 1)) + (top_offset)
 
         WinActivate, ahk_id %id%
-        Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)
+        Dock(x_pos, y_pos, win_width - left_offset * 2, win_height, "ahk_id" . " " . id)
     }
 
 Return
@@ -515,7 +512,7 @@ Return
 ; ==============================================================================
 GridWindows:
 #g::
-    Gui, Destroy
+    WinGet, win_count, List, ahk_group stackable, ,
 
     ; @AHK++AlignAssignmentOna
     win_width  := (screen_width / cols) + (left_offset * 2)
@@ -525,13 +522,13 @@ GridWindows:
     Loop, %win_count%
     {
         ; @AHK++AlignAssignmentOn
-        id      := win_count%A_Index%
         Update(id)
+        id      := win_count%A_Index%
         x_index := Floor((A_Index - 1) / rows)
         y_index := Mod(A_Index - 1, rows)
         x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
         y_pos   := (win_height - top_offset) * y_index
-        ; @AHK++AlignAssignmentOff
+        ; @AHK++AlignAssignmentOffa
 
         WinActivate, ahk_id %id%
         Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)

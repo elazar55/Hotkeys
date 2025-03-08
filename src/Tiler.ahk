@@ -26,6 +26,7 @@ global dock_up       := "#w"
 global dock_down     := "#r"
 global rows          := 2
 global cols          := 3
+global factors       :=
 ; @AHK++AlignAssignmentOff
 CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
@@ -46,6 +47,7 @@ Init()
         WriteNewConfig(ini_file)
 
     ReadConfig(ini_file)
+    factors := FactorizeAlignment()
 }
 ; ==============================================================================
 ;                                  Load Config
@@ -100,13 +102,10 @@ WriteNewConfig(ini_file)
     IniWrite, %cols%, %ini_file%, settings, cols
 }
 ; ==============================================================================
-;                                      GUI
+;                              FactorizeAlignment
 ; ==============================================================================
-DockerGUI:
-    WinGet, win_id, ID, A
-    Update(win_id)
-    Gui, Destroy
-
+FactorizeAlignment()
+{
     factors := 0
     Loop
     {
@@ -117,9 +116,17 @@ DockerGUI:
     } Until A_Index >= Sqrt(screen_width)
 
     Sort, factors, D| N
-    factors = %alignment%|%factors%
+    factors = %factors%
+    Return factors
+}
+; ==============================================================================
+;                                      GUI
+; ==============================================================================
+DockerGUI:
+    Gui, Destroy
 
-    Gui, Add, DDL, W64 Valignment Choose1, %factors%
+    _factors := alignment . "|" . factors
+    Gui, Add, DDL, W64 Valignment Choose1, %_factors%
     Gui, Add, Text, XP+68 YP+4, Alignment
     Gui, Add, Edit, W64 Vrows X8, %rows%
     Gui, Add, Text, XP+68 YP+4, Rows

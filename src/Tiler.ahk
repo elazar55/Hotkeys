@@ -102,24 +102,6 @@ WriteNewConfig(ini_file)
     IniWrite, %cols%, %ini_file%, settings, cols
 }
 ; ==============================================================================
-;                              FactorizeAlignment
-; ==============================================================================
-FactorizeAlignment()
-{
-    factors := 0
-    Loop
-    {
-        If (Mod(screen_width, A_Index) == 0)
-        {
-            factors .= "|" . A_Index . "|" . Round(screen_width / A_Index)
-        }
-    } Until A_Index >= Sqrt(screen_width)
-
-    Sort, factors, D| N
-    factors = %factors%
-    Return factors
-}
-; ==============================================================================
 ;                                      GUI
 ; ==============================================================================
 DockerGUI:
@@ -541,3 +523,21 @@ GridWindows:
         Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)
     }
 Return
+; ==============================================================================
+;                              FactorizeAlignment
+; ==============================================================================
+FactorizeAlignment()
+{
+    factors := 0
+    Loop
+    {
+        If (Mod(screen_width, A_Index) == 0)
+        {
+            factors .= "|" . A_Index . "|" . Round(screen_width / A_Index)
+        }
+    } Until A_Index >= Sqrt(screen_width)
+
+    Sort, factors, D| N
+    factors = %factors%
+    Return factors
+}

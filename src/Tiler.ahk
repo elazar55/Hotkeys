@@ -4,6 +4,7 @@
 /*
 * Dock by mouse edge screen.
 */
+
 ; ==============================================================================
 ;                             Auto Exexcute Section
 ; ==============================================================================
@@ -32,37 +33,6 @@ CoordMode, Mouse, Screen
 Init()
 Return
 ; ==============================================================================
-;                                      GUI
-; ==============================================================================
-DockerGUI:
-    Gui, Destroy
-
-    _factors := alignment . "|" . factors
-    Gui, Add, DDL, W64 Valignment Choose1, %_factors%
-    Gui, Add, Text, XP+68 YP+4, Alignment
-    Gui, Add, Edit, W64 Vrows X8, %rows%
-    Gui, Add, Text, XP+68 YP+4, Rows
-    Gui, Add, Edit, W64 Vcols X8, %cols%
-    Gui, Add, Text, XP+68 YP+4, Columns
-    Gui, Add, Button, W64 X8 GSubmitAll, Submit
-
-    Gui, Show
-Return
-; ==============================================================================
-;                                    Submit
-; ==============================================================================
-SubmitAll:
-    Gui, Submit
-    IniWrite, %rows%, %ini_file%, settings, rows
-    IniWrite, %cols%, %ini_file%, settings, cols
-    IniWrite, %alignment%, %ini_file%, settings, alignment
-Return
-
-SubmitAlignment:
-    Gui, Submit
-    IniWrite, %alignment%, %ini_file%, settings, alignment
-Return
-; ==============================================================================
 ;                                     Init
 ; ==============================================================================
 Init()
@@ -76,13 +46,13 @@ Init()
     If (!FileExist(ini_file))
         WriteNewConfig(ini_file)
 
-    LoadConfig(ini_file)
+    ReadConfig(ini_file)
     factors := FactorizeAlignment()
 }
 ; ==============================================================================
 ;                                  Load Config
 ; ==============================================================================
-LoadConfig(ini_file)
+ReadConfig(ini_file)
 {
     IniRead, alignment, %ini_file%, settings, alignment, %alignment%
 
@@ -131,6 +101,53 @@ WriteNewConfig(ini_file)
     IniWrite, %rows%, %ini_file%, settings, rows
     IniWrite, %cols%, %ini_file%, settings, cols
 }
+; ==============================================================================
+;                              FactorizeAlignment
+; ==============================================================================
+FactorizeAlignment()
+{
+    factors := 0
+    Loop
+    {
+        If (Mod(screen_width, A_Index) == 0)
+        {
+            factors .= "|" . A_Index . "|" . Round(screen_width / A_Index)
+        }
+    } Until A_Index >= Sqrt(screen_width)
+
+    Sort, factors, D| N
+    factors = %factors%
+    Return factors
+}
+; ==============================================================================
+;                                      GUI
+; ==============================================================================
+DockerGUI:
+    Gui, Destroy
+
+    _factors := alignment . "|" . factors
+    Gui, Add, DDL, W64 Valignment Choose1, %_factors%
+    Gui, Add, Text, XP+68 YP+4, Alignment
+    Gui, Add, Edit, W64 Vrows X8, %rows%
+    Gui, Add, Text, XP+68 YP+4, Rows
+    Gui, Add, Edit, W64 Vcols X8, %cols%
+    Gui, Add, Text, XP+68 YP+4, Columns
+    Gui, Add, Button, W64 X8 GSubmitAll, Submit
+
+    Gui, Show
+Return
+
+SubmitAll:
+    Gui, Submit
+    IniWrite, %rows%, %ini_file%, settings, rows
+    IniWrite, %cols%, %ini_file%, settings, cols
+    IniWrite, %alignment%, %ini_file%, settings, alignment
+Return
+
+SubmitAlignment:
+    Gui, Submit
+    IniWrite, %alignment%, %ini_file%, settings, alignment
+Return
 ; ==============================================================================
 ;                                Remove ToolTip
 ; ==============================================================================
@@ -471,26 +488,26 @@ TileWindows:
     WinGet, win_count, List, ahk_group stackable, ,
 
     ; @AHK++AlignAssignmentOn
-    rows       := Min(Ceil(win_count / 2), rows)
-    columns    := Ceil(win_count / rows)
-    slots      := rows * columns
+    _rows      := Min(Ceil(win_count / 2), rows)
+    columns    := Ceil(win_count / _rows)
+    slots      := _rows * columns
     carry      := slots - win_count
     win_width  := (screen_width / columns) + (left_offset * 2)
-    win_height := (screen_height / rows) + (top_offset)
+    win_height := (screen_height / _rows) + (top_offset)
     ; @AHK++AlignAssignmentOff
     Loop, %win_count%
     {
         Update(id)
         ; @AHK++AlignAssignmentOn
         id      := win_count%A_Index%
-        x_index := Floor((A_Index - 1) / rows)
-        y_index := Mod(A_Index - 1, rows)
+        x_index := Floor((A_Index - 1) / _rows)
+        y_index := Mod(A_Index - 1, _rows)
         x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
         y_pos   := (win_height - top_offset) * y_index
         ; @AHK++AlignAssignmentOff
 
         If (carry && A_Index = win_count)
-            win_height := ((screen_height / rows) * (carry + 1)) + (top_offset)
+            win_height := ((screen_height / _rows) * (carry + 1)) + (top_offset)
 
         WinActivate, ahk_id %id%
         Dock(x_pos, y_pos, win_width - left_offset * 2, win_height, "ahk_id" . " " . id)
@@ -524,21 +541,3 @@ GridWindows:
         Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)
     }
 Return
-; ==============================================================================
-;                              FactorizeAlignment
-; ==============================================================================
-FactorizeAlignment()
-{
-    factors := 0
-    Loop
-    {
-        If (Mod(screen_width, A_Index) == 0)
-        {
-            factors .= "|" . A_Index . "|" . Round(screen_width / A_Index)
-        }
-    } Until A_Index >= Sqrt(screen_width)
-
-    Sort, factors, D| N
-    factors = %factors%
-    Return factors
-}

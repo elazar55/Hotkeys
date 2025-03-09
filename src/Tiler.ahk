@@ -4,7 +4,6 @@
 /*
 * Dock by mouse edge screen.
 */
-
 ; ==============================================================================
 ;                             Auto Exexcute Section
 ; ==============================================================================
@@ -31,6 +30,37 @@ global factors       :=
 CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
 Init()
+Return
+; ==============================================================================
+;                                      GUI
+; ==============================================================================
+DockerGUI:
+    Gui, Destroy
+
+    _factors := alignment . "|" . factors
+    Gui, Add, DDL, W64 Valignment Choose1, %_factors%
+    Gui, Add, Text, XP+68 YP+4, Alignment
+    Gui, Add, Edit, W64 Vrows X8, %rows%
+    Gui, Add, Text, XP+68 YP+4, Rows
+    Gui, Add, Edit, W64 Vcols X8, %cols%
+    Gui, Add, Text, XP+68 YP+4, Columns
+    Gui, Add, Button, W64 X8 GSubmitAll, Submit
+
+    Gui, Show
+Return
+; ==============================================================================
+;                                    Submit
+; ==============================================================================
+SubmitAll:
+    Gui, Submit
+    IniWrite, %rows%, %ini_file%, settings, rows
+    IniWrite, %cols%, %ini_file%, settings, cols
+    IniWrite, %alignment%, %ini_file%, settings, alignment
+Return
+
+SubmitAlignment:
+    Gui, Submit
+    IniWrite, %alignment%, %ini_file%, settings, alignment
 Return
 ; ==============================================================================
 ;                                     Init
@@ -101,35 +131,6 @@ WriteNewConfig(ini_file)
     IniWrite, %rows%, %ini_file%, settings, rows
     IniWrite, %cols%, %ini_file%, settings, cols
 }
-; ==============================================================================
-;                                      GUI
-; ==============================================================================
-DockerGUI:
-    Gui, Destroy
-
-    _factors := alignment . "|" . factors
-    Gui, Add, DDL, W64 Valignment Choose1, %_factors%
-    Gui, Add, Text, XP+68 YP+4, Alignment
-    Gui, Add, Edit, W64 Vrows X8, %rows%
-    Gui, Add, Text, XP+68 YP+4, Rows
-    Gui, Add, Edit, W64 Vcols X8, %cols%
-    Gui, Add, Text, XP+68 YP+4, Columns
-    Gui, Add, Button, W64 X8 GSubmitAll, Submit
-
-    Gui, Show
-Return
-
-SubmitAll:
-    Gui, Submit
-    IniWrite, %rows%, %ini_file%, settings, rows
-    IniWrite, %cols%, %ini_file%, settings, cols
-    IniWrite, %alignment%, %ini_file%, settings, alignment
-Return
-
-SubmitAlignment:
-    Gui, Submit
-    IniWrite, %alignment%, %ini_file%, settings, alignment
-Return
 ; ==============================================================================
 ;                                Remove ToolTip
 ; ==============================================================================

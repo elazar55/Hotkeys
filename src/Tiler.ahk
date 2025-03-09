@@ -116,8 +116,16 @@ FactorizeAlignment()
     } Until A_Index >= Sqrt(screen_width)
 
     Sort, factors, D| N
-    factors = %factors%
     Return factors
+}
+; ==============================================================================
+;                                   FindIndex
+; ==============================================================================
+FindIndex()
+{
+    Loop, Parse, factors, |
+        If (alignment == A_LoopField)
+            Return A_Index
 }
 ; ==============================================================================
 ;                                      GUI
@@ -125,8 +133,8 @@ FactorizeAlignment()
 DockerGUI:
     Gui, Destroy
 
-    _factors := alignment . "|" . factors
-    Gui, Add, DDL, W64 Valignment Choose1, %_factors%
+    idx := FindIndex()
+    Gui, Add, DDL, W64 Valignment Choose%idx%, %factors%
     Gui, Add, Text, XP+68 YP+4, Alignment
     Gui, Add, Edit, W64 Vrows X8, %rows%
     Gui, Add, Text, XP+68 YP+4, Rows

@@ -46,13 +46,13 @@ Init()
     If (!FileExist(ini_file))
         WriteNewConfig(ini_file)
 
-    ReadConfig(ini_file)
+    LoadConfig(ini_file)
     factors := FactorizeAlignment()
 }
 ; ==============================================================================
 ;                                  Load Config
 ; ==============================================================================
-ReadConfig(ini_file)
+LoadConfig(ini_file)
 {
     IniRead, alignment, %ini_file%, settings, alignment, %alignment%
 

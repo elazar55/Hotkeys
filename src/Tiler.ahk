@@ -44,7 +44,7 @@ Init()
     SetTitleMatchMode 1
 
     If (!FileExist(ini_file))
-        WriteNewConfig(ini_file)
+        WriteConfig()
 
     ReadConfig(ini_file)
     factors := FactorizeAlignment()
@@ -83,8 +83,9 @@ ReadConfig(ini_file)
 ; ==============================================================================
 ;                                 Write Config
 ; ==============================================================================
-WriteNewConfig(ini_file)
+WriteConfig()
 {
+    Gui, Submit
     ; IniWrite, ${Value}, ${Filename}, ${Section}, ${Key}
     IniWrite, %alignment%, %ini_file%, settings, alignment
     IniWrite, %screen_width%, %ini_file%, settings, screen_width
@@ -140,21 +141,9 @@ DockerGUI:
     Gui, Add, Text, XP+68 YP+4, Rows
     Gui, Add, Edit, W64 Vcols X8, %cols%
     Gui, Add, Text, XP+68 YP+4, Columns
-    Gui, Add, Button, W64 X8 GSubmitAll, Submit
+    Gui, Add, Button, W64 X8 GWriteConfig, Submit
 
     Gui, Show
-Return
-
-SubmitAll:
-    Gui, Submit
-    IniWrite, %rows%, %ini_file%, settings, rows
-    IniWrite, %cols%, %ini_file%, settings, cols
-    IniWrite, %alignment%, %ini_file%, settings, alignment
-Return
-
-SubmitAlignment:
-    Gui, Submit
-    IniWrite, %alignment%, %ini_file%, settings, alignment
 Return
 ; ==============================================================================
 ;                                Remove ToolTip

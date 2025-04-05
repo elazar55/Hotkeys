@@ -141,7 +141,7 @@ DockerGUI:
     Gui, Add, Text, XP+68 YP+4, Rows
     Gui, Add, Edit, W64 Vcols X8, %cols%
     Gui, Add, Text, XP+68 YP+4, Columns
-    Gui, Add, Button, W64 X8 GWriteConfig, Submit
+    Gui, Add, Button, Default W64 X8 GWriteConfig, Submit
 
     Gui, Show
 Return
@@ -238,13 +238,14 @@ AlignWidth(resize)
 ; ==============================================================================
 ;                                     Left
 ; ==============================================================================
-DockLeft:
+Left(direction)
+{
     WinGet, win_id, ID, A
     Update(win_id)
+
     ; Resize if the window is already docked to the left.
     If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
-        new_width := AlignWidth(-1)
-
+        new_width := AlignWidth(direction)
     ; Otherwise, place it on the left, resize it to the nearest alignment, and
     ; stretch it vertically if it's over half the screen height.
     Else
@@ -256,24 +257,14 @@ DockLeft:
         }
     }
     Dock(-left_offset, pos_y, new_width, window_height)
+}
+
+DockLeft:
+    Left(-1)
 Return
-; ==============================================================================
-;                                 Left Reverse
-; ==============================================================================
+
 DockLeftReverse:
-    WinGet, win_id, ID, A
-    Update(win_id)
-    If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
-        new_width := AlignWidth(1)
-    Else
-    {
-        new_width := AlignWidth(0)
-        {
-            window_height := screen_height + top_offset
-            pos_y := 0
-        }
-    }
-    Dock(-left_offset, pos_y, new_width, window_height)
+    Left(1)
 Return
 ; ==============================================================================
 ;                                     Right

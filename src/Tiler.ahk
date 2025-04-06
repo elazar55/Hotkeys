@@ -242,7 +242,6 @@ Left(direction)
 {
     WinGet, win_id, ID, A
     Update(win_id)
-
     ; Resize if the window is already docked to the left.
     If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
         new_width := AlignWidth(direction)
@@ -258,50 +257,36 @@ Left(direction)
     }
     Dock(-left_offset, pos_y, new_width, window_height)
 }
-
 DockLeft:
     Left(-1)
 Return
-
 DockLeftReverse:
     Left(1)
 Return
 ; ==============================================================================
 ;                                     Right
 ; ==============================================================================
+Right(direction)
+{
+    WinGet, win_id, ID, A
+    Update(win_id)
+    If (pos_x + left_offset == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
+        new_width := AlignWidth(direction)
+    Else
+    {
+        new_width := AlignWidth(0)
+        {
+            window_height := screen_height + top_offset
+            pos_y := 0
+        }
+    }
+    Dock(screen_width - new_width - left_offset, pos_y, new_width, window_height)
+}
 DockRight:
-    WinGet, win_id, ID, A
-    Update(win_id)
-    If (pos_x + left_offset == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
-        new_width := AlignWidth(-1)
-    Else
-    {
-        new_width := AlignWidth(0)
-        {
-            window_height := screen_height + top_offset
-            pos_y := 0
-        }
-    }
-    Dock(screen_width - new_width - left_offset, pos_y, new_width, window_height)
+    Right(-1)
 Return
-; ==============================================================================
-;                             Right Reverse
-; ==============================================================================
 DockRightReverse:
-    WinGet, win_id, ID, A
-    Update(win_id)
-    If (pos_x + left_offset == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
-        new_width := AlignWidth(1)
-    Else
-    {
-        new_width := AlignWidth(0)
-        {
-            window_height := screen_height + top_offset
-            pos_y := 0
-        }
-    }
-
-    Dock(screen_width - new_width - left_offset, pos_y, new_width, window_height)
+    Right(1)
 Return
 ; ==============================================================================
 ;                                      Up

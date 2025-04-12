@@ -97,26 +97,3 @@ Return
         Beep(1000, 25)
     }
 Return
-; ==============================================================================
-;                                 Surround with
-; ==============================================================================
-; #IfWinNotActive, ahk_exe Code.exe
-; +9::SurroundWith("(", ")")
-; +'::SurroundWith("""", """")
-
-SurroundWith(left_char, right_char)
-{
-    old_clip := Clipboard
-    Clipboard := ""
-    Send, ^c
-    ClipWait, 0.02
-    Clipboard := left_char . Trim(Clipboard, " ") . right_char
-    Send, ^v
-
-    If (Clipboard == left_char . right_char)
-    {
-        Send, {Left}
-    }
-    Beep(1200, 20)
-    Clipboard := old_clip
-}

@@ -9,6 +9,7 @@ AmazonGUI:
     Gui, add, Button, XP+%width% Default GAmazonScrape, Go
     Gui, add, Edit, X10 W%width% Vtitle, Title
     Gui, add, Edit, X10 W%width% Vdescription, Description
+    Gui, add, Edit, X10 W%width% Vprice, Price
     Gui, Show
 Return
 ; ==============================================================================
@@ -20,6 +21,7 @@ AmazonScrape:
 
     GuiControl, , title, % GetTitle(source)
     GuiControl, , description, % GetDescription(source)
+    GuiControl, , price, % GetPrice(source)
 Return
 ; ==============================================================================
 ;                                DownloadSource
@@ -52,8 +54,9 @@ GetDescription(ByRef source)
     desc := ""
 
     pos := RegExMatch(source, "<table class=""a-normal a-spacing-micro"">.+?</table>", desc)
+    desc .= "<hr/>"
     pos := RegExMatch(source, "<ul class=""a-unordered-list a-vertical a-spacing-mini"">.+?</ul>", match, pos + StrLen(desc))
-    desc .= match
+    desc .= match . "<hr/>"
 
     desc := StrReplace(desc, "<noscript>", "")
     desc := StrReplace(desc, "</noscript>", "")
@@ -61,4 +64,11 @@ GetDescription(ByRef source)
     desc := StrReplace(desc, "`r", "")
 
     Return desc
+}
+; ==============================================================================
+;                                   GetPrice
+; ==============================================================================
+GetPrice(ByRef source)
+{
+    Return 0
 }

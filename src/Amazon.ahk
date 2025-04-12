@@ -11,7 +11,7 @@ AmazonGUI:
     Gui, add, Edit, X10 W%width% Vtitle, Title
     Gui, add, Edit, X10 W%width% Vdescription, Description
     Gui, add, Edit, X10 W%width% Vprice, Price
-    Gui, add, Edit, X10 W%width% Vimage_path, Image Path
+    Gui, add, Edit, X10 W%width% Vimage_path, C:\Users\Elazar\Downloads
     Gui, add, Button, XP+%width% GPickImagePath, ...
     Gui, Show
 Return
@@ -45,9 +45,10 @@ DownloadSource(asin)
 ; ==============================================================================
 ;                                   GetTitle
 ; ==============================================================================
-GetTitle(ByRef source)
+GetTitle(ByRef src)
 {
-    Return 0
+    RegExMatch(src, "(?<=<title>).+?(?=\s?: Amazon)", title)
+    Return title
 }
 ; ==============================================================================
 ;                                GetDescription
@@ -80,7 +81,6 @@ GetImages(ByRef source, path)
         If (!FileExist(match1))
         {
             UrlDownloadToFile, %match%, %path%\%match1%
-            MsgBox, %match1%
         }
     }
 }

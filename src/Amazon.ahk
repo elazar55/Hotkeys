@@ -11,6 +11,8 @@ AmazonGUI:
     Gui, add, Edit, X10 W%width% Vtitle, Title
     Gui, add, Edit, X10 W%width% Vdescription, Description
     Gui, add, Edit, X10 W%width% Vprice, Price
+    Gui, add, Edit, X10 W%width% Vimage_path, Image Path
+    Gui, add, Button, XP+%width% GPickImagePath, ...
     Gui, Show
 Return
 ; ==============================================================================
@@ -23,7 +25,7 @@ AmazonScrape:
     GuiControl, , title, % GetTitle(source)
     GuiControl, , description, % GetDescription(source)
     GuiControl, , price, % GetPrice(source)
-    GetImages(source)
+    GetImages(source, image_path)
 Return
 ; ==============================================================================
 ;                                DownloadSource
@@ -64,15 +66,29 @@ GetPrice(ByRef source)
 ; ==============================================================================
 ;                                   GetImages
 ; ==============================================================================
-GetImages(ByRef source)
+GetImages(ByRef source, path)
 {
+    If (!FileExist(path))
+    {
+        MsgBox, Invalid directory.
+        Return
+    }
+
     pos := 1
     While (pos := RegExMatch(source, "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_.jpg)", match, pos + StrLen(match)))
     {
         If (!FileExist(match1))
         {
-            UrlDownloadToFile, %match%, %match1%
+            UrlDownloadToFile, %match%, %path%\%match1%
             MsgBox, %match1%
         }
     }
+}
+; ==============================================================================
+;                                 PickImagePath
+; ==============================================================================
+PickImagePath()
+{
+    FileSelectFolder, dir
+    GuiControl, , image_path, %dir%
 }

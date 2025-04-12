@@ -3,8 +3,9 @@
 ; ==============================================================================
 #F1::
 AmazonGUI:
-    width := 320
     Gui, Destroy
+
+    width := 320
     Gui, add, Edit, X10 W%width% Vasin, B0CLQWN1CV
     Gui, add, Button, XP+%width% Default GAmazonScrape, Go
     Gui, add, Edit, X10 W%width% Vtitle, Title
@@ -22,6 +23,7 @@ AmazonScrape:
     GuiControl, , title, % GetTitle(source)
     GuiControl, , description, % GetDescription(source)
     GuiControl, , price, % GetPrice(source)
+    GetImages(source)
 Return
 ; ==============================================================================
 ;                                DownloadSource
@@ -43,27 +45,14 @@ DownloadSource(asin)
 ; ==============================================================================
 GetTitle(ByRef source)
 {
-    RegExMatch(source, "(?<=a-size-large product-title-word-break"">).+?(?=<\/span>)", match)
-    Return Trim(match)
+    Return 0
 }
 ; ==============================================================================
 ;                                GetDescription
 ; ==============================================================================
 GetDescription(ByRef source)
 {
-    desc := ""
-
-    pos := RegExMatch(source, "<table class=""a-normal a-spacing-micro"">.+?</table>", desc)
-    desc .= "<hr/>"
-    pos := RegExMatch(source, "<ul class=""a-unordered-list a-vertical a-spacing-mini"">.+?</ul>", match, pos + StrLen(desc))
-    desc .= match . "<hr/>"
-
-    desc := StrReplace(desc, "<noscript>", "")
-    desc := StrReplace(desc, "</noscript>", "")
-    desc := StrReplace(desc, "`n", "")
-    desc := StrReplace(desc, "`r", "")
-
-    Return desc
+    Return 0
 }
 ; ==============================================================================
 ;                                   GetPrice
@@ -71,4 +60,19 @@ GetDescription(ByRef source)
 GetPrice(ByRef source)
 {
     Return 0
+}
+; ==============================================================================
+;                                   GetImages
+; ==============================================================================
+GetImages(ByRef source)
+{
+    pos := 1
+    While (pos := RegExMatch(source, "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_.jpg)", match, pos + StrLen(match)))
+    {
+        If (!FileExist(match1))
+        {
+            UrlDownloadToFile, %match%, %match1%
+            MsgBox, %match1%
+        }
+    }
 }

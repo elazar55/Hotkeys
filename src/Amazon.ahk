@@ -7,7 +7,7 @@ AmazonGUI:
 
     width := 320
     Gui, add, Edit, X10 W%width% Vasin, B0CLQWN1CV
-    Gui, add, Button, XP+%width% Default GAmazonScrape, Go
+    Gui, add, Button, XP+%width% Default GStartScrape, Go
     Gui, add, Edit, X10 W%width% Vtitle, Title
     Gui, add, Edit, X10 W%width% Vdescription, Description
     Gui, add, Edit, X10 W%width% Vprice, Price
@@ -16,23 +16,25 @@ AmazonGUI:
     Gui, Show
 Return
 ; ==============================================================================
-;                                 AmazonScrape
+;                                 StartScrape
 ; ==============================================================================
-AmazonScrape:
+StartScrape:
     Gui, Submit, NoHide
-    source := DownloadSource(asin)
+    src := DownloadSource(asin)
 
-    GuiControl, , title, % GetTitle(source)
-    GuiControl, , description, % GetDescription(source)
-    GuiControl, , price, % GetPrice(source)
-    GetImages(source, image_path)
+    GuiControl, , title, % GetTitle(src)
+    GuiControl, , description, % GetDescription(src)
+    GuiControl, , price, % GetPrice(src)
+    GetImages(src, image_path, asin)
+
+    Beep(1200, 50)
 Return
 ; ==============================================================================
 ;                                DownloadSource
 ; ==============================================================================
 DownloadSource(asin)
 {
-    UrlDownloadToFile, https://www.amazon.co.uk/dp/%asin%, amazon_source.html
+    UrlDownloadToFile, https://www.amazon.de/dp/%asin%, amazon_source.html
     FileRead, src_str, amazon_source.html
 
     If (InStr(src_str, "Page Not Found"))
@@ -53,35 +55,35 @@ GetTitle(ByRef src)
 ; ==============================================================================
 ;                                GetDescription
 ; ==============================================================================
-GetDescription(ByRef source)
+GetDescription(ByRef src)
 {
     Return 0
 }
 ; ==============================================================================
 ;                                   GetPrice
 ; ==============================================================================
-GetPrice(ByRef source)
+GetPrice(ByRef src)
 {
     Return 0
 }
 ; ==============================================================================
 ;                                   GetImages
 ; ==============================================================================
-GetImages(ByRef source, path)
+GetImages(ByRef src, path, asin)
 {
+    RTrim(path, "/\")
+
     If (!FileExist(path))
     {
         MsgBox, Invalid directory.
         Return
     }
+    FileCreateDir, %path%\%asin%
 
     pos := 1
-    While (pos := RegExMatch(source, "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_.jpg)", match, pos + StrLen(match)))
+    While (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_.jpg)", match, pos + StrLen(match)))
     {
-        If (!FileExist(match1))
-        {
-            UrlDownloadToFile, %match%, %path%\%match1%
-        }
+        UrlDownloadToFile, %match%, %path%\%asin%\%match1%
     }
 }
 ; ==============================================================================

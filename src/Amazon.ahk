@@ -8,8 +8,13 @@ AmazonGUI:
     width := 320
     Gui, add, Edit, X10 W%width% Vasin, B0CLQWN1CV
     Gui, add, Button, XP+%width% Default GStartScrape, Go
+
     Gui, add, Edit, X10 W%width% Vtitle, Title
+    Gui, add, Button, XP+%width% GCopyTitle, Copy
+
     Gui, add, Edit, X10 W%width% Vdescription, Description
+    Gui, add, Button, XP+%width% GCopyDescription, Copy
+
     Gui, add, Edit, X10 W%width% Vprice, Price
     Gui, add, Edit, X10 W%width% Vimage_path, C:\Users\Elazar\Downloads
     Gui, add, Button, XP+%width% GPickImagePath, ...
@@ -25,8 +30,9 @@ StartScrape:
     GuiControl, , title, % GetTitle(src)
     GuiControl, , description, % GetDescription(src)
     GuiControl, , price, % GetPrice(src)
-    GetImages(src, image_path, asin)
 
+    Gui, Submit, NoHide
+    DownloadImages(src, image_path, SubStr(title, 1, 20))
     Beep(1200, 50)
 Return
 ; ==============================================================================
@@ -34,7 +40,7 @@ Return
 ; ==============================================================================
 DownloadSource(asin)
 {
-    UrlDownloadToFile, https://www.amazon.de/dp/%asin%, amazon_source.html
+    UrlDownloadToFile, https://www.amazon.co.uk/dp/%asin%, amazon_source.html
     FileRead, src_str, amazon_source.html
 
     If (InStr(src_str, "Page Not Found"))
@@ -50,6 +56,9 @@ DownloadSource(asin)
 GetTitle(ByRef src)
 {
     RegExMatch(src, "(?<=<title>).+?(?=\s?: Amazon)", title)
+    title := StrReplace(title, ",", "")
+    title := StrReplace(title, "[", "")
+    title := StrReplace(title, "]", "")
     Return title
 }
 ; ==============================================================================
@@ -67,9 +76,9 @@ GetPrice(ByRef src)
     Return 0
 }
 ; ==============================================================================
-;                                   GetImages
+;                                DownloadImages
 ; ==============================================================================
-GetImages(ByRef src, path, asin)
+DownloadImages(ByRef src, path, sub_dir)
 {
     RTrim(path, "/\")
 
@@ -78,19 +87,30 @@ GetImages(ByRef src, path, asin)
         MsgBox, Invalid directory.
         Return
     }
-    FileCreateDir, %path%\%asin%
+    FileCreateDir, %path%\%sub_dir%
 
     pos := 1
     While (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_.jpg)", match, pos + StrLen(match)))
-    {
-        UrlDownloadToFile, %match%, %path%\%asin%\%match1%
-    }
+        UrlDownloadToFile, %match%, %path%\%sub_dir%\%match1%
+
 }
 ; ==============================================================================
 ;                                 PickImagePath
 ; ==============================================================================
-PickImagePath()
-{
+PickImagePath:
     FileSelectFolder, dir
     GuiControl, , image_path, %dir%
-}
+Return
+; ==============================================================================
+;                                  GCopyTitle
+; ==============================================================================
+CopyTitle:
+    Clipboard := title
+Return
+
+; ==============================================================================
+;                               GCopyDescription
+; ==============================================================================
+CopyDescription:
+    Clipboard := description
+Return

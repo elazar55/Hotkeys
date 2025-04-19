@@ -6,7 +6,7 @@ AmazonGUI:
     Gui, Destroy
 
     width := 320
-    Gui, add, Edit, X10 W%width% Vasin, B0CLQWN1CV
+    Gui, add, Edit, X10 W%width% Vasin, B0CPPTFN4L
     Gui, add, Button, XP+%width% Default GStartScrape, Go
 
     Gui, add, Edit, X10 W%width% Vtitle, Title
@@ -59,6 +59,11 @@ GetTitle(ByRef src)
     title := StrReplace(title, ",", "")
     title := StrReplace(title, "[", "")
     title := StrReplace(title, "]", "")
+    title := StrReplace(title, "(", "")
+    title := StrReplace(title, ")", "")
+    title := StrReplace(title, "-", "")
+    title := StrReplace(title, "  ", " ")
+
     Return title
 }
 ; ==============================================================================
@@ -102,14 +107,14 @@ PickImagePath:
     GuiControl, , image_path, %dir%
 Return
 ; ==============================================================================
-;                                  GCopyTitle
+;                                  CopyTitle
 ; ==============================================================================
 CopyTitle:
     Clipboard := title
 Return
 
 ; ==============================================================================
-;                               GCopyDescription
+;                               CopyDescription
 ; ==============================================================================
 CopyDescription:
     Clipboard := description

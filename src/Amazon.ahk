@@ -6,7 +6,7 @@ AmazonGUI:
     Gui, Destroy
 
     width := 320
-    Gui, add, Edit, X10 W%width% Vasin, B0CPPTFN4L
+    Gui, add, Edit, X10 W%width% Vasin, B0C665CS9G
     Gui, add, Button, XP+%width% Default GStartScrape, Go
 
     Gui, add, Edit, X10 W%width% Vtitle, Title
@@ -91,7 +91,11 @@ GetTitle(ByRef src)
 ; ==============================================================================
 GetDescription(ByRef src)
 {
-    Return 0
+    pos := 1
+    pos := RegExMatch(src, "<table class=""a-normal a-spacing-micro.+?<\/table>", desc)
+    pos := RegExMatch(src, "<ul class=""a-unordered-list a-vertical a-spacing-mini"".+?<\/ul>", match, pos + StrLen(pos))
+    desc .= "<hr>" . match . "<hr>"
+    Return desc
 }
 ; ==============================================================================
 ;                                   GetPrice

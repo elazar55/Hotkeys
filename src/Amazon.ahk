@@ -51,7 +51,8 @@ StartScrape:
     GuiControl, , price, % GetPrice(src)
 
     Gui, Submit, NoHide
-    DownloadImages(src, image_path, RTrim(SubStr(title, 1, 20)))
+    RegExMatch(title, "(\w+\s){5}", title_match)
+    DownloadImages(src, image_path, RTrim(title_match))
     Beep(1200, 50)
 Return
 ; ==============================================================================

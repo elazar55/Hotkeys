@@ -114,7 +114,11 @@ DownloadImages(ByRef src, path, sub_dir)
     }
     FileCreateDir, %path%\%sub_dir%
 
-    pos := 1
-    While (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_\.jpg)", match, pos + StrLen(match)))
+    ;@AHK++AlignAssignmentOn
+    pos    := 1
+    needle := "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_\.jpg)"
+    ;@AHK++AlignAssignmentOff
+
+    While (pos := RegExMatch(src, needle, match, pos + StrLen(match)))
         UrlDownloadToFile, %match%, %path%\%sub_dir%\%match1%
 }

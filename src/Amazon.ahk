@@ -32,7 +32,7 @@ StartScrape:
     GuiControl, , price, % GetPrice(src)
 
     Gui, Submit, NoHide
-    DownloadImages(src, image_path, SubStr(title, 1, 20))
+    DownloadImages(src, image_path, RTrim(SubStr(title, 1, 20)))
     Beep(1200, 50)
 Return
 ; ==============================================================================
@@ -95,9 +95,8 @@ DownloadImages(ByRef src, path, sub_dir)
     FileCreateDir, %path%\%sub_dir%
 
     pos := 1
-    While (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_.jpg)", match, pos + StrLen(match)))
+    While (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_\.jpg)", match, pos + StrLen(match)))
         UrlDownloadToFile, %match%, %path%\%sub_dir%\%match1%
-
 }
 ; ==============================================================================
 ;                                 PickImagePath

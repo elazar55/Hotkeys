@@ -16,7 +16,7 @@ AmazonGUI:
     Gui, add, Button, XP+%width% GCopyDescription, Copy
 
     Gui, add, Edit, X10 W%width% Vprice, Price
-    Gui, add, Edit, X10 W%width% Vimage_path, C:\Users\Elazar\Downloads
+    Gui, add, Edit, X10 W%width% Vimage_path, C:\Users\Elazar\Downloads\AmazonPhotos
     Gui, add, Button, XP+%width% GPickImagePath, ...
     Gui, Show
 Return
@@ -94,7 +94,7 @@ GetDescription(ByRef src)
     pos := 1
     pos := RegExMatch(src, "<table class=""a-normal a-spacing-micro.+?<\/table>", desc)
     pos := RegExMatch(src, "<ul class=""a-unordered-list a-vertical a-spacing-mini"".+?<\/ul>", match, pos + StrLen(pos))
-    desc .= "<hr>" . match . "<hr>"
+    desc .= "<hr>" . match . "<hr><style>table { width: 30em; }</style>"
     Return desc
 }
 ; ==============================================================================

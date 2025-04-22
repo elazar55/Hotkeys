@@ -91,13 +91,13 @@ GetPrice(ByRef src)
 DownloadImages(ByRef src, path, sub_dir)
 {
     RTrim(path, "/\")
+    FileCreateDir, %path%\%sub_dir%
 
     If (!FileExist(path))
     {
         MsgBox, Invalid directory.
         Return
     }
-    FileCreateDir, %path%\%sub_dir%
 
     ;@AHK++AlignAssignmentOn
     pos    := 1

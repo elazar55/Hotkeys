@@ -8,6 +8,7 @@ AmazonGUI:
     width := 320
     Gui, add, Edit, X10 W%width% Vasin, B0C665CS9G
     Gui, add, Button, XP+%width% Default GStartScrape, Go
+    Gui, add, DDL, XP+28 W42 Vregion Choose1, DE|UK
 
     Gui, add, Edit, X10 W%width% Vtitle, Title
     Gui, add, Button, XP+%width% GCopyTitle, Copy
@@ -25,7 +26,7 @@ Return
 ; ==============================================================================
 StartScrape:
     Gui, Submit, NoHide
-    src := DownloadSource(asin)
+    src := DownloadSource(asin, region)
 
     GuiControl, , title, % GetTitle(src)
     GuiControl, , description, % GetDescription(src)
@@ -39,9 +40,13 @@ Return
 ; ==============================================================================
 ;                                DownloadSource
 ; ==============================================================================
-DownloadSource(asin)
+DownloadSource(asin, region)
 {
-    UrlDownloadToFile, https://www.amazon.co.uk/dp/%asin%, amazon_source.html
+    site := "https://www.amazon.co.uk/dp/" . asin
+    if (region == "DE")
+        site := "https://www.amazon.de/dp/" . asin
+
+    UrlDownloadToFile, %site%/%asin%, amazon_source.html
     FileRead, src_str, amazon_source.html
 
     If (InStr(src_str, "Page Not Found"))

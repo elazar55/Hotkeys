@@ -1,4 +1,4 @@
-; ==============================================================================
+﻿; ==============================================================================
 ;                                      GUI
 ; ==============================================================================
 #F1::
@@ -8,7 +8,7 @@ AmazonGUI:
     width := 320
     Gui, add, Edit, X10 W%width% Vasin, B0C665CS9G
     Gui, add, Button, XP+%width% Default GStartScrape, Go
-    Gui, add, DDL, XP+28 W42 Vregion Choose1, DE|UK
+    Gui, add, DDL, XP+28 W42 Vregion Choose2, DE|UK
 
     Gui, add, Edit, X10 W%width% Vtitle, Title
     Gui, add, Button, XP+%width% GCopyTitle, Copy
@@ -81,6 +81,8 @@ GetDescription(ByRef src)
     pos := RegExMatch(src, "<table class=""a-normal a-spacing-micro.+?<\/table>", desc)
     pos := RegExMatch(src, "<ul class=""a-unordered-list a-vertical a-spacing-mini"".+?<\/ul>", match, pos + StrLen(pos))
     desc .= "<hr>" . match . "<hr><style>table { width: 30em; }</style>"
+    desc := StrReplace(desc, "ã€", "[")
+    desc := StrReplace(desc, "ã€‘", "]")
     Return desc
 }
 ; ==============================================================================

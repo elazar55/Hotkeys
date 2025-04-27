@@ -8,7 +8,7 @@ AmazonGUI:
     width := 320
     Gui, add, Edit, X10 W%width% Vasin, B0C665CS9G
     Gui, add, Button, XP+%width% Default GStartScrape, Go
-    Gui, add, DDL, XP+28 W42 Vregion Choose2, DE|UK
+    Gui, add, DDL, XP+28 W42 Vregion Choose1, UK|DE
 
     Gui, add, Edit, X10 W%width% Vtitle, Title
     Gui, add, Button, XP+%width% GCopyTitle, Copy
@@ -49,11 +49,7 @@ DownloadSource(asin, region)
     UrlDownloadToFile, %site%/%asin%, amazon_source.html
     FileRead, src_str, amazon_source.html
 
-    If (InStr(src_str, "Page Not Found"))
-    {
-        MsgBox, %asin% not found.
-        Exit, -1
-    }
+    ; TODO: Page not found.
     Return src_str
 }
 ; ==============================================================================
@@ -80,7 +76,7 @@ GetDescription(ByRef src)
     pos := 1
     pos := RegExMatch(src, "<table class=""a-normal a-spacing-micro.+?<\/table>", desc)
     pos := RegExMatch(src, "<ul class=""a-unordered-list a-vertical a-spacing-mini"".+?<\/ul>", match, pos + StrLen(pos))
-    desc .= "<hr>" . match . "<hr><style>table { width: 30em; }</style>"
+    desc .= "<hr>" . match . "<hr><style>table { width: 30em; } .a-text-bold { font-weight: 700; }</style>"
     desc := StrReplace(desc, "ã€", "[")
     desc := StrReplace(desc, "ã€‘", "]")
     Return desc
@@ -108,7 +104,7 @@ DownloadImages(ByRef src, path, sub_dir)
 
     ;@AHK++AlignAssignmentOn
     pos    := 1
-    needle := "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_AC_SL\d{4}_\.jpg)"
+    needle := "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_SL\d{4}_\.jpg)"
     ;@AHK++AlignAssignmentOff
 
     While (pos := RegExMatch(src, needle, match, pos + StrLen(match)))

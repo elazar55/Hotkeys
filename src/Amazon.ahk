@@ -33,8 +33,7 @@ StartScrape:
     GuiControl, , price, % GetPrice(src)
 
     Gui, Submit, NoHide
-    RegExMatch(title, "(\w+\s){5}", title_match)
-    DownloadImages(src, image_path, RTrim(title_match))
+    DownloadImages(src, image_path, StrReplace(RTrim(title), "/", "_"))
     Beep(1200, 50)
 Return
 ; ==============================================================================
@@ -58,12 +57,13 @@ DownloadSource(asin, region)
 GetTitle(ByRef src)
 {
     RegExMatch(src, "(?<=<title>).+?(?=\s?: Amazon)", title)
-    title := StrReplace(title, ",", "")
-    title := StrReplace(title, "[", "")
-    title := StrReplace(title, "]", "")
-    title := StrReplace(title, "(", "")
-    title := StrReplace(title, ")", "")
-    title := StrReplace(title, "-", "")
+    title := StrReplace(title, ",", " ")
+    title := StrReplace(title, "[", " ")
+    title := StrReplace(title, "]", " ")
+    title := StrReplace(title, "(", " ")
+    title := StrReplace(title, ")", " ")
+    title := StrReplace(title, "-", " ")
+    title := StrReplace(title, "&amp;", " & ")
     title := StrReplace(title, "  ", " ")
 
     Return title

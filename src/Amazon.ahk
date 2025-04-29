@@ -86,7 +86,10 @@ GetDescription(ByRef src)
 ; ==============================================================================
 GetPrice(ByRef src)
 {
-    Return 0
+    RegExMatch(src, "(?<=<span class=""a-price-whole"">)\d+", price)
+    RegExMatch(src, "(?<=<span class=""a-price-fraction"">)\d+", match)
+    price .= "." . match
+    Return price
 }
 ; ==============================================================================
 ;                                DownloadImages

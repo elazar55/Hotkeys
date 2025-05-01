@@ -8,7 +8,7 @@ AmazonGUI:
     width := 320
     Gui, add, Edit, X10 W%width% Vasin, B0C665CS9G
     Gui, add, Button, XP+%width% Default GStartScrape, Go
-    Gui, add, DDL, XP+28 W42 Vregion Choose1, UK|DE
+    Gui, add, DDL, XP+28 W42 Vregion Choose1, UK|DE|AU
 
     Gui, add, Edit, X10 W%width% Vtitle, Title
     Gui, add, Button, XP+%width% GCopyTitle, Copy
@@ -44,6 +44,8 @@ DownloadSource(asin, region)
     site := "https://www.amazon.co.uk/dp/" . asin
     if (region == "DE")
         site := "https://www.amazon.de/dp/" . asin
+    else if (region == "AU")
+        site := "https://www.amazon.com.au/dp/" . asin
 
     UrlDownloadToFile, %site%/%asin%, amazon_source.html
     FileRead, src_str, amazon_source.html

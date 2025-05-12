@@ -47,7 +47,7 @@ DownloadSource(asin, region)
     else if (region == "AU")
         site := "https://www.amazon.com.au/dp/" . asin
 
-    UrlDownloadToFile, %site%/%asin%, amazon_source.html
+    UrlDownloadToFile, %site%, amazon_source.html
     FileRead, src_str, amazon_source.html
 
     ; TODO: Page not found.

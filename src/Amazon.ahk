@@ -33,7 +33,7 @@ StartScrape:
     GuiControl, , price, % GetPrice(src)
 
     Gui, Submit, NoHide
-    DownloadImages(src, image_path, StrReplace(RTrim(title), "/", "_"))
+    DownloadImages(src, image_path, StrReplace(RTrim(title), "/", "_"), asin)
     Beep(1200, 50)
 Return
 ; ==============================================================================
@@ -59,12 +59,12 @@ DownloadSource(asin, region)
 GetTitle(ByRef src)
 {
     RegExMatch(src, "(?<=<title>).+?(?=\s?: Amazon)", title)
-    ; title := StrReplace(title, ",", " ")
-    ; title := StrReplace(title, "[", " ")
-    ; title := StrReplace(title, "]", " ")
-    ; title := StrReplace(title, "(", " ")
-    ; title := StrReplace(title, ")", " ")
-    ; title := StrReplace(title, "-", " ")
+    title := StrReplace(title, ",", " ")
+    title := StrReplace(title, "[", " ")
+    title := StrReplace(title, "]", " ")
+    title := StrReplace(title, "(", " ")
+    title := StrReplace(title, ")", " ")
+    title := StrReplace(title, "-", " ")
     title := StrReplace(title, "&amp;", " & ")
     title := StrReplace(title, "  ", " ")
 
@@ -96,9 +96,9 @@ GetPrice(ByRef src)
 ; ==============================================================================
 ;                                DownloadImages
 ; ==============================================================================
-DownloadImages(ByRef src, path, sub_dir)
+DownloadImages(ByRef src, path, sub_dir, asin)
 {
-    RTrim(path, "/\")
+    path := RTrim(path, "/\")
     FileCreateDir, %path%\%sub_dir%
 
     If (!FileExist(path))

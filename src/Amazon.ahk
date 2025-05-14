@@ -6,7 +6,7 @@ AmazonGUI:
     Gui, Destroy
 
     width := 320
-    Gui, add, Edit, X10 W%width% Vasin, B0C665CS9G
+    Gui, add, Edit, X10 W%width% Vasin, B08LKTXYNQ
     Gui, add, Button, XP+%width% Default GStartScrape, Go
     Gui, add, DDL, XP+28 W42 Vregion Choose1, UK|DE|AU
 
@@ -41,13 +41,13 @@ Return
 ; ==============================================================================
 DownloadSource(asin, region)
 {
-    site := "https://www.amazon.co.uk/dp/" . asin
+    site := "https://www.amazon.co.uk/dp"
     if (region == "DE")
-        site := "https://www.amazon.de/dp/" . asin
+        site := "https://www.amazon.de/dp"
     else if (region == "AU")
-        site := "https://www.amazon.com.au/dp/" . asin
+        site := "https://www.amazon.com.au/dp"
 
-    UrlDownloadToFile, %site%, amazon_source.html
+    UrlDownloadToFile, %site%/%asin%?th=1, amazon_source.html
     FileRead, src_str, amazon_source.html
 
     ; TODO: Page not found.

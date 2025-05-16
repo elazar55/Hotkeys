@@ -47,7 +47,7 @@ DownloadSource(asin, region)
     else if (region == "AU")
         site := "https://www.amazon.com.au/dp"
 
-    UrlDownloadToFile, %site%/%asin%?th=1, amazon_source.html
+    UrlDownloadToFile, %site%/%asin%, amazon_source.html
     FileRead, src_str, amazon_source.html
 
     ; TODO: Page not found.
@@ -107,13 +107,19 @@ DownloadImages(ByRef src, path, sub_dir, asin)
         Return
     }
 
-    ;@AHK++AlignAssignmentOn
-    pos    := 1
-    needle := "(?<=""hiRes"":"")https:\/\/m.media-amazon.com\/images\/I\/(.+?_SL\d{4}_\.jpg)"
-    ;@AHK++AlignAssignmentOff
+    RegExMatch(src, "(""[\w+\.\s]+?""):\{""asin"":(""" . asin . """)\}", match)
 
-    While (pos := RegExMatch(src, needle, match, pos + StrLen(match)))
-        UrlDownloadToFile, %match%, %path%\%sub_dir%\%match1%
+    pos := InStr(src, match1 . ":[") + StrLen(match1)
+    while (pos := RegExMatch(src, "(?<=""hiRes"":"")(https:\/\/m\.media-amazon\.com\/images\/I\/[\w\-+]+\._\w{2}_\w+\.jpg)|(""[\w+\.\s]+?"":\[)", image, pos + StrLen(image)))
+    {
+        If (image1 == "")
+        {
+            break
+        }
+        UrlDownloadToFile, %image1%, %path%\%sub_dir%\%A_Index%.jpg
+        MsgBox, image1 : %image1%`nimage2 : %image2%
+    }
+    ;TODO Fallback branch
 }
 
 ; ==============================================================================

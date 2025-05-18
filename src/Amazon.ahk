@@ -49,8 +49,15 @@ DownloadSource(asin, region)
 
     src_filename := "amazon_source"
 
-    UrlDownloadToFile, %site%/%asin%, %src_filename%.gz
-    RunWait, "7z.exe" x -y %src_filename%.gz
+    FileDelete, FilePattern %src_filename%
+    UrlDownloadToFile, %site%/%asin%, %src_filename%
+    FileReadLine, first_line, %src_filename%, 1
+
+    If (InStr(first_line, "‹"))
+    {
+        RunWait, "7z.exe" x -y %src_filename%
+        FileMove, %src_filename%~, %src_filename%, 1
+    }
     FileRead, src_str, %src_filename%
 
     ; TODO: Page not found.

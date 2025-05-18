@@ -108,7 +108,10 @@ GetPrice(ByRef src)
 ; ==============================================================================
 DownloadImages(ByRef src, path, title, asin)
 {
+    title := SubStr(title, 1, 30)
     title := StrReplace(title, "/", "_")
+    title := StrReplace(title, ".", "_")
+    title := RTrim(title)
     path := RTrim(path, "/\")
 
     FileCreateDir, %path%\%title%
@@ -118,16 +121,20 @@ DownloadImages(ByRef src, path, title, asin)
         Return
     }
 
-    RegExMatch(src, "(""[\w+\.\s]+?""):\{""asin"":(""" . asin . """)\}", match)
+    RegExMatch(src, "(""[\w+\.\s\\\/\(\)]+?""):\{""asin"":(""" . asin . """)\}", match)
+    ; MsgBox, %match1% - %match2%
 
     pos := InStr(src, match1 . ":[") + StrLen(match1)
-    while (pos := RegExMatch(src, "(?<=""hiRes"":"")(https:\/\/m\.media-amazon\.com\/images\/I\/[\w\-+]+\._\w{2}_\w+\.jpg)|(""[\w+\.\s]+?"":\[)", image, pos + StrLen(image)))
+    ; MsgBox, %pos%
+    while (pos := RegExMatch(src, "(?<=""hiRes"":"")(https:\/\/m\.media-amazon\.com\/images\/I\/.+?\.jpg)|(""[\w\.\s\\\/\(\)]+?"":\[)", image, pos + StrLen(image)))
     {
+        ; MsgBox, %image1% : %image2%
         If (image1 == "")
         {
             break
         }
         UrlDownloadToFile, %image1%, %path%\%title%\%A_Index%.jpg
+        ; MsgBox, %path%\%title%\%A_Index%.jpg
     }
     ;TODO Fallback branch
 }

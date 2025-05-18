@@ -33,7 +33,7 @@ StartScrape:
     GuiControl, , price, % GetPrice(src)
 
     Gui, Submit, NoHide
-    DownloadImages(src, image_path, StrReplace(RTrim(title), "/", "_"), asin)
+    DownloadImages(src, image_path, title, asin)
     Beep(1200, 50)
 Return
 ; ==============================================================================
@@ -47,8 +47,11 @@ DownloadSource(asin, region)
     else if (region == "AU")
         site := "https://www.amazon.com.au/dp"
 
-    UrlDownloadToFile, %site%/%asin%, amazon_source.html
-    FileRead, src_str, amazon_source.html
+    src_filename := "amazon_source"
+
+    UrlDownloadToFile, %site%/%asin%, %src_filename%.gz
+    RunWait, "7z.exe" x -y %src_filename%.gz
+    FileRead, src_str, %src_filename%
 
     ; TODO: Page not found.
     Return src_str
@@ -96,11 +99,12 @@ GetPrice(ByRef src)
 ; ==============================================================================
 ;                                DownloadImages
 ; ==============================================================================
-DownloadImages(ByRef src, path, sub_dir, asin)
+DownloadImages(ByRef src, path, title, asin)
 {
+    title := StrReplace(title, "/", "_")
     path := RTrim(path, "/\")
-    FileCreateDir, %path%\%sub_dir%
 
+    FileCreateDir, %path%\%title%
     If (!FileExist(path))
     {
         MsgBox, Invalid directory.
@@ -116,8 +120,7 @@ DownloadImages(ByRef src, path, sub_dir, asin)
         {
             break
         }
-        UrlDownloadToFile, %image1%, %path%\%sub_dir%\%A_Index%.jpg
-        MsgBox, image1 : %image1%`nimage2 : %image2%
+        UrlDownloadToFile, %image1%, %path%\%title%\%A_Index%.jpg
     }
     ;TODO Fallback branch
 }

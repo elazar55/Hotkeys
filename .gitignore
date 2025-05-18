@@ -4,3 +4,5 @@
 *.txt
 *.conf
 *.ini
+*.gz
+amazon_source

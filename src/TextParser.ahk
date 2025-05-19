@@ -5,7 +5,7 @@ TextTools:
     Gui, Destroy
 
     width := StrLen(Trim(Clipboard)) * 6
-    if (width < 240 )
+    if (width < 240)
         width := 240
 
     Gui, Add, Edit, W%width% Vinput,
@@ -22,8 +22,9 @@ Return
 ParseText:
     Gui, Submit, NoHide
     output := ""
-
-    ; ================================= Input ==================================
+    ; ==========================================================================
+    ;                                   Input
+    ; ==========================================================================
     switch casing
     {
         ;@AHK++AlignAssignmentOn
@@ -33,8 +34,9 @@ ParseText:
         case "Dot" : words  := StrSplit(input, ".")
         ;@AHK++AlignAssignmentOff
     }
-
-    ; ================================ Output ==================================
+    ; ==========================================================================
+    ;                                  Output
+    ; ==========================================================================
     For key, value in words
     {
         If (casing_out == "Space")

@@ -512,5 +512,6 @@ GridWindows:
 
         WinActivate, ahk_id %id%
         Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)
+        Send, ^{NumpadAdd} ; Size columns to fit.
     }
 Return

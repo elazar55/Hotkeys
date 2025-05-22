@@ -85,9 +85,8 @@ GetTitle(ByRef src)
 ; ==============================================================================
 GetDescription(ByRef src)
 {
-    pos := 1
-    pos := RegExMatch(src, "<table class=""a-normal a-spacing-micro.+?<\/table>", desc)
-    pos := RegExMatch(src, "<ul class=""a-unordered-list a-vertical a-spacing-mini"".+?<\/ul>", match, pos + StrLen(desc))
+    RegExMatch(src, "<table class=""a-normal a-spacing-micro.+?<\/table>", desc)
+    RegExMatch(src, "<ul class=""a-unordered-list a-vertical a-spacing-mini"".+?<\/ul>", match)
     desc .= "<hr>" . match . "<hr><style>table { width: 30em; } .a-text-bold { font-weight: 700; }</style>"
     desc := StrReplace(desc, "ã€", "[")
     desc := StrReplace(desc, "ã€‘", "]")

@@ -41,6 +41,7 @@ Init()
     GroupAdd, stackable, ahk_class CabinetWClass, , , ,
     GroupAdd, stackable, ahk_class VirtualConsoleClass, , , ,
     GroupAdd, stackable, ahk_class FM, , , ,
+    GroupAdd, stackable, ahk_class Notepad, , , ,
     SetTitleMatchMode 1
 
     If (!FileExist(ini_file))
@@ -57,7 +58,6 @@ ReadConfig(ini_file)
     IniRead, alignment, %ini_file%, settings, alignment, %alignment%
 
     SysGet, mon, MonitorWorkArea
-    ; IniRead, OutputVar, Filename, Section, Key [, Default]
     IniRead, screen_width, %ini_file%, settings, screen_width, %monRight%
     IniRead, screen_height, %ini_file%, settings, screen_height, %monBottom%
 
@@ -86,7 +86,6 @@ ReadConfig(ini_file)
 WriteConfig()
 {
     Gui, Submit
-    ; IniWrite, ${Value}, ${Filename}, ${Section}, ${Key}
     IniWrite, %alignment%, %ini_file%, settings, alignment
     IniWrite, %screen_width%, %ini_file%, settings, screen_width
     IniWrite, %screen_height%, %ini_file%, settings, screen_height

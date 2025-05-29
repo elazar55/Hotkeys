@@ -5,7 +5,7 @@
 AmazonGUI:
     Gui, Destroy
 
-    width := 320
+    width := 1024
     Gui, add, Edit, X10 W%width% Vasin, B08LKTXYNQ
     Gui, add, Button, XP+%width% Default GStartScrape, Go
     Gui, add, DDL, XP+28 W42 Vregion Choose1, UK|DE|AU
@@ -70,11 +70,12 @@ GetTitle(ByRef src)
 {
     RegExMatch(src, "(?<=<title>).+?(?=\s?: Amazon)", title)
     title := StrReplace(title, ",", " ")
-    title := StrReplace(title, "[", " ")
-    title := StrReplace(title, "]", " ")
-    title := StrReplace(title, "(", " ")
-    title := StrReplace(title, ")", " ")
-    title := StrReplace(title, "-", " ")
+    title := StrReplace(title, "&quot;", """")
+    ; title := StrReplace(title, "[", " ")
+    ; title := StrReplace(title, "]", " ")
+    ; title := StrReplace(title, "(", " ")
+    ; title := StrReplace(title, ")", " ")
+    ; title := StrReplace(title, "-", " ")
     title := StrReplace(title, "&amp;", " & ")
     title := StrReplace(title, "  ", " ")
 
@@ -90,6 +91,7 @@ GetDescription(ByRef src)
     desc .= "<hr>" . match . "<hr><style>table { width: 30em; } .a-text-bold { font-weight: 700; }</style>"
     desc := StrReplace(desc, "ã€", "[")
     desc := StrReplace(desc, "ã€‘", "]")
+    desc := StrReplace(desc, "Î©", "Ω")
     Return desc
 }
 ; ==============================================================================

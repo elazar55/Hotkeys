@@ -52,8 +52,31 @@ Return
 !Space::Send _
 #d::Reload
 ; ==============================================================================
+;                              Auto Align Columns
+; ==============================================================================
+#IfWinActive, ahk_class CabinetWClass
+
+~Enter::
+    Sleep, 250
+    Send, {CtrlDown}{NumpadAdd}{CtrlUp}
+Return
+
+~BackSpace::
+    Sleep, 250
+    Send, {CtrlDown}{NumpadAdd}{CtrlUp}
+Return
+
+~LButton::
+    If (A_PriorHotkey == "~LButton" && A_TimeSincePriorHotkey < 500)
+    {
+        Sleep, 250
+        Send, {CtrlDown}{NumpadAdd}{CtrlUp}
+    }
+Return
+; ==============================================================================
 ;                                   Set Price
 ; ==============================================================================
+#IfWinActive
 #p::
     old_clip := Clipboard
     Clipboard :=

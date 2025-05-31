@@ -71,6 +71,7 @@ GetTitle(ByRef src)
     RegExMatch(src, "(?<=<title>).+?(?=\s?: Amazon)", title)
     title := StrReplace(title, ",", " ")
     title := StrReplace(title, "&quot;", """")
+    title := StrReplace(title, "&#x27;", "'")
     ; title := StrReplace(title, "[", " ")
     ; title := StrReplace(title, "]", " ")
     ; title := StrReplace(title, "(", " ")
@@ -94,6 +95,9 @@ GetDescription(ByRef src)
     desc := StrReplace(desc, "ã€", "[")
     desc := StrReplace(desc, "ã€‘", "]")
     desc := StrReplace(desc, "Î©", "Ω")
+
+    FileDelete, description.html
+    FileAppend, %desc%, description.html
 
     Return desc
 }

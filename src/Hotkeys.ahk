@@ -52,27 +52,34 @@ Return
 !Space::Send _
 #d::Reload
 ; ==============================================================================
-;                              Auto Align Columns
+;                              Auto Resize Columns
 ; ==============================================================================
 #IfWinActive, ahk_class CabinetWClass
 
 ~Enter::
-    Sleep, 250
-    Send, {CtrlDown}{NumpadAdd}{CtrlUp}
+    ResizeColumns()
 Return
 
 ~BackSpace::
-    Sleep, 250
-    Send, {CtrlDown}{NumpadAdd}{CtrlUp}
+    ResizeColumns()
 Return
 
 ~LButton::
     If (A_PriorHotkey == "~LButton" && A_TimeSincePriorHotkey < 500)
-    {
-        Sleep, 250
-        Send, {CtrlDown}{NumpadAdd}{CtrlUp}
-    }
+        ResizeColumns()
+
 Return
+
+ResizeColumns()
+{
+    Sleep, 1
+    ControlGetFocus, ctr, A
+    If (ctr != "DirectUIHWND3")
+        Return
+
+    Sleep, 250
+    Send, {CtrlDown}{NumpadAdd}{CtrlUp}
+}
 ; ==============================================================================
 ;                                   Set Price
 ; ==============================================================================

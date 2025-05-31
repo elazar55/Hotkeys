@@ -56,29 +56,21 @@ Return
 ; ==============================================================================
 #IfWinActive, ahk_class CabinetWClass
 
-~Enter::
-    ResizeColumns()
-Return
-
-~BackSpace::
-    ResizeColumns()
-Return
-
+~Enter::ResizeColumns()
+~BackSpace::ResizeColumns()
+~Delete::ResizeColumns()
 ~LButton::
     If (A_PriorHotkey == "~LButton" && A_TimeSincePriorHotkey < 500)
         ResizeColumns()
-
 Return
 
 ResizeColumns()
 {
-    Sleep, 1
-    ControlGetFocus, ctr, A
-    If (ctr != "DirectUIHWND3")
-        Return
+    Sleep, 170
 
-    Sleep, 250
-    Send, {CtrlDown}{NumpadAdd}{CtrlUp}
+    ControlGetFocus, active_ctrl, A
+    If (active_ctrl == "DirectUIHWND3")
+        Send, ^{NumpadAdd}
 }
 ; ==============================================================================
 ;                                   Set Price

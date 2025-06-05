@@ -33,7 +33,7 @@ StartScrape:
     GuiControl, , price, % GetPrice(src)
 
     Gui, Submit, NoHide
-    DownloadImages(src, image_path, title, asin)
+    images := DownloadImages(src, image_path, title, asin)
     Beep(1200, 50)
 Return
 ; ==============================================================================
@@ -129,6 +129,8 @@ DownloadImages(ByRef src, path, title, asin)
         Return
     }
 
+    image_urls := []
+
     RegExMatch(src, "(""[\w+\.\s\\\/\(\)]+?""):\{""asin"":(""" . asin . """)\}", match)
 
     pos := InStr(src, match1 . ":[") + StrLen(match1)
@@ -139,10 +141,11 @@ DownloadImages(ByRef src, path, title, asin)
             break
         }
         UrlDownloadToFile, %image1%, %path%\%title%\%A_Index%.jpg
+        image_urls.Push(image1)
     }
+    Return image_urls
     ;TODO Fallback branch
 }
-
 ; ==============================================================================
 ;                                 PickImagePath
 ; ==============================================================================
@@ -162,3 +165,10 @@ Return
 CopyDescription:
     Clipboard := description
 Return
+; ==============================================================================
+;                                   WriteCSV
+; ==============================================================================
+WriteCSV(data)
+{
+
+}

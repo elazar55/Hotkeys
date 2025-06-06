@@ -103,10 +103,6 @@ Return
 ; ==============================================================================
 ;                                  Cursor Keys
 ; ==============================================================================
-#^a:: MouseMove, -1, 0, , R
-#^s:: MouseMove, 1, 0, , R
-#^w:: MouseMove, 0, -1, , R
-#^r:: MouseMove, 0, 1, , R
 #^Space::
     if (toggle := !toggle)
     {
@@ -119,3 +115,8 @@ Return
         Beep(1000, 25)
     }
 Return
+#If toggle
+#^a:: MouseMove, -1, 0, , R
+#^s:: MouseMove, 1, 0, , R
+#^w:: MouseMove, 0, -1, , R
+#^r:: MouseMove, 0, 1, , R

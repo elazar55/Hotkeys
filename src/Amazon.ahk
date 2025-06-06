@@ -33,7 +33,7 @@ StartScrape:
     GuiControl, , price, % GetPrice(src)
 
     Gui, Submit, NoHide
-    images := DownloadImages(src, image_path, title, asin)
+    DownloadImages(src, image_path, title, asin)
     Beep(1200, 50)
 Return
 ; ==============================================================================
@@ -72,11 +72,6 @@ GetTitle(ByRef src)
     title := StrReplace(title, ",", " ")
     title := StrReplace(title, "&quot;", """")
     title := StrReplace(title, "&#x27;", "'")
-    ; title := StrReplace(title, "[", " ")
-    ; title := StrReplace(title, "]", " ")
-    ; title := StrReplace(title, "(", " ")
-    ; title := StrReplace(title, ")", " ")
-    ; title := StrReplace(title, "-", " ")
     title := StrReplace(title, "&amp;", " & ")
     title := StrReplace(title, "  ", " ")
 

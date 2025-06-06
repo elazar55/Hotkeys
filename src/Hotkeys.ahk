@@ -54,24 +54,29 @@ Return
 ; ==============================================================================
 ;                              Auto Resize Columns
 ; ==============================================================================
-#IfWinActive, ahk_class CabinetWClass
+#If isDirectoryActive()
 
-~Enter::ResizeColumns()
+~Enter::    ResizeColumns()
 ~BackSpace::ResizeColumns()
-~Delete::ResizeColumns()
+~Delete::   ResizeColumns()
+
 ~LButton::
     If (A_PriorHotkey == "~LButton" && A_TimeSincePriorHotkey < 500)
         ResizeColumns()
 Return
 
+isDirectoryActive()
+{
+    ControlGetFocus, active_ctrl, A
+    Return active_ctrl == "DirectUIHWND3"
+}
+
 ResizeColumns()
 {
-    Sleep, 170
-
-    ControlGetFocus, active_ctrl, A
-    If (active_ctrl == "DirectUIHWND3")
-        Send, ^{NumpadAdd}
+    Sleep, 50
+    Send, ^{NumpadAdd}
 }
+#If
 ; ==============================================================================
 ;                                   Set Price
 ; ==============================================================================

@@ -73,8 +73,8 @@ isDirectoryActive()
 
 ResizeColumns()
 {
-    Sleep, 50
-    Send, ^{NumpadAdd}
+    KeyWait, % LTrim(A_ThisHotkey, "~")
+    Send, {Blind}^{NumpadAdd}
 }
 #If
 ; ==============================================================================

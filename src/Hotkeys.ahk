@@ -48,33 +48,27 @@ Return
 ;                                    Hotkeys
 ; ==============================================================================
 #Escape::Gui, Destroy
-#+z::^NumpadAdd
-!Space::Send _
-#d::Reload
+!Space:: Send _
+#+z::    ^NumpadAdd
+#d::     Reload
 ; ==============================================================================
 ;                              Auto Resize Columns
 ; ==============================================================================
 #If isDirectoryActive()
 
-~Enter::    ResizeColumns()
-~BackSpace::ResizeColumns()
-~Delete::   ResizeColumns()
+~Enter Up::
+~Delete Up::
+~BackSpace Up::Send, {Blind}^{NumpadAdd}
 
-~LButton::
-    If (A_PriorHotkey == "~LButton" && A_TimeSincePriorHotkey < 500)
-        ResizeColumns()
+~LButton Up::
+    If (A_PriorHotkey == "~LButton Up" && A_TimeSincePriorHotkey < 500)
+        Send, {Blind}^{NumpadAdd}
 Return
 
 isDirectoryActive()
 {
     ControlGetFocus, active_ctrl, A
     Return active_ctrl == "DirectUIHWND3"
-}
-
-ResizeColumns()
-{
-    KeyWait, % LTrim(A_ThisHotkey, "~")
-    Send, {Blind}^{NumpadAdd}
 }
 #If
 ; ==============================================================================
@@ -125,3 +119,4 @@ Return
 #^s:: MouseMove, 1, 0, , R
 #^w:: MouseMove, 0, -1, , R
 #^r:: MouseMove, 0, 1, , R
+#If

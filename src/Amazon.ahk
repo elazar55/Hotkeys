@@ -5,7 +5,7 @@
 AmazonGUI:
     Gui, Destroy
 
-    width := 1024
+    width := 512
     Gui, add, Edit, X10 W%width% Vasin, B08LKTXYNQ
     Gui, add, Button, XP+%width% Default GStartScrape, Go
     Gui, add, DDL, XP+28 W42 Vregion Choose1, UK|DE|AU
@@ -73,6 +73,9 @@ GetTitle(ByRef src)
     title := StrReplace(title, "&quot;", """")
     title := StrReplace(title, "&#x27;", "'")
     title := StrReplace(title, "&amp;", " & ")
+    title := StrReplace(title, "â€", """")
+    title := StrReplace(title, "ã€", "【")
+    title := StrReplace(title, "", "")
     title := StrReplace(title, "  ", " ")
 
     Return title

@@ -76,6 +76,7 @@ GetTitle(ByRef src)
     title := StrReplace(title, "â€", """")
     title := StrReplace(title, "ã€", "【")
     title := StrReplace(title, "", "")
+    title := StrReplace(title, "Â®", "®")
     title := StrReplace(title, "  ", " ")
 
     Return title
@@ -93,6 +94,7 @@ GetDescription(ByRef src)
     desc := StrReplace(desc, "ã€", "[")
     desc := StrReplace(desc, "ã€‘", "]")
     desc := StrReplace(desc, "Î©", "Ω")
+    desc := StrReplace(desc, "â€“", "-")
 
     FileDelete, description.html
     FileAppend, %desc%, description.html
@@ -131,6 +133,17 @@ DownloadImages(ByRef src, path, title, asin)
 
     RegExMatch(src, "(""[\w+\.\s\\\/\(\)]+?""):\{""asin"":(""" . asin . """)\}", match)
 
+    If (match1 == "")
+    {
+        pos := 1
+        while (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m\.media-amazon\.com\/images\/I\/\w+?L._AC_SL1500_\.jpg", image, pos + StrLen(image)))
+        {
+            UrlDownloadToFile, %image%, %path%\%title%\%A_Index%.jpg
+            image_urls.Push(image1)
+        }
+        Return image_urls
+    }
+
     pos := InStr(src, match1 . ":[") + StrLen(match1)
     while (pos := RegExMatch(src, "(?<=""hiRes"":"")(https:\/\/m\.media-amazon\.com\/images\/I\/.+?\.jpg)|(""[\w\.\s\\\/\(\)]+?"":\[)", image, pos + StrLen(image)))
     {
@@ -142,7 +155,6 @@ DownloadImages(ByRef src, path, title, asin)
         image_urls.Push(image1)
     }
     Return image_urls
-    ;TODO Fallback branch
 }
 ; ==============================================================================
 ;                                 PickImagePath

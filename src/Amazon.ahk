@@ -87,7 +87,7 @@ GetTitle(ByRef src)
 GetDescription(ByRef src)
 {
     RegExMatch(src, "<table class=""a-normal a-spacing-micro.+?<\/table>", desc)
-    RegExMatch(src, "<ul class=""a-unordered-list a-vertical a-spacing-mini"".+?<\/ul>", match)
+    RegExMatch(src, "<ul class=""a-unordered-list a-vertical a-spacing-\w+?"".+?<\/ul>", match)
     style := "<hr><style>table { width: 30em; } .a-text-bold { font-weight: 700; }</style>"
 
     desc .= "<hr>" . match . style

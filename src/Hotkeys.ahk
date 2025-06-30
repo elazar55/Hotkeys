@@ -68,7 +68,8 @@ Return
 isDirectoryActive()
 {
     ControlGetFocus, active_ctrl, A
-    Return active_ctrl == "DirectUIHWND3"
+    If (active_ctrl == "wxWindow13" || active_ctrl == "DirectUIHWND3")
+        Return true
 }
 #If
 ; ==============================================================================

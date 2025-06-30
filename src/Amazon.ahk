@@ -6,7 +6,7 @@ AmazonGUI:
     Gui, Destroy
 
     width := 512
-    Gui, add, Edit, X10 W%width% Vasin, B08LKTXYNQ
+    Gui, add, Edit, X10 W%width% Vasin, B09KR7SJR4
     Gui, add, Button, XP+%width% Default GStartScrape, Go
     Gui, add, DDL, XP+28 W42 Vregion Choose1, UK|DE|AU
 
@@ -95,6 +95,8 @@ GetDescription(ByRef src)
     desc := StrReplace(desc, "ã€‘", "]")
     desc := StrReplace(desc, "Î©", "Ω")
     desc := StrReplace(desc, "â€“", "-")
+    desc := StrReplace(desc, "âœ”", "✔")
+    desc := StrReplace(desc, "â€Ž", "")
 
     FileDelete, description.html
     FileAppend, %desc%, description.html
@@ -136,7 +138,7 @@ DownloadImages(ByRef src, path, title, asin)
     If (match1 == "")
     {
         pos := 1
-        while (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m\.media-amazon\.com\/images\/I\/(\w+?)L._AC_SL1\d00_\.jpg", image, pos + StrLen(image)))
+        while (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m\.media-amazon\.com\/images\/I\/([\w+-]+?)L._AC_SL1\d\d\d_\.jpg", image, pos + StrLen(image)))
         {
             UrlDownloadToFile, %image%, %path%\%title%\%image1%.jpg
             image_urls.Push(image1)

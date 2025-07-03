@@ -97,6 +97,7 @@ GetDescription(ByRef src)
     desc := StrReplace(desc, "â€“", "-")
     desc := StrReplace(desc, "âœ”", "✔")
     desc := StrReplace(desc, "â€Ž", "")
+    desc := StrReplace(desc, "Â°", "°")
 
     FileDelete, description.html
     FileAppend, %desc%, description.html
@@ -133,7 +134,7 @@ DownloadImages(ByRef src, path, title, asin)
 
     image_urls := []
 
-    RegExMatch(src, "(""[-\w+\.\s\\\/\(\)]+?""):\{""asin"":(""" . asin . """)\}", match)
+    RegExMatch(src, "(""[-\w+\.\s:\\\/\(\)]+?""):\{""asin"":(""" . asin . """)\}", match)
 
     If (match1 == "")
     {

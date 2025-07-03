@@ -6,7 +6,7 @@ AmazonGUI:
     Gui, Destroy
 
     width := 512
-    Gui, add, Edit, X10 W%width% Vasin, B09KR7SJR4
+    Gui, add, Edit, X10 W%width% Vasin, B0BVFKZKDH
     Gui, add, Button, XP+%width% Default GStartScrape, Go
     Gui, add, DDL, XP+28 W42 Vregion Choose1, UK|DE|AU
 
@@ -148,7 +148,7 @@ DownloadImages(ByRef src, path, title, asin)
     }
 
     pos := InStr(src, match1 . ":[") + StrLen(match1)
-    while (pos := RegExMatch(src, "(?<=""hiRes"":"")(https:\/\/m\.media-amazon\.com\/images\/I\/.+?\.jpg)|(""[-\w\.\s\\\/\(\)]+?"":\[)", image, pos + StrLen(image)))
+    while (pos := RegExMatch(src, "(?<=""hiRes"":"")(https:\/\/m\.media-amazon\.com\/images\/I\/.+?\.jpg)|(""[\w :\.]+?"":\[)", image, pos + StrLen(image)))
     {
         If (image1 == "")
         {

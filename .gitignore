@@ -6,3 +6,4 @@
 *.ini
 *.gz
 amazon_source
+src/var_json.json

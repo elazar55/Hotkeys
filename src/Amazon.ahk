@@ -148,6 +148,14 @@ DownloadImages(ByRef src, path, title, asin)
         Return
     }
 
+    ;@AHK++AlignAssignmentOn
+    str_start := InStr(src, "{""dataInJson"":")
+    str_end   := InStr(src, "');", , str_start)
+    sub_src   := SubStr(src, str_start, str_end - str_start)
+    ;@AHK++AlignAssignmentOff
+    FileDelete, var_json.json
+    FileAppend, %sub_src%, var_json.json
+
     image_urls := []
 
     RegExMatch(src, "(""[-\w+\.\s:\\\/\(\)]+?""):\{""asin"":(""" . asin . """)\}", match)

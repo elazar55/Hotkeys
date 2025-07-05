@@ -4,11 +4,12 @@
 #F1::
 AmazonGUI:
     Gui, Destroy
+    LoadLast(asin, region)
 
     width := 512
-    Gui, add, Edit, X10 W%width% Vasin, B0BVFKZKDH
+    Gui, add, Edit, X10 W%width% Vasin, %asin%
     Gui, add, Button, XP+%width% Default GStartScrape, Go
-    Gui, add, DDL, XP+28 W42 Vregion Choose1, UK|DE|AU
+    Gui, add, DDL, AltSubmit XP+28 W42 Vregion Choose%region%, UK|DE|AU
 
     Gui, add, Edit, X10 W%width% Vtitle, Title
     Gui, add, Button, XP+%width% GCopyTitle, Copy
@@ -22,10 +23,25 @@ AmazonGUI:
     Gui, Show
 Return
 ; ==============================================================================
+;                                    loadINI
+; ==============================================================================
+LoadLast(ByRef asin, ByRef region)
+{
+    IniRead, asin, amazon_scraper.ini, last, asin, Emptykey
+    IniRead, region, amazon_scraper.ini, last, region, 1
+}
+WriteLast(asin, region)
+{
+    IniWrite, %asin%, amazon_scraper.ini, last, asin
+    IniWrite, %region%, amazon_scraper.ini, last, region
+}
+; ==============================================================================
 ;                                 StartScrape
 ; ==============================================================================
 StartScrape:
     Gui, Submit, NoHide
+    WriteLast(asin, region)
+
     src := DownloadSource(asin, region)
 
     GuiControl, , title, % GetTitle(src)

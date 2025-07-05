@@ -158,7 +158,7 @@ DownloadImages(ByRef src, path, title, asin)
 
     image_urls := []
 
-    RegExMatch(src, "(""[-\w+\.\s:\\\/\(\)]+?""):\{""asin"":(""" . asin . """)\}", match)
+    RegExMatch(src, "(""[-\w+\.\s:\\\/\(\)&]+?""):\{""asin"":(""" . asin . """)\}", match)
 
     If (match1 == "")
     {
@@ -172,7 +172,7 @@ DownloadImages(ByRef src, path, title, asin)
     }
 
     pos := InStr(src, match1 . ":[") + StrLen(match1)
-    while (pos := RegExMatch(src, "(?<=""hiRes"":"")(https:\/\/m\.media-amazon\.com\/images\/I\/.+?\.jpg)|(""[\w :\.]+?"":\[)", image, pos + StrLen(image)))
+    while (pos := RegExMatch(src, "(?<=""hiRes"":"")(https:\/\/m\.media-amazon\.com\/images\/I\/.+?\.jpg)|(""[\w :\.&\\\/+]+?"":\[)", image, pos + StrLen(image)))
     {
         If (image1 == "")
         {

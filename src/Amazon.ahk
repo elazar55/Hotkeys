@@ -156,8 +156,6 @@ DownloadImages(ByRef src, path, title, asin)
     FileDelete, var_json.json
     FileAppend, %sub_src%, var_json.json
 
-    image_urls := []
-
     RegExMatch(src, "(""[-\w+\.\s:\\\/\(\)&]+?""):\{""asin"":(""" . asin . """)\}", match)
 
     If (match1 == "")
@@ -166,9 +164,8 @@ DownloadImages(ByRef src, path, title, asin)
         while (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m\.media-amazon\.com\/images\/I\/([\w+-]+?)L._AC_SL1\d\d\d_\.jpg", image, pos + StrLen(image)))
         {
             UrlDownloadToFile, %image%, %path%\%title%\%image1%.jpg
-            image_urls.Push(image1)
         }
-        Return image_urls
+        Return
     }
 
     pos := InStr(src, match1 . ":[") + StrLen(match1)
@@ -179,9 +176,8 @@ DownloadImages(ByRef src, path, title, asin)
             break
         }
         UrlDownloadToFile, %image1%, %path%\%title%\%A_Index%.jpg
-        image_urls.Push(image1)
     }
-    Return image_urls
+    Return
 }
 ; ==============================================================================
 ;                                 PickImagePath

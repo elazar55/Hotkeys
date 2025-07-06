@@ -141,6 +141,7 @@ DownloadImages(ByRef src, path, title, asin)
     title := RTrim(title)
     path  := RTrim(path, "/\")
 
+    FileRemoveDir, %path%, 1
     FileCreateDir, %path%\%title%
     If (!FileExist(path))
     {

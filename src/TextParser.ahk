@@ -8,11 +8,14 @@ TextTools:
     if (width < 240)
         width := 240
 
-    Gui, Add, Edit, W%width% Vinput,
-    Gui, Add, DDL, W60 XP+%width% Vcasing Choose1, Space|Snake|Dot|Kebab
-    Gui, Add, Button, XP+60 gParseText, ParseText
+    Gui, Add, Edit  , W%width%             Vinput,
+    Gui, Add, Edit  , W30 XP+%width%       Vdelimiter,
+    Gui, Add, DDL   , W60 XP+30            Vcasing Choose1, Space|Snake|Dot|Kebab
+    Gui, Add, Button,     XP+60 gParseText                , ParseText
+
     Gui, Add, Edit, X10 W%width% Voutput
     Gui, Add, DDL, W60 XP+%width% Vcasing_out Choose1, Space|Sentence|Title|Snake|Dot|Kebab|Pascal|Camel|Uppercase|Lowercase
+
     GuiControl,, input, % Trim(Clipboard)
     Gui, Show
 Return
@@ -25,14 +28,21 @@ ParseText:
     ; ==========================================================================
     ;                                   Input
     ; ==========================================================================
-    switch casing
+    If (delimiter != "")
     {
-        ;@AHK++AlignAssignmentOn
-        case "Space": words := StrSplit(input, " ")
-        case "Snake": words := StrSplit(input, "_")
-        case "Kebab": words := StrSplit(input, "-")
-        case "Dot" : words  := StrSplit(input, ".")
-        ;@AHK++AlignAssignmentOff
+        words := StrSplit(input, delimiter)
+    }
+    Else
+    {
+        switch casing
+        {
+            ;@AHK++AlignAssignmentOn
+            case "Space": words := StrSplit(input, " ")
+            case "Snake": words := StrSplit(input, "_")
+            case "Kebab": words := StrSplit(input, "-")
+            case "Dot" : words  := StrSplit(input, ".")
+            ;@AHK++AlignAssignmentOff
+        }
     }
     ; ==========================================================================
     ;                                  Output

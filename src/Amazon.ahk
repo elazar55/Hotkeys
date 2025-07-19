@@ -162,7 +162,7 @@ DownloadImages(ByRef src, path, title, asin)
     If (match1 == "")
     {
         pos := 1
-        while (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m\.media-amazon\.com\/images\/I\/([\w+-]+?)L._AC_SL1\d\d\d_\.jpg", image, pos + StrLen(image)))
+        while (pos := RegExMatch(src, "(?<=""hiRes"":"")https:\/\/m\.media-amazon\.com\/images\/I\/([\w+-]+?)L\._AC_SL1\d\d\d_\.jpg", image, pos + StrLen(image)))
         {
             UrlDownloadToFile, %image%, %path%\%title%\%image1%.jpg
         }

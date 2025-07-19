@@ -124,3 +124,16 @@ Return
 #^w:: MouseMove, 0, -1, , R
 #^r:: MouseMove, 0, 1, , R
 #If
+; ==============================================================================
+;                                 Double Quotes
+; ==============================================================================
+#^q::
+    If (InStr(Clipboard, """"""))
+        Clipboard := StrReplace(Clipboard, """""", """")
+    Else
+        Clipboard := StrReplace(Clipboard, """", """""")
+
+    ; msgbox % Clipboard
+    Send, ^v
+    Beep(1200, 25)
+Return

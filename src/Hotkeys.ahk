@@ -56,6 +56,7 @@ Return
 ; ==============================================================================
 #If isDirectoryActive()
 
+~^v::
 ~Enter Up::
 ~Delete Up::
 ~BackSpace Up::Send, {Blind}^{NumpadAdd}

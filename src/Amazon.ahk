@@ -58,9 +58,9 @@ Return
 DownloadSource(asin, region)
 {
     site := "https://www.amazon.co.uk/dp"
-    if (region == "DE")
+    if (region == 2)
         site := "https://www.amazon.de/dp"
-    else if (region == "AU")
+    else if (region == 3)
         site := "https://www.amazon.com.au/dp"
 
     src_filename := "amazon_source"

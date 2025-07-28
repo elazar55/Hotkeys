@@ -129,6 +129,7 @@ Return
 ;                                 Double Quotes
 ; ==============================================================================
 #^q::
+    Send, ^c
     If (InStr(Clipboard, """"""))
         Clipboard := StrReplace(Clipboard, """""", """")
     Else

@@ -80,7 +80,7 @@ isDirectoryActive()
 ;                                   Set Price
 ; ==============================================================================
 #IfWinActive
-#p::
+SetPrice:
     old_clip := Clipboard
     Clipboard :=
 

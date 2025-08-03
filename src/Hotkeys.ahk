@@ -41,6 +41,7 @@ Beep(frequency, volume)
     Gui, Add, Button, W%width% GAmazonGUI, Amazon
     Gui, Add, Button, W%width% GDockerGUI, Docker
     Gui, Add, Button, W%width% GTextTools, Text Tools
+    Gui, Add, Button, W%width% GOpacity, Opacity
     Gui, Add, Button, W%width% GByteConverter, Byte Converter
     Gui, Show
 Return
@@ -140,11 +141,12 @@ DoubleQuotes:
     Beep(1200, 25)
 Return
 ; ==============================================================================
-;                                 Transparency
+;                                 Opacity
 ; ==============================================================================
-Transparency:
-    WinGet, trans_value, Transparent, A, , ,
+Opacity:
+    Gui, hide
 
+    WinGet, trans_value, Transparent, A, , ,
     trans_step := 255 / 5
     trans_value := Round(trans_value + trans_step)
 
@@ -152,8 +154,9 @@ Transparency:
         trans_value := "Off"
 
     WinSet, Transparent, % trans_value, A, , ,
-    ToolTip, %trans_value%
     SetTimer, RemoveTooltip, -1000
 
-; msgbox % trans_value
+    ; msgbox % trans_value
+    Gui, show
+    ToolTip, %trans_value%
 Return

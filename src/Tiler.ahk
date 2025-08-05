@@ -366,6 +366,8 @@ MoveAlongGrid(dir)
 
     If (window_height - top_offset <= screen_height / 2)
     {
+        window_height := (screen_height / 2) + top_offset
+
         If (pos_y < screen_height * 0.25)
             pos_y := 0
         Else
@@ -374,6 +376,7 @@ MoveAlongGrid(dir)
     Else
     {
         pos_y := 0
+        window_height := screen_height + top_offset
     }
 
     if (pos_x + left_offset >= screen_width - window_width && dir == 1)
@@ -387,7 +390,7 @@ MoveAlongGrid(dir)
     }
     else if (pos_x + left_offset <= 0 && dir == -1)
     {
-        index := cells
+        index := cells + 1
 
         If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
             pos_y := screen_height / 2

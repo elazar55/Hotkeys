@@ -156,14 +156,14 @@ return
 Update(win_id)
 {
     WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
-    WinGet, title, ProcessName, ahk_id %win_id%
+    WinGet, proc_name, ProcessName, ahk_id %win_id%
 
     IniRead, left_offset, %ini_file%, settings, left_offset, 3
     IniRead, top_offset, %ini_file%, settings, top_offset, 3
     global min_width := 320
 
     ; Program specifics
-    If (RegExMatch(title, "(Code.exe)|(Playnite.*.exe)"))
+    If (RegExMatch(proc_name, "(Code.exe)|(Playnite.*.exe)"))
     {
         ; @AHK++AlignAssignmentOn
         global left_offset := 0
@@ -171,11 +171,11 @@ Update(win_id)
         global min_width   := 400
         ; @AHK++AlignAssignmentOff
     }
-    else If (RegExMatch(title, "Afterburner"))
+    else If (RegExMatch(proc_name, "Afterburner"))
     {
         global min_width := 240
     }
-    else If (RegExMatch(title, "chrome") || RegExMatch(title, "thorium"))
+    else If (RegExMatch(proc_name, "chrome") || RegExMatch(title, "thorium"))
     {
         global min_width := 502
     }

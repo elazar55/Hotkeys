@@ -10,23 +10,26 @@
 ; ==============================================================================
 #IfWinActive
 ; @AHK++AlignAssignmentOn
+; Defaults
 global screen_width  := 1920
 global screen_height := 1050
-global pos_x         :=
-global pos_y         :=
 global left_offset   := 3
 global top_offset    := 3
 global alignment     := 80
-global window_width  :=
-global window_height :=
-global ini_file      := "tiler.ini"
 global dock_left     := "#a"
 global dock_right    := "#s"
 global dock_up       := "#w"
 global dock_down     := "#r"
 global rows          := 2
 global cols          := 3
+global ini_file      := "tiler.ini"
+global min_width     := 320
 global factors       :=
+; Window attributes
+global pos_x         :=
+global pos_y         :=
+global window_width  :=
+global window_height :=
 ; @AHK++AlignAssignmentOff
 CoordMode, ToolTip, Screen
 CoordMode, Mouse, Screen
@@ -68,6 +71,7 @@ INIReadFailThenWritn(filename, section, key, default)
 ; ==============================================================================
 ReadConfig(ini_file)
 {
+    ; INIReadFailThenWritn(ini_file, "settings", "alignment", alignment)
     IniRead, alignment, %ini_file%, settings, alignment, %alignment%
 
     SysGet, mon, MonitorWorkArea
@@ -76,6 +80,7 @@ ReadConfig(ini_file)
 
     IniRead, left_offset, %ini_file%, settings, left_offset, %left_offset%
     IniRead, top_offset, %ini_file%, settings, top_offset, %top_offset%
+    IniRead, min_width, %ini_file%, settings, min_width, %min_width%
 
     IniRead, dock_left, %ini_file%, settings, dock_left, #a
     IniRead, dock_right, %ini_file%, settings, dock_right, #s
@@ -105,6 +110,7 @@ WriteConfig()
 
     IniWrite, %left_offset%, %ini_file%, settings, left_offset
     IniWrite, %top_offset%, %ini_file%, settings, top_offset
+    IniWrite, %min_width%, %ini_file%, settings, min_width
 
     IniWrite, %dock_left%, %ini_file%, settings, dock_left
     IniWrite, %dock_right%, %ini_file%, settings, dock_right
@@ -171,27 +177,31 @@ Update(win_id)
     WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
     WinGet, proc_name, ProcessName, ahk_id %win_id%
 
-    IniRead, left_offset, %ini_file%, settings, left_offset, 3
-    IniRead, top_offset, %ini_file%, settings, top_offset, 3
-    global min_width := 320
+    IniRead, left_offset, %ini_file%, %proc_name%, left_offset, 3
+    IniRead, top_offset, %ini_file%, %proc_name%, top_offset, 3
+    IniRead, min_width, %ini_file%, %proc_name%, min_width, 320
 
+    ; msgbox % "proc_name`t"proc_name . "`n"
+    ;     . "left_offset`t"left_offset . "`n"
+    ;     . "top_offset`t"top_offset . "`n"
+    ;     . "min_width`t"min_width . "`n"
     ; Program specifics
-    If (RegExMatch(proc_name, "(Code.exe)|(Playnite.*.exe)"))
-    {
-        ; @AHK++AlignAssignmentOn
-        global left_offset := 0
-        global top_offset  := 0
-        global min_width   := 400
-        ; @AHK++AlignAssignmentOff
-    }
-    else If (RegExMatch(proc_name, "Afterburner"))
-    {
-        global min_width := 240
-    }
-    else If (RegExMatch(proc_name, "chrome") || RegExMatch(title, "thorium"))
-    {
-        global min_width := 502
-    }
+    ; If (RegExMatch(proc_name, "(Code.exe)|(Playnite.*.exe)"))
+    ; {
+    ;     ; @AHK++AlignAssignmentOn
+    ;     global left_offset := 0
+    ;     global top_offset  := 0
+    ;     global min_width   := 400
+    ;     ; @AHK++AlignAssignmentOff
+    ; }
+    ; else If (RegExMatch(proc_name, "Afterburner"))
+    ; {
+    ;     global min_width := 240
+    ; }
+    ; else If (RegExMatch(proc_name, "chrome") || RegExMatch(title, "thorium"))
+    ; {
+    ;     global min_width := 502
+    ; }
 
     global window_width := window_width - left_offset * 2
 }

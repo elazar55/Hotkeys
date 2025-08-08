@@ -51,6 +51,19 @@ Init()
     factors := FactorizeAlignment()
 }
 ; ==============================================================================
+;                             INIReadFailThenWritn
+; ==============================================================================
+INIReadFailThenWritn(filename, section, key, default)
+{
+    IniRead, value, %filename%, %section%, %key%, empty
+    If (value == "empty")
+    {
+        IniWrite, %default%, %filename%, %section%, %key%
+        value := default
+    }
+    Return value
+}
+; ==============================================================================
 ;                                  Load Config
 ; ==============================================================================
 ReadConfig(ini_file)

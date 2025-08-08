@@ -154,10 +154,13 @@ DockerGUI:
     idx := FindIndex()
     Gui, Add, DDL, W64 Valignment Choose%idx%, %factors%
     Gui, Add, Text, XP+68 YP+4, Alignment
+
     Gui, Add, Edit, W64 Vrows X8, %rows%
     Gui, Add, Text, XP+68 YP+4, Rows
+
     Gui, Add, Edit, W64 Vcols X8, %cols%
     Gui, Add, Text, XP+68 YP+4, Columns
+
     Gui, Add, Button, Default W64 X8 GWriteConfig, Submit
 
     Gui, Show
@@ -176,31 +179,18 @@ Update(win_id)
     WinGetPos, pos_x, pos_y, window_width, window_height, ahk_id %win_id%
     WinGet, proc_name, ProcessName, ahk_id %win_id%
 
-    IniRead, left_offset, %ini_file%, %proc_name%, left_offset, 3
-    IniRead, top_offset, %ini_file%, %proc_name%, top_offset, 3
-    IniRead, min_width, %ini_file%, %proc_name%, min_width, 320
+    IniRead, left_offset_default, %ini_file%, settings, left_offset
+    IniRead, top_offset_default, %ini_file%, settings, top_offset
+    IniRead, min_width_default, %ini_file%, settings, min_width
+
+    IniRead, left_offset, %ini_file%, %proc_name%, left_offset, %left_offset_default%
+    IniRead, top_offset, %ini_file%, %proc_name%, top_offset, %top_offset_default%
+    IniRead, min_width, %ini_file%, %proc_name%, min_width, %min_width_default%
 
     ; msgbox % "proc_name`t"proc_name . "`n"
     ;     . "left_offset`t"left_offset . "`n"
     ;     . "top_offset`t"top_offset . "`n"
     ;     . "min_width`t"min_width . "`n"
-    ; Program specifics
-    ; If (RegExMatch(proc_name, "(Code.exe)|(Playnite.*.exe)"))
-    ; {
-    ;     ; @AHK++AlignAssignmentOn
-    ;     global left_offset := 0
-    ;     global top_offset  := 0
-    ;     global min_width   := 400
-    ;     ; @AHK++AlignAssignmentOff
-    ; }
-    ; else If (RegExMatch(proc_name, "Afterburner"))
-    ; {
-    ;     global min_width := 240
-    ; }
-    ; else If (RegExMatch(proc_name, "chrome") || RegExMatch(title, "thorium"))
-    ; {
-    ;     global min_width := 502
-    ; }
 
     global window_width := window_width - left_offset * 2
 }

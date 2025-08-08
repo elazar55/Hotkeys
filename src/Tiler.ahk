@@ -71,7 +71,6 @@ INIReadFailThenWritn(filename, section, key, default)
 ; ==============================================================================
 ReadConfig(ini_file)
 {
-    ; INIReadFailThenWritn(ini_file, "settings", "alignment", alignment)
     IniRead, alignment, %ini_file%, settings, alignment, %alignment%
 
     SysGet, mon, MonitorWorkArea

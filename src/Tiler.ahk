@@ -54,19 +54,6 @@ Init()
     factors := FactorizeAlignment()
 }
 ; ==============================================================================
-;                             INIReadFailThenWritn
-; ==============================================================================
-INIReadFailThenWritn(filename, section, key, default)
-{
-    IniRead, value, %filename%, %section%, %key%, empty
-    If (value == "empty")
-    {
-        IniWrite, %default%, %filename%, %section%, %key%
-        value := default
-    }
-    Return value
-}
-; ==============================================================================
 ;                                  Load Config
 ; ==============================================================================
 ReadConfig(ini_file)
@@ -192,7 +179,7 @@ Update(win_id)
     ;     . "top_offset`t"top_offset . "`n"
     ;     . "min_width`t"min_width . "`n"
 
-    global window_width := window_width - left_offset * 2
+    global window_width -= left_offset * 2
 }
 ; ==============================================================================
 ;                                 Dock Function

@@ -396,7 +396,7 @@ MoveAlongGrid(dir)
         Else
             pos_y := 0
     }
-    Dock(screen_width * ((Floor(index) + dir) / cells) - left_offset, pos_y, window_width, window_height)
+    Dock(screen_width * ((Round(index) + dir) / cells) - left_offset, pos_y, window_width, window_height)
 }
 #x::MoveAlongGrid(1)
 +#x::MoveAlongGrid(-1)

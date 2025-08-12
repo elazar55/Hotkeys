@@ -143,20 +143,16 @@ Return
 ; ==============================================================================
 ;                                 Opacity
 ; ==============================================================================
+#+t::
 Opacity:
-    Gui, hide
-
     WinGet, trans_value, Transparent, A, , ,
-    trans_step := 255 / 5
-    trans_value := Round(trans_value + trans_step)
+    trans_step := 255 / 4
+    trans_value := Round(trans_value) + Round(trans_step)
 
     If (trans_value >= 255)
         trans_value := "Off"
 
     WinSet, Transparent, % trans_value, A, , ,
-    SetTimer, RemoveTooltip, -1000
-
-    ; msgbox % trans_value
-    Gui, show
     ToolTip, %trans_value%
+    SetTimer, RemoveTooltip, -1000
 Return

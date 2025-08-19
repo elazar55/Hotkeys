@@ -174,11 +174,6 @@ Update(win_id)
     IniRead, top_offset, %ini_file%, %proc_name%, top_offset, %top_offset_default%
     IniRead, min_width, %ini_file%, %proc_name%, min_width, %min_width_default%
 
-    ; msgbox % "proc_name`t"proc_name . "`n"
-    ;     . "left_offset`t"left_offset . "`n"
-    ;     . "top_offset`t"top_offset . "`n"
-    ;     . "min_width`t"min_width . "`n"
-
     global window_width -= left_offset * 2
 }
 ; ==============================================================================
@@ -389,7 +384,7 @@ MoveAlongGrid(dir)
     }
     else if (pos_x + left_offset <= 0 && dir == -1)
     {
-        index := cells + 1
+        index := cells
 
         If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
             pos_y := screen_height / 2

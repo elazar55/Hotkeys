@@ -25,6 +25,7 @@ global cols          := 3
 global ini_file      := "tiler.ini"
 global min_width     := 320
 global factors       :=
+global stackables    :=
 ; Window attributes
 global pos_x         :=
 global pos_y         :=
@@ -40,18 +41,18 @@ Return
 ; ==============================================================================
 Init()
 {
-    SetTitleMatchMode Regex
-    GroupAdd, stackable, ahk_class CabinetWClass, , , ,
-    GroupAdd, stackable, ahk_class VirtualConsoleClass, , , ,
-    GroupAdd, stackable, ahk_class FM, , , ,
-    GroupAdd, stackable, ahk_class Notepad, , , ,
-    SetTitleMatchMode 1
-
     If (!FileExist(ini_file))
         WriteConfig()
 
     ReadConfig(ini_file)
     factors := FactorizeAlignment()
+
+    SetTitleMatchMode Regex
+    Loop, Parse, stackables, %A_Space%
+    {
+        GroupAdd, stackables, ahk_class %A_LoopField%
+    }
+    SetTitleMatchMode 1
 }
 ; ==============================================================================
 ;                                  Load Config
@@ -75,6 +76,7 @@ ReadConfig(ini_file)
 
     IniRead, rows, %ini_file%, settings, rows
     IniRead, cols, %ini_file%, settings, cols
+    IniRead, stackables, %ini_file%, settings, stackables
 
     Hotkey, IfWinActive
     Hotkey, %dock_left%, DockLeft
@@ -105,6 +107,7 @@ WriteConfig()
 
     IniWrite, %rows%, %ini_file%, settings, rows
     IniWrite, %cols%, %ini_file%, settings, cols
+    IniWrite, %stackables%, %ini_file%, settings, stackables
 }
 ; ==============================================================================
 ;                              FactorizeAlignment
@@ -454,7 +457,7 @@ Return
 ; ==============================================================================
 TileWindows:
 #t::
-    WinGet, win_count, List, ahk_group stackable, ,
+    WinGet, win_count, List, ahk_group stackables, ,
 
     ; @AHK++AlignAssignmentOn
     _rows      := Min(Ceil(win_count / 2), rows)
@@ -488,7 +491,7 @@ Return
 ; ==============================================================================
 GridWindows:
 #g::
-    WinGet, win_count, List, ahk_group stackable, ,
+    WinGet, win_count, List, ahk_group stackables, ,
 
     ; @AHK++AlignAssignmentOna
     win_width  := (screen_width / cols) + (left_offset * 2)

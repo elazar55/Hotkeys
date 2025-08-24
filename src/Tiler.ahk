@@ -142,18 +142,49 @@ DockerGUI:
     Gui, Destroy
 
     idx := FindIndex()
-    Gui, Add, DDL, W64 Valignment Choose%idx%, %factors%
-    Gui, Add, Text, XP+68 YP+4, Alignment
+    Gui, Add, DDL, W80 Valignment Choose%idx%, %factors%
+    Gui, Add, Text, XP+84 YP+4, Alignment
 
-    Gui, Add, Edit, W64 Vrows X8, %rows%
-    Gui, Add, Text, XP+68 YP+4, Rows
+    Gui, Add, Edit, W80 Vrows X8, %rows%
+    Gui, Add, Text, XP+84 YP+4, Rows
 
-    Gui, Add, Edit, W64 Vcols X8, %cols%
-    Gui, Add, Text, XP+68 YP+4, Columns
+    Gui, Add, Edit, W80 Vcols X8, %cols%
+    Gui, Add, Text, XP+84 YP+4, Columns
 
-    Gui, Add, Button, Default W64 X8 GWriteConfig, Submit
+    Gui, Add, Button, Default W80 X8 GWriteConfig, Submit
+
+    WinGet, exe_name, ProcessName, A
+    WinGet, win_id, ID, A
+    Update(win_id)
+
+    Gui, Add, Edit, W80 Vexe_name X8, %exe_name%
+    Gui, Add, Text, XP+84 YP+4, exe_name
+
+    Gui, Add, Edit, W80 Vleft_offset X8, %left_offset%
+    Gui, Add, Text, XP+84 YP+4, left_offset
+
+    Gui, Add, Edit, W80 Vtop_offset X8, %top_offset%
+    Gui, Add, Text, XP+84 YP+4, top_offset
+
+    Gui, Add, Edit, W80 Vmin_width X8, %min_width%
+    Gui, Add, Text, XP+84 YP+4, min_width
+
+    Gui, Add, Button, Default W80 X8 GAddExe, Add exe
+    Gui, Add, Button, Default W80 X8 GRemoveExe, Remove exe
 
     Gui, Show
+Return
+
+AddExe:
+    Gui, Submit
+    IniWrite, %left_offset%, %ini_file%, %exe_name%, left_offset
+    IniWrite, %top_offset%, %ini_file%, %exe_name%, top_offset
+    IniWrite, %min_width%, %ini_file%, %exe_name%, min_width
+Return
+
+RemoveExe:
+    Gui, Submit
+    IniDelete, %ini_file%, %exe_name%
 Return
 ; ==============================================================================
 ;                                Remove ToolTip

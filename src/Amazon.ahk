@@ -135,7 +135,7 @@ GetPrice(ByRef src)
 ; ==============================================================================
 DownloadImages(ByRef src, path, title, asin)
 {
-    title := SubStr(title, 1, 30)
+    title := SubStr(title, 1, 10)
     title := StrReplace(title, "/", "_")
     title := StrReplace(title, ".", "_")
     title := RTrim(title)

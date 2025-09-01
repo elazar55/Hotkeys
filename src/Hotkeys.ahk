@@ -41,7 +41,6 @@ Beep(frequency, volume)
     Gui, Add, Button, W%width% GAmazonGUI, Amazon
     Gui, Add, Button, W%width% GDockerGUI, Docker
     Gui, Add, Button, W%width% GTextTools, Text Tools
-    Gui, Add, Button, W%width% GOpacity, Opacity
     Gui, Add, Button, W%width% GByteConverter, Byte Converter
     Gui, Show
 Return

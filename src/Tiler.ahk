@@ -140,46 +140,55 @@ FindIndex()
 ; ==============================================================================
 DockerGUI:
     Gui, Destroy
+    width := 100
+    padding := 4
 
     idx := FindIndex()
-    Gui, Add, DDL, W80 Valignment Choose%idx%, %factors%
-    Gui, Add, Text, XP+84 YP+4, Alignment
+    Gui, Add, DDL, W%width% Valignment Choose%idx%, %factors%
+    Gui, Add, Text, % "XP+" . width + padding . " YP+4", Alignment
 
-    Gui, Add, Edit, W80 Vrows X8, %rows%
-    Gui, Add, Text, XP+84 YP+4, Rows
+    Gui, Add, Edit, W%width% Vrows X8, %rows%
+    Gui, Add, Text, % "XP+" . width + padding . " YP+4", Rows
 
-    Gui, Add, Edit, W80 Vcols X8, %cols%
-    Gui, Add, Text, XP+84 YP+4, Columns
+    Gui, Add, Edit, W%width% Vcols X8, %cols%
+    Gui, Add, Text, % "XP+" . width + padding . " YP+4", Columns
 
-    Gui, Add, Button, Default W80 X8 GWriteConfig, Submit
+    Gui, Add, Button, Default W%width% X8 GWriteConfig, Submit
 
     WinGet, exe_name, ProcessName, A
     WinGet, win_id, ID, A
     Update(win_id)
 
-    Gui, Add, Edit, W80 Vexe_name X8, %exe_name%
-    Gui, Add, Text, XP+84 YP+4, exe_name
+    Gui, Add, Edit, W%width% Vexe_name X8, %exe_name%
+    Gui, Add, Text, % "XP+" . width + padding . " YP+4", exe_name
 
-    Gui, Add, Edit, W80 Vleft_offset X8, %left_offset%
-    Gui, Add, Text, XP+84 YP+4, left_offset
+    Gui, Add, Edit, W%width% Vleft_offset X8, %left_offset%
+    Gui, Add, Text, % "XP+" . width + padding . " YP+4", left_offset
 
-    Gui, Add, Edit, W80 Vtop_offset X8, %top_offset%
-    Gui, Add, Text, XP+84 YP+4, top_offset
+    Gui, Add, Edit, W%width% Vtop_offset X8, %top_offset%
+    Gui, Add, Text, % "XP+" . width + padding . " YP+4", top_offset
 
-    Gui, Add, Edit, W80 Vmin_width X8, %min_width%
-    Gui, Add, Text, XP+84 YP+4, min_width
+    Gui, Add, Edit, W%width% Vmin_width X8, %min_width%
+    Gui, Add, Text, % "XP+" . width + padding . " YP+4", min_width
 
-    Gui, Add, Button, Default W80 X8 GAddExe, Add exe
-    Gui, Add, Button, Default W80 X8 GRemoveExe, Remove exe
+    Gui, Add, Button, Default W%width% X8 GAddExe, Add exe
+    Gui, Add, Button, Default W%width% X8 GRemoveExe, Remove exe
+
+    Gui, +DelimiterSpace
+    Gui, Add, DDL, W%width% Choose1, %stackables%
+    Gui, Add, Text, % "XP+" . width + padding . " YP+4", Stackables
 
     Gui, Show
 Return
 
 AddExe:
     Gui, Submit
-    IniWrite, %left_offset%, %ini_file%, %exe_name%, left_offset
-    IniWrite, %top_offset%, %ini_file%, %exe_name%, top_offset
-    IniWrite, %min_width%, %ini_file%, %exe_name%, min_width
+    If (Trim(left_offset) != "")
+        IniWrite, %left_offset%, %ini_file%, %exe_name%, left_offset
+    If (Trim(top_offset) != "")
+        IniWrite, %top_offset%, %ini_file%, %exe_name%, top_offset
+    If (Trim(min_width) != "")
+        IniWrite, %min_width%, %ini_file%, %exe_name%, min_width
 Return
 
 RemoveExe:
@@ -388,7 +397,7 @@ MoveAlongGrid(dir)
     Update(win_id)
 
     ;@AHK++AlignAssignmentOn
-    cells := screen_width / window_width ; alignment or window_width
+    cells := screen_width / (window_width / 2) ; alignment or window_width
     index := (pos_x + left_offset) / (screen_width / cells)
     ;@AHK++AlignAssignmentOff
 
@@ -433,7 +442,7 @@ MoveAlongGrid(dir)
 ;                              Snap window to Next Window
 ; ==============================================================================
 Jump:
-#j::
+^#x::
     WinGet, win_id, ID, A
     Update(win_id)
 

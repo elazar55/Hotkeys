@@ -441,57 +441,52 @@ MoveAlongGrid(dir)
 ; ==============================================================================
 ;                              Snap window to Next Window
 ; ==============================================================================
-Jump:
-^#x::
-    WinGet, win_id, ID, A
-    Update(win_id)
-
-    ; @AHK++AlignAssignmentOn
-    _x        := pos_x
-    _y        := pos_y
-    _id       := win_id
-    _w        := window_width
-    _h        := window_height
-    _left_off := left_offset
-    _top_off  := top_offset
-    ; @AHK++AlignAssignmentOff
-
+Jump(dir)
+{
     SetTitleMatchMode Regex
     WinGet, win_handles, List, .+, , \d+x\d+|Start Menu|Program Manager|Window Spy,
+    SetTitleMatchMode 1
 
     x_list :=
     Loop, %win_handles%
     {
         id := win_handles%A_Index%
-        If (id == _id)
-            Continue
 
         WinGet, minmax, MinMax, ahk_id %id%
         If (minmax != 0)
             Continue
 
         Update(id)
-        x_list .= pos_x + left_offset . "," . pos_x + window_width + left_offset . ","
+        If (pos_x + left_offset < screen_width)
+            x_list .= pos_x + left_offset . "," . pos_x + window_width + left_offset . ","
     }
     x_list := Trim(x_list, ",")
     Sort, x_list, N U D,
     x_list := StrSplit(x_list, ",")
 
+    WinGet, win_id, ID, A
+    Update(win_id)
+
+    active_index := 0
     For k, v in x_list
     {
-        If (v >= screen_width)
-            Break
-
-        If (v - (_x + _left_off) > 0)
+        If (v == pos_x + left_offset)
         {
-            Dock(v - _left_off, _y, _w, _h)
-            SetTitleMatchMode 1
-            Return
+            active_index := A_Index
+            Break
         }
     }
-    Dock(0 - _left_off, _y, _w, _h)
-    SetTitleMatchMode 1
-Return
+    If (active_index == x_list.Length() && dir == 1)
+        active_index := 0
+    Else If (active_index == 1 && dir == -1)
+        active_index := x_list.Length()
+
+    Dock(x_list[active_index + dir] - left_offset, pos_y, window_width, window_height)
+
+    Return
+}
+^#x::Jump(1)
++^#x::Jump(-1)
 ; ==============================================================================
 ;                                 Tile Windows
 ; ==============================================================================

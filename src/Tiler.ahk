@@ -446,43 +446,44 @@ Jump(dir)
     SetTitleMatchMode Regex
     WinGet, win_handles, List, .+, , \d+x\d+|Start Menu|Program Manager|Window Spy,
     SetTitleMatchMode 1
+    WinGet, active_id, ID, A
 
     x_list :=
     Loop, %win_handles%
     {
         id := win_handles%A_Index%
+        If (active_id == id)
+            Continue
 
         WinGet, minmax, MinMax, ahk_id %id%
         If (minmax != 0)
             Continue
 
         Update(id)
-        If (pos_x + left_offset < screen_width)
+        If (pos_x + window_width + left_offset < screen_width)
             x_list .= pos_x + left_offset . "," . pos_x + window_width + left_offset . ","
     }
     x_list := Trim(x_list, ",")
-    Sort, x_list, N U D,
+
+    If (dir == 1)
+        Sort, x_list, N U D,
+    Else If (dir == -1)
+        Sort, x_list, R N U D,
+
     x_list := StrSplit(x_list, ",")
 
     WinGet, win_id, ID, A
     Update(win_id)
 
-    active_index := 0
     For k, v in x_list
     {
-        If (v == pos_x + left_offset)
+        If ((dir == 1 && v > pos_x + left_offset) || (dir == -1 && v < pos_x + left_offset))
         {
-            active_index := A_Index
-            Break
+            Dock(v - left_offset, pos_y, window_width, window_height)
+            Return
         }
     }
-    If (active_index == x_list.Length() && dir == 1)
-        active_index := 0
-    Else If (active_index == 1 && dir == -1)
-        active_index := x_list.Length()
-
-    Dock(x_list[active_index + dir] - left_offset, pos_y, window_width, window_height)
-
+    Dock(x_list[1] - left_offset, pos_y, window_width, window_height)
     Return
 }
 ^#x::Jump(1)

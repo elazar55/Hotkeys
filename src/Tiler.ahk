@@ -460,8 +460,10 @@ Jump(dir)
             Continue
 
         Update(id)
+        If (pos_x + left_offset < screen_width)
+            x_list .= pos_x + left_offset . ","
         If (pos_x + window_width + left_offset < screen_width)
-            x_list .= pos_x + left_offset . "," . pos_x + window_width + left_offset . ","
+            x_list .= pos_x + window_width + left_offset . ","
     }
     x_list := Trim(x_list, ",")
 

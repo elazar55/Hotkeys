@@ -439,6 +439,34 @@ MoveAlongGrid(dir)
 #x::MoveAlongGrid(1)
 +#x::MoveAlongGrid(-1)
 ; ==============================================================================
+;                                    AltJump
+; ==============================================================================
+#F1::AltJump(1)
+AltJump(dir)
+{
+    SetTitleMatchMode Regex
+    WinGet, win_handles, List, .+, , \d+x\d+|Start Menu|Program Manager|Window Spy,
+    SetTitleMatchMode 1
+    WinGet, active_id, ID, A
+    Update(win_id)
+    active_width := window_width
+
+    x_list := []
+    Loop, %win_handles%
+    {
+        id := win_handles%A_Index%
+        Update(id)
+        WinGetTitle, title, ahk_id %id%
+
+        x_list[pos_x + left_offset]                := title
+        x_list[pos_x + left_offset + window_width] := title
+    }
+    For k, v in x_list
+    {
+        msgbox % v
+    }
+}
+; ==============================================================================
 ;                              Snap window to Next Window
 ; ==============================================================================
 Jump(dir)
@@ -447,6 +475,8 @@ Jump(dir)
     WinGet, win_handles, List, .+, , \d+x\d+|Start Menu|Program Manager|Window Spy,
     SetTitleMatchMode 1
     WinGet, active_id, ID, A
+    Update(active_id)
+    active_width := window_width
 
     x_list :=
     Loop, %win_handles%
@@ -462,16 +492,19 @@ Jump(dir)
         Update(id)
         If (pos_x + left_offset < screen_width)
             x_list .= pos_x + left_offset . ","
-        If (pos_x + window_width + left_offset < screen_width)
-            x_list .= pos_x + window_width + left_offset . ","
+        If (pos_x + left_offset + window_width < screen_width)
+            x_list .= pos_x + left_offset + window_width . ","
+        If (pos_x + left_offset - active_width > 0)
+            x_list .= pos_x + left_offset - active_width . ","
+        If (pos_x + left_offset + window_width - active_width > 0)
+            x_list .= pos_x + left_offset + window_width - active_width . ","
+
     }
     x_list := Trim(x_list, ",")
-
     If (dir == 1)
         Sort, x_list, N U D,
     Else If (dir == -1)
         Sort, x_list, R N U D,
-
     x_list := StrSplit(x_list, ",")
 
     WinGet, win_id, ID, A
@@ -488,8 +521,8 @@ Jump(dir)
     Dock(x_list[1] - left_offset, pos_y, window_width, window_height)
     Return
 }
-^#x::Jump(1)
-+^#x::Jump(-1)
+#VKE2::Jump(1)
++#VKE2::Jump(-1)
 ; ==============================================================================
 ;                                 Tile Windows
 ; ==============================================================================

@@ -474,15 +474,15 @@ Jump(dir)
     SetTitleMatchMode Regex
     WinGet, win_handles, List, .+, , \d+x\d+|Start Menu|Program Manager|Window Spy,
     SetTitleMatchMode 1
-    WinGet, active_id, ID, A
-    Update(active_id)
+    WinGet, win_id, ID, A
+    Update(win_id)
     active_width := window_width
 
     x_list :=
     Loop, %win_handles%
     {
         id := win_handles%A_Index%
-        If (active_id == id)
+        If (win_id == id)
             Continue
 
         WinGet, minmax, MinMax, ahk_id %id%
@@ -490,15 +490,17 @@ Jump(dir)
             Continue
 
         Update(id)
-        If (pos_x + left_offset < screen_width)
-            x_list .= pos_x + left_offset . ","
-        If (pos_x + left_offset + window_width < screen_width)
-            x_list .= pos_x + left_offset + window_width . ","
-        If (pos_x + left_offset - active_width > 0)
-            x_list .= pos_x + left_offset - active_width . ","
-        If (pos_x + left_offset + window_width - active_width > 0)
-            x_list .= pos_x + left_offset + window_width - active_width . ","
+        win_left  := pos_x + left_offset
+        win_right := pos_x + left_offset + window_width
 
+        If (win_left < screen_width)
+            x_list .= win_left . ","
+        If (win_right < screen_width)
+            x_list .= win_right . ","
+        If (win_left - active_width > 0)
+            x_list .= win_left - active_width . ","
+        If (win_right - active_width > 0)
+            x_list .= win_right - active_width . ","
     }
     x_list := Trim(x_list, ",")
     If (dir == 1)

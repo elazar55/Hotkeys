@@ -446,9 +446,9 @@ AltJump(dir)
 {
     SetTitleMatchMode Regex
     WinGet, win_handles, List, .+, , \d+x\d+|Start Menu|Program Manager|Window Spy,
-    SetTitleMatchMode 1
-    WinGet, active_id, ID, A
     Update(win_id)
+    SetTitleMatchMode 1
+    active_left  := pos_x + left_offset
     active_width := window_width
 
     x_list := []
@@ -457,13 +457,17 @@ AltJump(dir)
         id := win_handles%A_Index%
         Update(id)
         WinGetTitle, title, ahk_id %id%
+        win_left  := pos_x + left_offset
+        win_right := pos_x + left_offset + window_width
 
-        x_list[pos_x + left_offset]                := title
-        x_list[pos_x + left_offset + window_width] := title
+        x_list[win_left]                 .= "`n" . title . "`n"
+        x_list[win_right]                .= "`n" . title . "`n"
+        x_list[win_left - active_width]  .= "`n" . title . "`n"
+        x_list[win_right - active_width] .= "`n" . title . "`n"
     }
     For k, v in x_list
     {
-        msgbox % v
+        msgbox [%k%] = %v%
     }
 }
 ; ==============================================================================

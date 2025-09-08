@@ -486,8 +486,6 @@ Jump(dir)
     Loop, %win_handles%
     {
         id := win_handles%A_Index%
-        If (win_id == id)
-            Continue
 
         WinGet, minmax, MinMax, ahk_id %id%
         If (minmax != 0)
@@ -507,24 +505,26 @@ Jump(dir)
             x_list .= this_right - active_width . ","
     }
     x_list := Trim(x_list, ",")
-    If (dir == 1)
-        Sort, x_list, N U D,
-    Else If (dir == -1)
-        Sort, x_list, R N U D,
+    Sort, x_list, N U D,
     x_list := StrSplit(x_list, ",")
 
     WinGet, win_id, ID, A
     Update(win_id)
-
+    index := 0
     For k, v in x_list
     {
-        If ((dir == 1 && v > pos_x + left_offset) || (dir == -1 && v < pos_x + left_offset))
+        If (v == pos_x + left_offset)
         {
-            Dock(v - left_offset, pos_y, window_width, window_height)
-            Return
+            index := A_Index
+            break
         }
     }
-    Dock(x_list[1] - left_offset, pos_y, window_width, window_height)
+    If (index == x_list.Length())
+        index := 0
+    Else If (index + dir == 0)
+        index := x_list.Length() + 1
+
+    Dock(x_list[index + dir] - left_offset, pos_y, window_width, window_height)
     Return
 }
 #VKE2::Jump(1)

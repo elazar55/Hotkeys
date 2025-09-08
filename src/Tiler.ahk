@@ -494,17 +494,17 @@ Jump(dir)
             Continue
 
         Update(id)
-        win_left  := pos_x + left_offset
-        win_right := pos_x + left_offset + window_width
+        this_left  := pos_x + left_offset
+        this_right := pos_x + left_offset + window_width
 
-        If (win_left < screen_width)
-            x_list .= win_left . ","
-        If (win_right < screen_width)
-            x_list .= win_right . ","
-        If (win_left - active_width > 0)
-            x_list .= win_left - active_width . ","
-        If (win_right - active_width > 0)
-            x_list .= win_right - active_width . ","
+        If (this_left < screen_width)
+            x_list .= this_left . ","
+        If (this_right < screen_width)
+            x_list .= this_right . ","
+        If (this_left - active_width > 0)
+            x_list .= this_left - active_width . ","
+        If (this_right - active_width > 0)
+            x_list .= this_right - active_width . ","
     }
     x_list := Trim(x_list, ",")
     If (dir == 1)

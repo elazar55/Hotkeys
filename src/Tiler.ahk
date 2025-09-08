@@ -519,7 +519,7 @@ Jump(dir)
             break
         }
     }
-    If (index == x_list.Length())
+    If (index == x_list.Length() && dir == 1)
         index := 0
     Else If (index + dir == 0)
         index := x_list.Length() + 1

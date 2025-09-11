@@ -173,6 +173,7 @@ DockerGUI:
 
     Gui, Add, Button, Default W%width% X8 GAddExe, Add exe
     Gui, Add, Button, Default W%width% X8 GRemoveExe, Remove exe
+    Gui, Add, Button, Default W%width% X8 GOpenTilerINI, Open Tiler INI
 
     Gui, +DelimiterSpace
     Gui, Add, DDL, W%width% Choose1, %stackables%
@@ -194,6 +195,10 @@ Return
 RemoveExe:
     Gui, Submit
     IniDelete, %ini_file%, %exe_name%
+Return
+
+OpenTilerINI:
+    Run, notepad.exe %ini_file%
 Return
 ; ==============================================================================
 ;                                Remove ToolTip

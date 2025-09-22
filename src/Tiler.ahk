@@ -222,7 +222,9 @@ Update(win_id)
     IniRead, top_offset, %ini_file%, %proc_name%, top_offset, %top_offset_default%
     IniRead, min_width, %ini_file%, %proc_name%, min_width, %min_width_default%
 
-    global window_width -= left_offset * 2
+    global window_width  -= left_offset * 2
+    global window_height -= top_offset
+    global pos_x += left_offset
 }
 ; ==============================================================================
 ;                                 Dock Function
@@ -241,22 +243,20 @@ Dock(x, y, width, height, id := "A")
     tooltip_x  := x + left_offset
     ;@AHK++AlignAssignmentOff
 
-    If (win_left == 0)
+    If (x + left_offset == 0)
         tooltip_x := x + width
 
-    ToolTip, % width . "x" . Round(win_height) . "`nx: "
-        . Round(win_left) . " y: " Round(y), tooltip_x, y
+    ToolTip, % width . "x" . height . "`nx: " . x . " y: " y, tooltip_x, y
 
     SetTimer, RemoveTooltip, -1000
 
-    WinMove, %id%, , x, y, width + left_offset * 2, height, ,
+    WinMove, %id%, , x - left_offset, y, width + left_offset * 2, height + top_offset
 }
 ; ==============================================================================
 ;                                  Align Width
 ; ==============================================================================
 AlignWidth(resize)
 {
-    global left_offset
     global alignment
     global min_width
     global screen_width
@@ -283,20 +283,20 @@ Left(direction)
 {
     WinGet, win_id, ID, A
     Update(win_id)
-    ; Resize if the window is already docked to the left.
-    If (pos_x == -left_offset && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
+    win_bot := pos_y + window_height
+
+    If (pos_x == 0 && (pos_y == 0 || win_bot == screen_height))
+    {
         new_width := AlignWidth(direction)
-    ; Otherwise, place it on the left, resize it to the nearest alignment, and
-    ; stretch it vertically if it's over half the screen height.
+    }
     Else
     {
         new_width := AlignWidth(0)
         {
-            window_height := screen_height + top_offset
             pos_y := 0
         }
     }
-    Dock(-left_offset, pos_y, new_width, window_height)
+    Dock(0, pos_y, new_width, window_height)
 }
 DockLeft:
     Left(-1)
@@ -311,17 +311,20 @@ Right(direction)
 {
     WinGet, win_id, ID, A
     Update(win_id)
-    If (pos_x + left_offset == screen_width - window_width && (pos_y == 0 || pos_y + window_height - top_offset == screen_height))
+    win_right := pos_x + window_width
+
+    If (win_right == screen_width && (pos_y + window_height <= screen_height))
+    {
         new_width := AlignWidth(direction)
+    }
     Else
     {
         new_width := AlignWidth(0)
         {
-            window_height := screen_height + top_offset
             pos_y := 0
         }
     }
-    Dock(screen_width - new_width - left_offset, pos_y, new_width, window_height)
+    Dock(screen_width - new_width, pos_y, new_width, window_height)
 }
 DockRight:
     Right(-1)
@@ -337,9 +340,9 @@ DockUp:
     Update(win_id)
 
     If (window_height < screen_height)
-        Dock(pos_x, 0, window_width, screen_height + top_offset)
+        Dock(pos_x, 0, window_width, screen_height)
     Else
-        Dock(pos_x, 0, window_width, (window_height / 2 + top_offset / 2))
+        Dock(pos_x, 0, window_width, (window_height / 2))
 Return
 ; ==============================================================================
 ;                                     Down
@@ -349,9 +352,9 @@ DockDown:
     Update(win_id)
 
     If (window_height < screen_height)
-        Dock(pos_x, 0, window_width, screen_height + top_offset)
+        Dock(pos_x, 0, window_width, screen_height)
     Else
-        Dock(pos_x, screen_height / 2, window_width, (screen_height / 2 + top_offset))
+        Dock(pos_x, screen_height / 2, window_width, (screen_height / 2))
 Return
 ; ==============================================================================
 ;                                   Top-Left
@@ -359,7 +362,7 @@ Return
 #q::
     WinGet, win_id, ID, A
     Update(win_id)
-    Dock(-left_offset, 0, window_width, window_height)
+    Dock(0, 0, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Top-Right
@@ -367,7 +370,7 @@ Return
 #f::
     WinGet, win_id, ID, A
     Update(win_id)
-    Dock(screen_width - window_width - left_offset, 0, window_width, window_height)
+    Dock(screen_width - window_width, 0, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Bottom-Left
@@ -375,7 +378,7 @@ Return
 #z::
     WinGet, win_id, ID, A
     Update(win_id)
-    Dock(-left_offset, screen_height - window_height + top_offset, window_width, window_height)
+    Dock(0, screen_height - window_height, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                   Bottom-Right
@@ -383,7 +386,7 @@ Return
 #c::
     WinGet, win_id, ID, A
     Update(win_id)
-    Dock(screen_width - window_width - left_offset, screen_height - window_height + top_offset, window_width, window_height)
+    Dock(screen_width - window_width, screen_height - window_height, window_width, window_height)
 Return
 ; ==============================================================================
 ;                                 Minimum Size
@@ -403,12 +406,12 @@ MoveAlongGrid(dir)
 
     ;@AHK++AlignAssignmentOn
     cells := screen_width / (window_width / 2) ; alignment or window_width
-    index := (pos_x + left_offset) / (screen_width / cells)
+    index := pos_x / (screen_width / cells)
     ;@AHK++AlignAssignmentOff
 
-    If (window_height - top_offset <= screen_height / 2)
+    If (window_height <= screen_height / 2)
     {
-        window_height := (screen_height / 2) + top_offset
+        window_height := (screen_height / 2)
 
         If (pos_y < screen_height * 0.25)
             pos_y := 0
@@ -418,28 +421,28 @@ MoveAlongGrid(dir)
     Else
     {
         pos_y := 0
-        window_height := screen_height + top_offset
+        window_height := screen_height
     }
 
-    if (pos_x + left_offset >= screen_width - window_width && dir == 1)
+    if (pos_x >= screen_width - window_width && dir == 1)
     {
         index := -1
 
-        If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
+        If (pos_y < screen_height / 2 && window_height <= screen_height / 2)
             pos_y := screen_height / 2
         Else
             pos_y := 0
     }
-    else if (pos_x + left_offset <= 0 && dir == -1)
+    else if (pos_x <= 0 && dir == -1)
     {
         index := cells
 
-        If (pos_y < screen_height / 2 && window_height - top_offset <= screen_height / 2)
+        If (pos_y < screen_height / 2 && window_height <= screen_height / 2)
             pos_y := screen_height / 2
         Else
             pos_y := 0
     }
-    Dock(screen_width * ((Round(index) + dir) / cells) - left_offset, pos_y, window_width, window_height)
+    Dock(screen_width * ((Round(index) + dir) / cells), pos_y, window_width, window_height)
 }
 #x::MoveAlongGrid(1)
 +#x::MoveAlongGrid(-1)
@@ -497,8 +500,8 @@ Jump(dir)
             Continue
 
         Update(id)
-        this_left  := pos_x + left_offset
-        this_right := pos_x + left_offset + window_width
+        this_left  := pos_x
+        this_right := pos_x + window_width
 
         If (this_left < screen_width)
             x_list .= this_left . ","
@@ -518,7 +521,7 @@ Jump(dir)
     index := 0
     For k, v in x_list
     {
-        If (v == pos_x + left_offset)
+        If (v == pos_x)
         {
             index := A_Index
             break
@@ -529,7 +532,7 @@ Jump(dir)
     Else If (index + dir == 0)
         index := x_list.Length() + 1
 
-    Dock(x_list[index + dir] - left_offset, pos_y, window_width, window_height)
+    Dock(x_list[index + dir], pos_y, window_width, window_height)
     Return
 }
 #VKE2::Jump(1)
@@ -546,8 +549,8 @@ TileWindows:
     columns    := Ceil(win_count / _rows)
     slots      := _rows * columns
     carry      := slots - win_count
-    win_width  := (screen_width / columns) + (left_offset * 2)
-    win_height := (screen_height / _rows) + (top_offset)
+    win_width  := (screen_width / columns)
+    win_height := (screen_height / _rows)
     ; @AHK++AlignAssignmentOff
     Loop, %win_count%
     {
@@ -557,11 +560,11 @@ TileWindows:
         x_index := Floor((A_Index - 1) / _rows)
         y_index := Mod(A_Index - 1, _rows)
         x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
-        y_pos   := (win_height - top_offset) * y_index
+        y_pos   := (win_height) * y_index
         ; @AHK++AlignAssignmentOff
 
         If (carry && A_Index = win_count)
-            win_height := ((screen_height / _rows) * (carry + 1)) + (top_offset)
+            win_height := ((screen_height / _rows) * (carry + 1))
 
         WinActivate, ahk_id %id%
         Dock(x_pos, y_pos, win_width - left_offset * 2, win_height, "ahk_id" . " " . id)
@@ -575,24 +578,22 @@ GridWindows:
 #g::
     WinGet, win_count, List, ahk_group stackables, ,
 
-    ; @AHK++AlignAssignmentOna
-    win_width  := (screen_width / cols) + (left_offset * 2)
-    win_height := (screen_height / rows) + (top_offset)
-    ; @AHK++AlignAssignmentOff
+    win_width  := screen_width / cols
+    win_height := screen_height / rows
 
     Loop, %win_count%
     {
         ; @AHK++AlignAssignmentOn
-        Update(id)
         id      := win_count%A_Index%
+        Update(id)
         x_index := Floor((A_Index - 1) / rows)
         y_index := Mod(A_Index - 1, rows)
-        x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
-        y_pos   := (win_height - top_offset) * y_index
+        x_pos   := win_width * x_index
+        y_pos   := win_height * y_index
         ; @AHK++AlignAssignmentOffa
 
         WinActivate, ahk_id %id%
-        Dock(x_pos, y_pos, win_width - left_offset * 2, win_height)
+        Dock(x_pos, y_pos, win_width, win_height)
         Send, ^{NumpadAdd} ; Size columns to fit.
     }
 Return

@@ -145,7 +145,7 @@ Return
 #+t::
 Opacity:
     WinGet, trans_value, Transparent, A, , ,
-    trans_step := 255 / 4
+    trans_step := 255 / 2
     trans_value := Round(trans_value) + Round(trans_step)
 
     If (trans_value >= 255)

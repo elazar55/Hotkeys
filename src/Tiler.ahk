@@ -285,17 +285,31 @@ Left(direction)
     Update(win_id)
     win_bot := pos_y + window_height
 
-    If (pos_x == 0 && (pos_y == 0 || win_bot == screen_height))
+    If (window_height > screen_height / 2)
+    {
+        window_height := screen_height
+        pos_y         := 0
+    }
+    Else If (pos_y >= screen_height / 2)
+    {
+        window_height := screen_height / 2
+        pos_y         := screen_height / 2
+    }
+    Else
+    {
+        window_height := screen_height / 2
+        pos_y         := 0
+    }
+
+    If (pos_x == 0)
     {
         new_width := AlignWidth(direction)
     }
     Else
     {
         new_width := AlignWidth(0)
-        {
-            pos_y := 0
-        }
     }
+
     Dock(0, pos_y, new_width, window_height)
 }
 DockLeft:

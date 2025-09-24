@@ -277,13 +277,12 @@ AlignWidth(resize)
     Return new_width
 }
 ; ==============================================================================
-;                                     Left
+;                                  CheckHeight
 ; ==============================================================================
-Left(direction)
+CheckHeight()
 {
     WinGet, win_id, ID, A
     Update(win_id)
-    win_bot := pos_y + window_height
 
     If (window_height > screen_height / 2)
     {
@@ -300,15 +299,18 @@ Left(direction)
         window_height := screen_height / 2
         pos_y         := 0
     }
+}
+; ==============================================================================
+;                                     Left
+; ==============================================================================
+Left(direction)
+{
+    CheckHeight()
 
     If (pos_x == 0)
-    {
         new_width := AlignWidth(direction)
-    }
     Else
-    {
         new_width := AlignWidth(0)
-    }
 
     Dock(0, pos_y, new_width, window_height)
 }
@@ -323,21 +325,15 @@ Return
 ; ==============================================================================
 Right(direction)
 {
-    WinGet, win_id, ID, A
-    Update(win_id)
     win_right := pos_x + window_width
 
-    If (win_right == screen_width && (pos_y + window_height <= screen_height))
-    {
+    CheckHeight()
+
+    If (win_right == screen_width)
         new_width := AlignWidth(direction)
-    }
     Else
-    {
         new_width := AlignWidth(0)
-        {
-            pos_y := 0
-        }
-    }
+
     Dock(screen_width - new_width, pos_y, new_width, window_height)
 }
 DockRight:

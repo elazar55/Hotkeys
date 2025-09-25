@@ -87,6 +87,20 @@ ReadConfig(ini_file)
     Hotkey, +%dock_right%, DockRightReverse
 }
 ; ==============================================================================
+;                               INI Read Default
+; ==============================================================================
+IniReadDefault(ini_file, section, key, default)
+{
+    IniRead, output, %ini_file%, %section%, %key%
+
+    If (output == "ERROR")
+    {
+        IniWrite, %default%, %ini_file%, %section%, %key%
+        Return %default%
+    }
+    Return output
+}
+; ==============================================================================
 ;                                 Write Config
 ; ==============================================================================
 WriteConfig()

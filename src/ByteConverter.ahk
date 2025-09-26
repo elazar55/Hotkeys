@@ -60,76 +60,74 @@ Return
 ; ==============================================================================
 Bit:
     Gui, Submit, NoHide
-    GuiControl, , k_bit, % b_bit / 1024
-    GuiControl, , m_bit, % b_bit / 1024 ** 2
-    GuiControl, , g_bit, % b_bit / 1024 ** 3
+    GuiControl, , k_bit, % TrimNumber(b_bit / 1024)
+    GuiControl, , m_bit, % TrimNumber(b_bit / 1024 ** 2)
+    GuiControl, , g_bit, % TrimNumber(b_bit / 1024 ** 3)
 
-    GuiControl, , b_byte, % (b_bit / 8)
-    GuiControl, , k_byte, % (b_bit / 8) / 1024
-    GuiControl, , m_byte, % (b_bit / 8) / 1024 ** 2
-    GuiControl, , g_byte, % (b_bit / 8) / 1024 ** 3
+    GuiControl, , b_byte, % TrimNumber(b_bit / 8)
+    GuiControl, , k_byte, % TrimNumber(b_bit / 8 / 1024)
+    GuiControl, , m_byte, % TrimNumber(b_bit / 8 / 1024 ** 2)
+    GuiControl, , g_byte, % TrimNumber(b_bit / 8 / 1024 ** 3)
 Return
 KBit:
     Gui, Submit, NoHide
-    GuiControl, , b_bit, % k_bit * 1024
-    GuiControl, , m_bit, % k_bit / 1024
-    GuiControl, , g_bit, % k_bit / 1024 ** 2
+    GuiControl, , b_bit, % TrimNumber(k_bit * 1024)
+    GuiControl, , m_bit, % TrimNumber(k_bit / 1024)
+    GuiControl, , g_bit, % TrimNumber(k_bit / 1024 ** 2)
 
-    GuiControl, , b_byte, % (k_bit / 8) * 1024
-    GuiControl, , k_byte, % (k_bit / 8)
-    GuiControl, , m_byte, % (k_bit / 8) / 1024
-    GuiControl, , g_byte, % (k_bit / 8) / 1024 ** 2
-Return
+    GuiControl, , b_byte, % TrimNumber(k_bit / 8 * 1024)
+    GuiControl, , k_byte, % TrimNumber(k_bit / 8)
+    GuiControl, , m_byte, % TrimNumber(k_bit / 8 / 1024)
+    GuiControl, , g_byte, % TrimNumber(k_bit / 8 / 1024 ** 2)
 Return
 MBit:
-Return
 Return
 GBit:
 Return
 
 Byte:
     Gui, Submit, NoHide
-    GuiControl, , b_bit, % (b_byte * 8)
-    GuiControl, , k_bit, % (b_byte * 8) / 1024
-    GuiControl, , m_bit, % (b_byte * 8) / 1024 ** 2
-    GuiControl, , g_bit, % (b_byte * 8) / 1024 ** 3
+    GuiControl, , b_bit, % TrimNumber(b_byte * 8)
+    GuiControl, , k_bit, % TrimNumber(b_byte * 8 / 1024)
+    GuiControl, , m_bit, % TrimNumber(b_byte * 8 / 1024 ** 2)
+    GuiControl, , g_bit, % TrimNumber(b_byte * 8 / 1024 ** 3)
 
-    GuiControl, , k_byte, % ((b_byte / 1024 ** 1))
-    GuiControl, , m_byte, % ((b_byte / 1024 ** 2))
-    GuiControl, , g_byte, % ((b_byte / 1024 ** 3))
+    GuiControl, , k_byte, % TrimNumber(b_byte / 1024)
+    GuiControl, , m_byte, % TrimNumber(b_byte / 1024 ** 2)
+    GuiControl, , g_byte, % TrimNumber(b_byte / 1024 ** 3)
 Return
 KByte:
     Gui, Submit, NoHide
-    GuiControl, , b_bit, % (k_byte * 8) * 1024
-    GuiControl, , k_bit, % (k_byte * 8)
-    GuiControl, , m_bit, % (k_byte * 8) / 1024
-    GuiControl, , g_bit, % (k_byte * 8) / 1024 ** 2
+    GuiControl, , b_bit, % TrimNumber(k_byte * 8 * 1024)
+    GuiControl, , k_bit, % TrimNumber(k_byte * 8)
+    GuiControl, , m_bit, % TrimNumber(k_byte * 8 / 1024)
+    GuiControl, , g_bit, % TrimNumber(k_byte * 8 / 1024 ** 2)
 
-    GuiControl, , b_byte, % ((k_byte * 1024 ** 1))
-    GuiControl, , m_byte, % ((k_byte / 1024 ** 1))
-    GuiControl, , g_byte, % ((k_byte / 1024 ** 2))
+    GuiControl, , b_byte, % TrimNumber(k_byte * 1024)
+    GuiControl, , m_byte, % TrimNumber(k_byte / 1024)
+    GuiControl, , g_byte, % TrimNumber(k_byte / 1024 ** 2)
 Return
 MByte:
     Gui, Submit, NoHide
-    GuiControl, , b_bit, % (m_byte * 8) * 1024 ** 2
-    GuiControl, , k_bit, % (m_byte * 8) * 1024
-    GuiControl, , m_bit, % (m_byte * 8)
-    GuiControl, , g_bit, % (m_byte * 8) / 1024
+    GuiControl, , b_bit, % TrimNumber(m_byte * 8 * 1024 ** 2)
+    GuiControl, , k_bit, % TrimNumber(m_byte * 8 * 1024)
+    GuiControl, , m_bit, % TrimNumber(m_byte * 8)
+    GuiControl, , g_bit, % TrimNumber(m_byte * 8 / 1024)
 
-    GuiControl, , b_byte, % ((m_byte * 1024 ** 2))
-    GuiControl, , k_byte, % ((m_byte * 1024 ** 1))
-    GuiControl, , g_byte, % ((m_byte / 1024 ** 1))
+    GuiControl, , b_byte, % TrimNumber(m_byte * 1024 ** 2)
+    GuiControl, , k_byte, % TrimNumber(m_byte * 1024)
+    GuiControl, , g_byte, % TrimNumber(m_byte / 1024)
 Return
 GByte:
     Gui, Submit, NoHide
-    GuiControl, , b_bit, % (g_byte * 8) * 1024 ** 3
-    GuiControl, , k_bit, % (g_byte * 8) * 1024 ** 2
-    GuiControl, , m_bit, % (g_byte * 8) * 1024
-    GuiControl, , g_bit, % (g_byte * 8)
+    GuiControl, , b_bit, % TrimNumber(g_byte * 8 * 1024 ** 3)
+    GuiControl, , k_bit, % TrimNumber(g_byte * 8 * 1024 ** 2)
+    GuiControl, , m_bit, % TrimNumber(g_byte * 8 * 1024)
+    GuiControl, , g_bit, % TrimNumber(g_byte * 8)
 
-    GuiControl, , b_byte, % ((g_byte * 1024 ** 3))
-    GuiControl, , k_byte, % ((g_byte * 1024 ** 2))
-    GuiControl, , m_byte, % ((g_byte * 1024 ** 1))
+    GuiControl, , b_byte, % TrimNumber(g_byte * 1024 ** 3)
+    GuiControl, , k_byte, % TrimNumber(g_byte * 1024 ** 2)
+    GuiControl, , m_byte, % TrimNumber(g_byte * 1024)
 Return
 Clear:
     GuiControl, , b_byte,

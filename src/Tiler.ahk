@@ -41,9 +41,6 @@ Return
 ; ==============================================================================
 Init()
 {
-    If (!FileExist(ini_file))
-        WriteConfig()
-
     ReadConfig(ini_file)
     factors := FactorizeAlignment()
 
@@ -59,24 +56,24 @@ Init()
 ; ==============================================================================
 ReadConfig(ini_file)
 {
-    IniRead, alignment, %ini_file%, settings, alignment, %alignment%
 
     SysGet, mon, MonitorWorkArea
-    IniRead, screen_width, %ini_file%, settings, screen_width, %monRight%
-    IniRead, screen_height, %ini_file%, settings, screen_height, %monBottom%
+    screen_width := IniReadOrCreate(ini_file, "settings", "screen_width", monRight)
+    screen_height := IniReadOrCreate(ini_file, "settings", "screen_height", monBottom)
+    alignment := IniReadOrCreate(ini_file, "settings", "alignment", alignment)
 
-    IniRead, left_offset, %ini_file%, settings, left_offset, %left_offset%
-    IniRead, top_offset, %ini_file%, settings, top_offset, %top_offset%
-    IniRead, min_width, %ini_file%, settings, min_width, %min_width%
+    left_offset := IniReadOrCreate(ini_file, "settings", "left_offset", left_offset)
+    top_offset := IniReadOrCreate(ini_file, "settings", "top_offset", top_offset)
+    min_width := IniReadOrCreate(ini_file, "settings", "min_width", min_width)
 
-    IniRead, dock_left, %ini_file%, settings, dock_left, #a
-    IniRead, dock_right, %ini_file%, settings, dock_right, #s
-    IniRead, dock_up, %ini_file%, settings, dock_up, #w
-    IniRead, dock_down, %ini_file%, settings, dock_down, #r
+    dock_left := IniReadOrCreate(ini_file, "settings", "dock_left", dock_left)
+    dock_right := IniReadOrCreate(ini_file, "settings", "dock_right", dock_right)
+    dock_up := IniReadOrCreate(ini_file, "settings", "dock_up", dock_up)
+    dock_down := IniReadOrCreate(ini_file, "settings", "dock_down", dock_down)
 
-    IniRead, rows, %ini_file%, settings, rows
-    IniRead, cols, %ini_file%, settings, cols
-    IniRead, stackables, %ini_file%, settings, stackables
+    rows := IniReadOrCreate(ini_file, "settings", "rows", rows)
+    cols := IniReadOrCreate(ini_file, "settings", "cols", cols)
+    stackables := IniReadOrCreate(ini_file, "settings", "stackables", stackables)
 
     Hotkey, IfWinActive
     Hotkey, %dock_left%, DockLeft
@@ -89,7 +86,7 @@ ReadConfig(ini_file)
 ; ==============================================================================
 ;                               INI Read Default
 ; ==============================================================================
-IniReadDefault(ini_file, section, key, default)
+IniReadOrCreate(ini_file, section, key, default)
 {
     IniRead, output, %ini_file%, %section%, %key%
 
@@ -107,21 +104,8 @@ WriteConfig()
 {
     Gui, Submit
     IniWrite, %alignment%, %ini_file%, settings, alignment
-    IniWrite, %screen_width%, %ini_file%, settings, screen_width
-    IniWrite, %screen_height%, %ini_file%, settings, screen_height
-
-    IniWrite, %left_offset%, %ini_file%, settings, left_offset
-    IniWrite, %top_offset%, %ini_file%, settings, top_offset
-    IniWrite, %min_width%, %ini_file%, settings, min_width
-
-    IniWrite, %dock_left%, %ini_file%, settings, dock_left
-    IniWrite, %dock_right%, %ini_file%, settings, dock_right
-    IniWrite, %dock_up%, %ini_file%, settings, dock_up
-    IniWrite, %dock_down%, %ini_file%, settings, dock_down
-
     IniWrite, %rows%, %ini_file%, settings, rows
     IniWrite, %cols%, %ini_file%, settings, cols
-    IniWrite, %stackables%, %ini_file%, settings, stackables
 }
 ; ==============================================================================
 ;                              FactorizeAlignment

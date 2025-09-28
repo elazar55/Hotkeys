@@ -143,7 +143,6 @@ Return
 ;                                 Opacity
 ; ==============================================================================
 #+t::
-Opacity:
     WinGet, trans_value, Transparent, A, , ,
     trans_step := 255 / 2
     trans_value := Round(trans_value) + Round(trans_step)

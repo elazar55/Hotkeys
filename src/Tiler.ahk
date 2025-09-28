@@ -58,22 +58,21 @@ ReadConfig(ini_file)
 {
 
     SysGet, mon, MonitorWorkArea
-    screen_width := IniReadOrCreate(ini_file, "settings", "screen_width", monRight)
+    ; @AHK++AlignAssignmentOn
+    screen_width  := IniReadOrCreate(ini_file, "settings", "screen_width", monRight)
     screen_height := IniReadOrCreate(ini_file, "settings", "screen_height", monBottom)
-    alignment := IniReadOrCreate(ini_file, "settings", "alignment", alignment)
-
-    left_offset := IniReadOrCreate(ini_file, "settings", "left_offset", left_offset)
-    top_offset := IniReadOrCreate(ini_file, "settings", "top_offset", top_offset)
-    min_width := IniReadOrCreate(ini_file, "settings", "min_width", min_width)
-
-    dock_left := IniReadOrCreate(ini_file, "settings", "dock_left", dock_left)
-    dock_right := IniReadOrCreate(ini_file, "settings", "dock_right", dock_right)
-    dock_up := IniReadOrCreate(ini_file, "settings", "dock_up", dock_up)
-    dock_down := IniReadOrCreate(ini_file, "settings", "dock_down", dock_down)
-
-    rows := IniReadOrCreate(ini_file, "settings", "rows", rows)
-    cols := IniReadOrCreate(ini_file, "settings", "cols", cols)
-    stackables := IniReadOrCreate(ini_file, "settings", "stackables", stackables)
+    alignment     := IniReadOrCreate(ini_file, "settings", "alignment", alignment)
+    left_offset   := IniReadOrCreate(ini_file, "settings", "left_offset", left_offset)
+    top_offset    := IniReadOrCreate(ini_file, "settings", "top_offset", top_offset)
+    min_width     := IniReadOrCreate(ini_file, "settings", "min_width", min_width)
+    dock_left     := IniReadOrCreate(ini_file, "settings", "dock_left", dock_left)
+    dock_right    := IniReadOrCreate(ini_file, "settings", "dock_right", dock_right)
+    dock_up       := IniReadOrCreate(ini_file, "settings", "dock_up", dock_up)
+    dock_down     := IniReadOrCreate(ini_file, "settings", "dock_down", dock_down)
+    rows          := IniReadOrCreate(ini_file, "settings", "rows", rows)
+    cols          := IniReadOrCreate(ini_file, "settings", "cols", cols)
+    stackables    := IniReadOrCreate(ini_file, "settings", "stackables", stackables)
+    ; @AHK++AlignAssignmentOff
 
     Hotkey, IfWinActive
     Hotkey, %dock_left%, DockLeft
@@ -84,7 +83,7 @@ ReadConfig(ini_file)
     Hotkey, +%dock_right%, DockRightReverse
 }
 ; ==============================================================================
-;                               INI Read Default
+;                               IniReadOrCreate
 ; ==============================================================================
 IniReadOrCreate(ini_file, section, key, default)
 {
@@ -222,7 +221,7 @@ Update(win_id)
 
     global window_width  -= left_offset * 2
     global window_height -= top_offset
-    global pos_x += left_offset
+    global pos_x         += left_offset
 }
 ; ==============================================================================
 ;                                 Dock Function
@@ -234,8 +233,6 @@ Dock(x, y, width, height, id := "A")
         WinRestore, %id%
 
     ;@AHK++AlignAssignmentOn
-    global left_offset
-    global top_offset
     win_left   := x + left_offset
     win_height := height - top_offset
     tooltip_x  := x + left_offset
@@ -245,7 +242,6 @@ Dock(x, y, width, height, id := "A")
         tooltip_x := x + width
 
     ToolTip, % width . "x" . height . "`nx: " . x . " y: " y, tooltip_x, y
-
     SetTimer, RemoveTooltip, -1000
 
     WinMove, %id%, , x - left_offset, y, width + left_offset * 2, height + top_offset
@@ -255,10 +251,6 @@ Dock(x, y, width, height, id := "A")
 ; ==============================================================================
 AlignWidth(resize)
 {
-    global alignment
-    global min_width
-    global screen_width
-
     ; Undersize left
     If (window_width == min_width && resize < 0)
         new_width := screen_width
@@ -323,9 +315,8 @@ Return
 ; ==============================================================================
 Right(direction)
 {
-    win_right := pos_x + window_width
-
     CheckHeight()
+    win_right := pos_x + window_width
 
     If (win_right == screen_width)
         new_width := AlignWidth(direction)

@@ -553,20 +553,20 @@ TileWindows:
     ; @AHK++AlignAssignmentOff
     Loop, %win_count%
     {
-        Update(id)
         ; @AHK++AlignAssignmentOn
         id      := win_count%A_Index%
+        Update(id)
         x_index := Floor((A_Index - 1) / _rows)
         y_index := Mod(A_Index - 1, _rows)
-        x_pos   := ((win_width - left_offset * 2) * x_index) - left_offset
-        y_pos   := (win_height) * y_index
+        x_pos   := win_width * x_index
+        y_pos   := win_height * y_index
         ; @AHK++AlignAssignmentOff
 
         If (carry && A_Index = win_count)
             win_height := ((screen_height / _rows) * (carry + 1))
 
         WinActivate, ahk_id %id%
-        Dock(x_pos, y_pos, win_width - left_offset * 2, win_height, "ahk_id" . " " . id)
+        Dock(x_pos, y_pos, win_width, win_height, "ahk_id" . " " . id)
     }
 
 Return

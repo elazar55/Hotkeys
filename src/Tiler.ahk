@@ -13,9 +13,10 @@
 ; Defaults
 global screen_width  := 1920
 global screen_height := 1050
+global alignment     := 80
 global left_offset   := 3
 global top_offset    := 3
-global alignment     := 80
+global min_width     := 320
 global dock_left     := "#a"
 global dock_right    := "#s"
 global dock_up       := "#w"
@@ -23,9 +24,7 @@ global dock_down     := "#r"
 global rows          := 2
 global cols          := 3
 global ini_file      := "tiler.ini"
-global min_width     := 320
-global factors       :=
-global stackables    :=
+global grid_windows  :=
 ; Window attributes
 global pos_x         :=
 global pos_y         :=
@@ -45,9 +44,9 @@ Init()
     factors := FactorizeAlignment()
 
     SetTitleMatchMode Regex
-    Loop, Parse, stackables, %A_Space%
+    Loop, Parse, grid_windows, %A_Space%
     {
-        GroupAdd, stackables, ahk_class %A_LoopField%
+        GroupAdd, grid_windows, ahk_class %A_LoopField%
     }
     SetTitleMatchMode 1
 }
@@ -56,7 +55,6 @@ Init()
 ; ==============================================================================
 ReadConfig(ini_file)
 {
-
     SysGet, mon, MonitorWorkArea
     ; @AHK++AlignAssignmentOn
     screen_width  := IniReadOrCreate(ini_file, "settings", "screen_width", monRight)
@@ -71,7 +69,7 @@ ReadConfig(ini_file)
     dock_down     := IniReadOrCreate(ini_file, "settings", "dock_down", dock_down)
     rows          := IniReadOrCreate(ini_file, "settings", "rows", rows)
     cols          := IniReadOrCreate(ini_file, "settings", "cols", cols)
-    stackables    := IniReadOrCreate(ini_file, "settings", "stackables", stackables)
+    grid_windows  := IniReadOrCreate(ini_file, "settings", "grid_windows", grid_windows)
     ; @AHK++AlignAssignmentOff
 
     Hotkey, IfWinActive
@@ -143,13 +141,10 @@ DockerGUI:
     idx := FindIndex()
     Gui, Add, DDL, W%width% Valignment Choose%idx%, %factors%
     Gui, Add, Text, % "XP+" . width + padding . " YP+4", Alignment
-
     Gui, Add, Edit, W%width% Vrows X8, %rows%
     Gui, Add, Text, % "XP+" . width + padding . " YP+4", Rows
-
     Gui, Add, Edit, W%width% Vcols X8, %cols%
     Gui, Add, Text, % "XP+" . width + padding . " YP+4", Columns
-
     Gui, Add, Button, Default W%width% X8 GWriteConfig, Submit
 
     WinGet, exe_name, ProcessName, A

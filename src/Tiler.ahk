@@ -41,7 +41,6 @@ Return
 Init()
 {
     ReadConfig(ini_file)
-    factors := FactorizeAlignment()
 
     SetTitleMatchMode Regex
     Loop, Parse, grid_windows, %A_Space%
@@ -105,18 +104,18 @@ WriteConfig()
     IniWrite, %cols%, %ini_file%, settings, cols
 }
 ; ==============================================================================
-;                              FactorizeAlignment
+;                              Factorize
 ; ==============================================================================
-FactorizeAlignment()
+Factorize(number)
 {
     factors := 0
     Loop
     {
-        If (Mod(screen_width, A_Index) == 0)
+        If (Mod(number, A_Index) == 0)
         {
-            factors .= "|" . A_Index . "|" . Round(screen_width / A_Index)
+            factors .= "|" . A_Index . "|" . Round(number / A_Index)
         }
-    } Until A_Index >= Sqrt(screen_width)
+    } Until A_Index >= Sqrt(number)
 
     Sort, factors, D| N
     Return factors
@@ -124,10 +123,10 @@ FactorizeAlignment()
 ; ==============================================================================
 ;                                   FindIndex
 ; ==============================================================================
-FindIndex()
+FindIndex(number_list, value)
 {
-    Loop, Parse, factors, |
-        If (alignment == A_LoopField)
+    Loop, Parse, number_list, |
+        If (value == A_LoopField)
             Return A_Index
 }
 ; ==============================================================================
@@ -135,11 +134,12 @@ FindIndex()
 ; ==============================================================================
 DockerGUI:
     Gui, Destroy
-    width := 100
-    padding := 4
+    width                := 100
+    padding              := 4
+    screen_width_factors := Factorize(screen_width)
+    alignment_index      := FindIndex(screen_width_factors, alignment)
 
-    idx := FindIndex()
-    Gui, Add, DDL, W%width% Valignment Choose%idx%, %factors%
+    Gui, Add, DDL, W%width% Valignment Choose%alignment_index%, %screen_width_factors%
     Gui, Add, Text, % "XP+" . width + padding . " YP+4", Alignment
     Gui, Add, Edit, W%width% Vrows X8, %rows%
     Gui, Add, Text, % "XP+" . width + padding . " YP+4", Rows
@@ -168,8 +168,8 @@ DockerGUI:
     Gui, Add, Button, Default W%width% X8 GOpenTilerINI, Open Tiler INI
 
     Gui, +DelimiterSpace
-    Gui, Add, DDL, W%width% Choose1, %stackables%
-    Gui, Add, Text, % "XP+" . width + padding . " YP+4", Stackables
+    Gui, Add, DDL, W%width% Choose1, %grid_windows%
+    Gui, Add, Text, % "XP+" . width + padding . " YP+4", grid_windows
 
     Gui, Show
 Return
@@ -247,7 +247,7 @@ Dock(x, y, width, height, id := "A")
 AlignWidth(resize)
 {
     ; Undersize left
-    If (window_width == min_width && resize < 0)
+    If (window_width <= min_width && resize < 0)
         new_width := screen_width
     ; Undersize right
     Else If (window_width - alignment < min_width && resize < 0)
@@ -536,7 +536,7 @@ Jump(dir)
 ; ==============================================================================
 TileWindows:
 #t::
-    WinGet, win_count, List, ahk_group stackables, ,
+    WinGet, win_count, List, ahk_group grid_windows, ,
 
     ; @AHK++AlignAssignmentOn
     _rows      := Min(Ceil(win_count / 2), rows)
@@ -570,7 +570,7 @@ Return
 ; ==============================================================================
 GridWindows:
 #g::
-    WinGet, win_count, List, ahk_group stackables, ,
+    WinGet, win_count, List, ahk_group grid_windows, ,
 
     win_width  := screen_width / cols
     win_height := screen_height / rows

@@ -69,8 +69,9 @@ Return
 isDirectoryActive()
 {
     ControlGetFocus, active_ctrl, A
-    If (active_ctrl == "wxWindow13"
-        || active_ctrl == "DirectUIHWND3")
+    If    (active_ctrl == "wxWindow13"
+        || active_ctrl == "DirectUIHWND3"
+        || active_ctrl == "SysListView321")
     {
         Return true
     }

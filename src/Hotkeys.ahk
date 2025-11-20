@@ -59,7 +59,10 @@ Return
 ~^v::
 ~Enter Up::
 ~Delete Up::
-~BackSpace Up::Send, {Blind}^{NumpadAdd}
+~BackSpace Up::
+    KeyWait % Trim(A_ThisHotkey, "~^")
+    Send, {Blind}^{NumpadAdd}
+Return
 
 ~LButton Up::
     If (A_PriorHotkey == "~LButton Up" && A_TimeSincePriorHotkey < 500)

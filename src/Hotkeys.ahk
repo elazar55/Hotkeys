@@ -60,13 +60,16 @@ Return
 ~Enter Up::
 ~Delete Up::
 ~BackSpace Up::
-    KeyWait % Trim(A_ThisHotkey, "~^")
+    Sleep, 200
     Send, {Blind}^{NumpadAdd}
 Return
 
 ~LButton Up::
     If (A_PriorHotkey == "~LButton Up" && A_TimeSincePriorHotkey < 500)
+    {
+        Sleep, 200
         Send, {Blind}^{NumpadAdd}
+    }
 Return
 
 isDirectoryActive()

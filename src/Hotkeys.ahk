@@ -56,19 +56,16 @@ Return
 ; ==============================================================================
 #If isDirectoryActive()
 
-~^v::
-~Enter Up::
-~Delete Up::
-~BackSpace Up::
-    Sleep, 200
-    Send, {Blind}^{NumpadAdd}
-Return
-
 ~LButton Up::
     If (A_PriorHotkey == "~LButton Up" && A_TimeSincePriorHotkey < 500)
     {
-        Sleep, 200
+        ~^v Up::
+        ~Enter Up::
+        ~Delete Up::
+        ~BackSpace Up::
+        Sleep, 50
         Send, {Blind}^{NumpadAdd}
+        Return
     }
 Return
 

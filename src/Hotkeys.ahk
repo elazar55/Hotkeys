@@ -74,6 +74,7 @@ isDirectoryActive()
     ControlGetFocus, active_ctrl, A
     If    (active_ctrl == "wxWindow13"
         || active_ctrl == "DirectUIHWND3"
+        || active_ctrl == "SysListView325"
         || active_ctrl == "PhTreeNew1"
         || active_ctrl == "SysListView321")
     {
@@ -158,4 +159,22 @@ Return
     WinSet, Transparent, % trans_value, A, , ,
     ToolTip, %trans_value%
     SetTimer, RemoveTooltip, -1000
+Return
+; ==============================================================================
+;                                   Surround
+; ==============================================================================
+#IfWinNotActive, ahk_exe Code.exe
+
+^+9::SurroundWith("(", ")")
+^+'::SurroundWith("""", """")
+
+SurroundWith(char_left, char_right)
+{
+    clip_backup := Clipboard
+    Clipboard   := ""
+
+    Send, ^c
+    Clipboard := char_left . Clipboard . char_right
+    Send, ^v{Left}
+}
 Return

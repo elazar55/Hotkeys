@@ -32,7 +32,7 @@ ByteConverter:
     Gui, Add, Text, XP+%x_offset%, KB
 
     Gui, Add, Button, gKBit XP+24, Go
-    Gui, Add, Edit, vk_bit  w%width% XP+28
+    Gui, Add, Edit, vk_bit w%width% XP+28
     Gui, Add, Text, XP+%x_offset%, Kb
 
     Gui, Add, Button, gMByte X10, Go

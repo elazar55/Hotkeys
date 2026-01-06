@@ -160,21 +160,3 @@ Return
     ToolTip, %trans_value%
     SetTimer, RemoveTooltip, -1000
 Return
-; ==============================================================================
-;                                   Surround
-; ==============================================================================
-#IfWinNotActive, ahk_exe Code.exe
-
-^+9::SurroundWith("(", ")")
-^+'::SurroundWith("""", """")
-
-SurroundWith(char_left, char_right)
-{
-    clip_backup := Clipboard
-    Clipboard   := ""
-
-    Send, ^c
-    Clipboard := char_left . Clipboard . char_right
-    Send, ^v{Left}
-}
-Return

@@ -74,9 +74,9 @@ isDirectoryActive()
     ControlGetFocus, active_ctrl, A
     If    (active_ctrl == "wxWindow13"
         || active_ctrl == "DirectUIHWND3"
+        || active_ctrl == "TEasyListview1"
         || active_ctrl == "SysListView325"
-        || active_ctrl == "PhTreeNew1"
-        || active_ctrl == "SysListView321")
+        || active_ctrl == "PhTreeNew1")
     {
         Return true
     }
@@ -132,20 +132,6 @@ Return
 #^r:: MouseMove, 0, 1, , R
 ; #If
 ; ==============================================================================
-;                                 Double Quotes
-; ==============================================================================
-DoubleQuotes:
-    Send, ^c
-    If (InStr(Clipboard, """"""))
-        Clipboard := StrReplace(Clipboard, """""", """")
-    Else
-        Clipboard := StrReplace(Clipboard, """", """""")
-
-    ; msgbox % Clipboard
-    Send, ^v
-    Beep(1200, 25)
-Return
-; ==============================================================================
 ;                                 Opacity
 ; ==============================================================================
 #+t::
@@ -159,4 +145,23 @@ Return
     WinSet, Transparent, % trans_value, A, , ,
     ToolTip, %trans_value%
     SetTimer, RemoveTooltip, -1000
+Return
+; ==============================================================================
+;                                   Surround
+; ==============================================================================
+#IfWinNotActive, ahk_exe Code.exe
+
+^+'::SurroundWith("""", """")
+^+9::SurroundWith("(", ")")
+$^+[::SurroundWith("[", "]")
+
+SurroundWith(char_left, char_right)
+{
+    clip_backup := Clipboard
+    Clipboard   := ""
+
+    Send, ^c
+    Clipboard := char_left . Clipboard . char_right
+    Send, ^v{Left}
+}
 Return

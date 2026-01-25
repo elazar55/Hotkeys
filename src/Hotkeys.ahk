@@ -154,14 +154,23 @@ Return
 ^+'::SurroundWith("""", """")
 ^+9::SurroundWith("(", ")")
 $^+[::SurroundWith("[", "]")
+$^+8::SurroundWith("*", "*")
 
 SurroundWith(char_left, char_right)
 {
-    clip_backup := Clipboard
-    Clipboard   := ""
+    ;@AHK++AlignAssignmentOn
+    clip_backup  := Clipboard
+    Clipboard    :=
+    milliseconds := 50
+    ;@AHK++AlignAssignmentOff
 
     Send, ^c
+    ClipWait, % milliseconds / 1000
+
     Clipboard := char_left . Clipboard . char_right
-    Send, ^v{Left}
+    Send, ^v
+    Clipboard := clip_backup
+
+    Beep(1200, 25)
 }
 Return

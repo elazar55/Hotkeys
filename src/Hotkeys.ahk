@@ -164,13 +164,11 @@ SurroundWith(char_left, char_right)
     milliseconds := 50
     ;@AHK++AlignAssignmentOff
 
+    Beep(1288, 25)
     Send, ^c
     ClipWait, % milliseconds / 1000
 
     Clipboard := char_left . Clipboard . char_right
-    Send, ^v
+    Send, ^v{Left}
     Clipboard := clip_backup
-
-    Beep(1200, 25)
 }
-Return

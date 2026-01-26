@@ -239,7 +239,15 @@ Dock(x, y, width, height, id := "A")
     ToolTip, % width . "x" . height . "`nx: " . x . " y: " y, tooltip_x, y
     SetTimer, RemoveTooltip, -1000
 
-    WinMove, %id%, , x - left_offset, y, width + left_offset * 2, height + top_offset
+    ; WinMove, %id%, , x - left_offset, y, width + left_offset * 2, height + top_offset
+    hwnd := WinExist(id)
+    DllCall("MoveWindow"
+        , "Ptr", hwnd
+        , "Int", x -  left_offset
+        , "Int", y
+        , "Int", width + left_offset * 2
+        , "Int", height + top_offset
+        , "Int", true)
 }
 ; ==============================================================================
 ;                                  Align Width

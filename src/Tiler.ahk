@@ -249,6 +249,26 @@ Dock(x, y, width, height, id := "A")
         , "Int", height + top_offset
         , "Int", true)
 }
+; ==========================================================================================
+; Function    : MoveWindow (via DllCall)
+; Description : Positions and resizes the specified window, incorporating offsets
+;              to account for invisible borders or custom padding.
+;
+; Parameters:
+;   hWnd          - [Ptr]  Handle to the window.
+;   X             - [Int]  New X-coordinate (adjusted: x - left_offset).
+;   Y             - [Int]  New Y-coordinate.
+;   Width         - [Int]  New width (adjusted: width + double left_offset).
+;   Height        - [Int]  New height (adjusted: height + top_offset).
+;   bRepaint      - [BOOL] Whether to repaint the window (True).
+; ==========================================================================================
+DllCall("MoveWindow"
+    , "Ptr", hwnd
+    , "Int", x -  left_offset
+    , "Int", y
+    , "Int", width + left_offset * 2
+    , "Int", height + top_offset
+    , "Int", true)
 ; ==============================================================================
 ;                                  Align Width
 ; ==============================================================================

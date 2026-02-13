@@ -246,7 +246,7 @@ Dock(x, y, width, height, id := "A")
     hwnd := WinExist(id)
     DllCall("MoveWindow"
         , "Ptr", hwnd                    ; Handle to the window.
-        , "Int", x -  left_offset        ; New X-coordinate.
+        , "Int", x - left_offset         ; New X-coordinate.
         , "Int", y                       ; New Y-coordinate.
         , "Int", width + left_offset * 2 ; New width.
         , "Int", height + top_offset     ; New height.

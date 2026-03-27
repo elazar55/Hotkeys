@@ -150,25 +150,23 @@ Return
 ;                                   Surround
 ; ==============================================================================
 #IfWinNotActive, ahk_exe Code.exe
+#Hotstring, B0
+#Hotstring, *
 
-^+'::SurroundWith("""", """")
-^+9::SurroundWith("(", ")")
-$^+[::SurroundWith("[", "]")
-$^+8::SurroundWith("*", "*")
+"::SurroundWith("""", """")
+(::SurroundWith("(", ")")
+[::SurroundWith("[", "]")
+*::SurroundWith("*", "*")
+Return
 
 SurroundWith(char_left, char_right)
 {
-    ;@AHK++AlignAssignmentOn
-    clip_backup  := Clipboard
-    Clipboard    :=
-    milliseconds := 50
-    ;@AHK++AlignAssignmentOff
-
-    Beep(1288, 25)
+    clip_backup := Clipboard
+    Clipboard   :=
+    clip_waitt_ms = 50
+    ClipWait, clip_waitt_ms / 1000
     Send, ^c
-    ClipWait, % milliseconds / 1000
-
     Clipboard := char_left . Clipboard . char_right
-    Send, ^v{Left}
+    Send, ^v
     Clipboard := clip_backup
 }

@@ -161,9 +161,9 @@ Return
 
 SurroundWith(char_left, char_right)
 {
-    clip_backup := Clipboard
-    Clipboard   :=
-    clip_waitt_ms = 50
+    clip_backup   := Clipboard
+    Clipboard     :=
+    clip_waitt_ms  = 50
     ClipWait, clip_waitt_ms / 1000
     Send, ^c
     Clipboard := char_left . Clipboard . char_right

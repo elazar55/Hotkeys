@@ -125,12 +125,10 @@ Return
         Beep(1000, 25)
     }
 Return
-; #If toggle
 #^a:: MouseMove, -1, 0, , R
 #^s:: MouseMove, 1, 0, , R
 #^w:: MouseMove, 0, -1, , R
 #^r:: MouseMove, 0, 1, , R
-; #If
 ; ==============================================================================
 ;                                 Opacity
 ; ==============================================================================
@@ -156,17 +154,16 @@ Return
 "::SurroundWith("""", """")
 (::SurroundWith("(", ")")
 [::SurroundWith("[", "]")
-*::SurroundWith("*", "*")
-Return
 
 SurroundWith(char_left, char_right)
 {
-    clip_backup   := Clipboard
-    Clipboard     :=
-    clip_waitt_ms  = 50
-    ClipWait, clip_waitt_ms / 1000
+    clip_backup  := Clipboard
+    Clipboard    :=
+    clip_wait_ms := 50 / 1000
+
     Send, ^c
+    ClipWait, clip_wait_ms
     Clipboard := char_left . Clipboard . char_right
-    Send, ^v
+    Send, ^v{Left}
     Clipboard := clip_backup
 }

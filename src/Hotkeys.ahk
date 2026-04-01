@@ -76,6 +76,7 @@ isDirectoryActive()
         || active_ctrl == "DirectUIHWND3"
         || active_ctrl == "TEasyListview1"
         || active_ctrl == "SysListView325"
+        || active_ctrl == "SysListView321"
         || active_ctrl == "PhTreeNew1")
     {
         Return true
@@ -161,7 +162,7 @@ SurroundWith(char_left, char_right)
     Clipboard    :=
     clip_wait_ms := 50 / 1000
 
-    Send, ^c
+    Send, {CtrlDown}{CtrlUp}
     ClipWait, clip_wait_ms
     Clipboard := char_left . Clipboard . char_right
     Send, ^v{Left}

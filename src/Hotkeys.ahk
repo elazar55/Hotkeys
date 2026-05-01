@@ -155,16 +155,9 @@ Return
 "::SurroundWith("""", """")
 (::SurroundWith("(", ")")
 [::SurroundWith("[", "]")
++[::SurroundWith("{{}", "{}}")
 
 SurroundWith(char_left, char_right)
 {
-    clip_backup  := Clipboard
-    Clipboard    :=
-    Send ^c
-    clip_wait_ms := 50 / 1000
-
-    ClipWait, clip_wait_ms
-    Clipboard := char_left . Clipboard . char_right
-    Send, ^v{Left}
-    Clipboard := clip_backup
+    Send %char_left%%char_right%{Left}
 }

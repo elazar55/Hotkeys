@@ -126,16 +126,16 @@ Return
         Beep(1000, 25)
     }
 Return
-#^a:: MouseMove, -1, 0, , R
-#^s:: MouseMove, 1, 0, , R
-#^w:: MouseMove, 0, -1, , R
-#^r:: MouseMove, 0, 1, , R
+#^a:: MouseMove -1,  0, , R
+#^s:: MouseMove  1,  0, , R
+#^w:: MouseMove  0, -1, , R
+#^r:: MouseMove  0,  1, , R
 ; ==============================================================================
 ;                                 Opacity
 ; ==============================================================================
 #+t::
     WinGet, trans_value, Transparent, A, , ,
-    trans_step := 255 / 2
+    trans_step  := 255 / 2
     trans_value := Round(trans_value) + Round(trans_step)
 
     If (trans_value >= 255)
@@ -156,6 +156,7 @@ Return
 (::SurroundWith("(", ")")
 [::SurroundWith("[", "]")
 +[::SurroundWith("{{}", "{}}")
+*::SurroundWith("*", "*")
 
 SurroundWith(char_left, char_right)
 {
